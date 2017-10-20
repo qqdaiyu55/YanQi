@@ -3,6 +3,7 @@ import Logo from '../components/Logo.js';
 import { Video } from './Video.js';
 import Hero from '../components/Hero.js';
 import TitleList from '../components/TitleList.js';
+import UserProfile from './UserProfile.js';
 
 
 class Homepage extends React.Component {
@@ -39,6 +40,7 @@ class Homepage extends React.Component {
           </div>
           <UserProfile />
         </header>
+        <UserProfile />
         <Hero />
         <Video />
         <TitleList title="Search Results" url={this.state.searchUrl} />
@@ -60,21 +62,8 @@ const Navigation = () => (
       <ul>
         <li>Browse</li>
         <li>My list</li>
-        <li>Top picks</li>
-        <li>Recent</li>
       </ul>
     </nav>
-  </div>
-)
-
-
-// User Profile
-const UserProfile = () => (
-  <div className="UserProfile">
-    <div className="User">
-      <div className="name">DAIYU</div>
-      <div className="image"><img src="http://www.avatarsdb.com/avatars/waifu.jpg" alt="profile" /></div>
-    </div>
   </div>
 )
 

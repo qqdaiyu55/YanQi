@@ -1,5 +1,6 @@
 {
   "name": "YanQi",
+  "description": "A p2p website support oneline streaming.",
   "version": "1.0.0",
   "license": "MIT",
   "devDependencies": {
