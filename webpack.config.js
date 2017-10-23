@@ -19,15 +19,10 @@ module.exports = {
   module: {
 
     // apply loaders to files that meet given conditions
-    loaders: [{
-      test: /\.js?$/,
-      // include: path.join(__dirname, '/src/client/'),
-      exclude: '/node_modules/',
-      loader: 'babel',
-      query: {
-        presets: ["react", "es2015"]
-      }
-    }],
+    loaders: [
+      { test: /\.js$/, loader: 'babel-loader', exclude: /node_modules/ },
+      { test: /\.jsx$/, loader: 'babel-loader', exclude: /node_modules/ }
+    ]
   },
 
   // start Webpack in a watch mode, so Webpack will rebuild the bundle on changes

@@ -45,8 +45,7 @@ const LoginForm = ({
 LoginForm.propTypes = {
   onSubmit: PropTypes.func.isRequired,
   onChange: PropTypes.func.isRequired,
-  errors: PropTypes.object.isRequired,
-  successMessage: PropTypes.string.isRequired
+  errors: PropTypes.object.isRequired
 };
 
 export default LoginForm;

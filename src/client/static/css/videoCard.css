@@ -1,0 +1,60 @@
+.videoCard {
+  width: 40vw;
+  height: 80vh;
+  position: fixed;
+  left: 30vw;
+  bottom: 10vh;
+  border-radius: 5px;
+  z-index: 10000;
+  background: white;
+  overflow: auto;
+}
+
+.videoCard .cover-wrapper {
+  width: 100%;
+  height: 25%;
+  overflow: hidden;
+}
+
+.videoCard .cover-wrapper .cover{
+  cursor: pointer;
+  padding: 20px;
+  margin: 10px;
+  background: #6e6868;
+  color: white;
+  font-size: 50px;
+  font-weight: bold;
+  line-height: 1.3em;
+  border: 2px dashed #fff;
+  border-radius: 10px;
+  box-shadow: 0 0 0 4px #6e6868;
+  /*text-shadow: -1px -1px #aa3030;*/
+}
+
+.coverImg-wrapper {
+  width: 100%;
+  height: 100%;
+  font-size: 10px;
+  color: white;
+  background-color: black;
+}
+
+/*.coverImg-wrapper .mask {
+  width: inherit;
+  height: inherit;
+  background: black;
+}*/
+
+i.coverImg-wrapper {
+  font-size: 50px;
+}
+
+#coverImg {
+  width: 100%;
+}
+
+#coverImg:hover {
+  opacity: 0.4;
+}
+
+/*#coverImg:hover >*/

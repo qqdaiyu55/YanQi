@@ -38,6 +38,8 @@ function validateSignupForm(payload) {
  *                   errors tips, and a global message for the whole form.
  */
 function validateLoginForm(payload) {
+  // **check if errors is needed in the future**
+  let errors = {};
   let isFormValid = true;
   let message = '';
 
@@ -53,7 +55,8 @@ function validateLoginForm(payload) {
 
   return {
     success: isFormValid,
-    message
+    message,
+    errors
   };
 }
 
@@ -119,7 +122,7 @@ router.post('/login', (req, res, next) => {
     }
 
 
-    return res.json({
+    return res.status(200).json({
       success: true,
       message: 'You have successfully logged in!',
       token,

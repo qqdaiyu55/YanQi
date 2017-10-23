@@ -27,9 +27,9 @@ app.use('/api', authCheckMiddleware);
 
 // routes
 const authRoutes = require('./src/server/routes/auth');
-// const apiRoutes = require('./src/server/routes/api');
+const apiRoutes = require('./src/server/routes/api');
 app.use('/auth', authRoutes);
-// app.use('/api', apiRoutes);
+app.use('/api', apiRoutes);
 
 
 // start the server

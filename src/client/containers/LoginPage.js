@@ -9,8 +9,8 @@ class LoginPage extends React.Component {
   /**
    * Class constructor.
    */
-  constructor(props, context) {
-    super(props, context);
+  constructor(props) {
+    super(props);
 
     const storedMessage = localStorage.getItem('successMessage');
     let successMessage = '';
@@ -65,9 +65,9 @@ class LoginPage extends React.Component {
         // save the token
         Auth.authenticateUser(xhr.response.token);
 
-
         // change the current URL to /
         this.props.history.push('/');
+
       } else {
         // failure
 

@@ -8,6 +8,10 @@ const UserSchema = new mongoose.Schema({
     index: { unique: true }
   },
   password: String,
+  avatar: {
+    data: Buffer,
+    contentype: String
+  }
 });
 
 

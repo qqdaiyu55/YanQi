@@ -54,7 +54,6 @@
   height: 250px;
   border-radius: 30px;
   /*border: solid 1px red;*/
-  background: black;
-  opacity: 0.7;
+  background-color: rgba(0, 0, 0, 0.7);
   z-index: -1;
 }

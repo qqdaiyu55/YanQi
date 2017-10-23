@@ -1,4 +1,4 @@
 {
   "dbUri": "mongodb://localhost/yanqi",
-  "jwtSecret": "a secret phrase!!"
+  "jwtSecret": "YANQI Secret Phrase"
 }
