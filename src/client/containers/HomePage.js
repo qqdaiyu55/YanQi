@@ -70,7 +70,7 @@ class Homepage extends React.Component {
               <button onClick={this.closeNew}>Close</button>
           </div>
         </Modal> */}
-        <EditVideoCard />
+        {/* <EditVideoCard /> */}
         <TitleList title="Search Results" url={this.state.searchUrl} />
         {/* <TitleList title="Top TV picks for Jack" url='discover/tv?sort_by=popularity.desc&page=1' />
         <TitleList title="Trending now" url='discover/movie?sort_by=popularity.desc&page=1' />
@@ -102,7 +102,6 @@ const Navigation = ({
         <li>My lists</li>
         <li>New</li>
         <li>FAQ</li>
-        <li><i className="fa fa-times"></i></li>
         <li onClick={plusOnClick}><i className="fa fa-fw fa-plus"></i></li>
       </ul>
     </nav>

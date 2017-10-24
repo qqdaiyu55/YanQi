@@ -6,7 +6,7 @@
   bottom: 10vh;
   border-radius: 5px;
   z-index: 10000;
-  background: white;
+  background: rgb(30, 30, 30);
   overflow: auto;
 }
 
@@ -14,9 +14,10 @@
   width: 100%;
   height: 25%;
   overflow: hidden;
+  position: relative;
 }
 
-.videoCard .cover-wrapper .cover{
+.videoCard .cover-wrapper .cover {
   cursor: pointer;
   padding: 20px;
   margin: 10px;
@@ -25,6 +26,7 @@
   font-size: 50px;
   font-weight: bold;
   line-height: 1.3em;
+  text-align: center;
   border: 2px dashed #fff;
   border-radius: 10px;
   box-shadow: 0 0 0 4px #6e6868;
@@ -34,27 +36,181 @@
 .coverImg-wrapper {
   width: 100%;
   height: 100%;
-  font-size: 10px;
   color: white;
+  font-size: 16px;
   background-color: black;
+  position: relative;
 }
 
-/*.coverImg-wrapper .mask {
-  width: inherit;
-  height: inherit;
-  background: black;
-}*/
+.coverImg-wrapper:hover > #coverImg {
+  opacity: 0.3;
+}
 
-i.coverImg-wrapper {
-  font-size: 50px;
+.coverImg-wrapper:hover div {
+  display: block;
+}
+
+.coverImg-wrapper div {
+  display: none;
+  cursor: pointer;
+  border: 2px solid #ffffff;
+  border-radius: 40px;
+  position: absolute;
+  width: 40px;
+  height: 40px;
+  top: 50%;
+  left: 50%;
+  z-index: 6;
+  transform: translate(-50%, -50%);
+}
+
+.coverImg-wrapper div i {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-align: center;
+  -webkit-align-items: center;
+      -ms-flex-align: center;
+          align-items: center;
+  -webkit-box-pack: center;
+  -webkit-justify-content: center;
+      -ms-flex-pack: center;
+          justify-content: center;
+  width: 40px;
+  height: 40px;
 }
 
 #coverImg {
   width: 100%;
 }
 
-#coverImg:hover {
-  opacity: 0.4;
+.videoCard .title {
+  position: relative;
+  width: 80%;
+  left: 10%;
+  border: 0;
+  border-bottom: 2px solid #1976D2;
+  font-family: 'Andada', serif;
+  font-size: 30px;
+  line-height: 35px;
+  /*height: 70px;*/
+  text-align: center;
+  padding: 10px;
+  background: transparent;
+  color: #BBDEFB;
 }
 
-/*#coverImg:hover >*/
+.videoCard .title:focus {
+  outline: 0;
+  color: #BBDEFB;
+}
+
+.videoCard .title::placeholder {
+  color: #1976D2;
+}
+
+.videoCard .horizonScroll {
+  position: relative;
+  box-sizing: border-box;
+  width: 100%;
+  height: 25%;
+  margin: 0, 10px, 0, 10px;
+}
+
+.videoCard .horizonScroll .addButton {
+  cursor: pointer;
+  position: absolute;
+  top: 10px;
+  right: 20px;
+  color: rgb(119, 236, 96);
+  font-size: 25px;
+}
+
+.videoCard .horizonScroll .noResources {
+  position: absolute;
+  width: 100%;
+  bottom: 30%;
+  font-weight: bold;
+  font-size: 40px;
+  line-height: 1.3em;
+  text-align: center;
+  vertical-align: middle;
+  color: #9a9a9a;
+}
+
+#editResourceCard {
+  display: none;
+  position: fixed;
+  width: 300px;
+  height: 200px;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: #2ecc71;
+  color: black;
+  border-radius: 5px;
+  z-index: 6;
+}
+
+#editResourceCard .Input {
+  display: flex;
+  flex-direction: row-reverse;
+  border-bottom: 1px solid black;
+  padding-bottom: 3px;
+  margin-bottom: 5px;
+}
+
+#editResourceCard .Input input {
+  outline: none;
+  border: 0;
+  color: black;
+  background: transparent;
+  font-family: "Lato", sans-serif;
+  flex: 1 0 auto;
+  font-size: 14px;
+  font-weight: 300;
+}
+
+#editResourceCard .Input label::before {
+  align-items: center;
+  color: black;
+  display: flex;
+  height: 30px;
+  justify-content: center;
+  width: 30px;
+}
+
+#editResourceCard .Input input[name='title'] ~ label::before {
+  content: "\f15c";
+}
+
+#editResourceCard .Input input[name='size'] ~ label::before {
+  content: "\f07b";
+}
+
+#editResourceCard .Input input[name='magnet'] ~ label::before {
+  content: "\f076";
+}
+
+#editResourceCard .Input label {
+  font-family: FontAwesome;
+  font-size: 13px;
+}
+
+.videoCard .intro {
+  position: relative;
+  box-sizing: border-box;
+  width: 100%;
+  height: auto;
+  color: white;
+  border: 1px solid #9a9a9a;
+  margin: 0, 10px, 0, 10px;
+  padding: 3px;
+  background: transparent;
+  border-radius: 2px;
+}
+
+.videoCard .intro:focus {
+  outline: 0;
+}
