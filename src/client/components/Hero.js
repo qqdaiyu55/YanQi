@@ -2,7 +2,7 @@ import React from 'react';
 import { displayVideo } from '../containers/Video.js';
 
 const Hero = () => (
-  <div id="hero" className="Hero" style={{backgroundImage: 'url(https://imagescdn.poocg.me/uploadfile/photo/2017/10/pic_l2rtc11l5qb33mj433z5ld8uj84evfek.jpg)'}}>
+  <div id="hero" className="Hero" style={{backgroundImage: 'url(https://images.alphacoders.com/633/633643.jpg)'}}>
     <div className="content">
       <img className="logo" src="http://www.returndates.com/backgrounds/narcos.logo.png" alt="narcos background" />
       <h2>Season 2 now available</h2>
@@ -25,7 +25,7 @@ class HeroButton extends React.Component {
   }
   handleClick() {
     document.getElementsByClassName("VideoPopup")[0].style.display = 'block'
-    displayVideo({torrentID: 'magnet:?xt=urn:btih:08ada5a7a6183aae1e09d831df6748d566095a10&dn=Sintel&tr=udp%3A%2F%2Fexplodie.org%3A6969&tr=udp%3A%2F%2Ftracker.coppersurfer.tk%3A6969&tr=udp%3A%2F%2Ftracker.empire-js.us%3A1337&tr=udp%3A%2F%2Ftracker.leechers-paradise.org%3A6969&tr=udp%3A%2F%2Ftracker.opentrackr.org%3A1337&tr=wss%3A%2F%2Ftracker.btorrent.xyz&tr=wss%3A%2F%2Ftracker.fastcast.nz&tr=wss%3A%2F%2Ftracker.openwebtorrent.com&ws=https%3A%2F%2Fwebtorrent.io%2Ftorrents%2F&xs=https%3A%2F%2Fwebtorrent.io%2Ftorrents%2Fsintel.torrent'})
+    displayVideo({torrentID: 'magnet:?xt=urn:btih:6760314e7f754a2184fe3dff4b8c6d1b33f49fd9&dn=%5BJYFanSub%5D%5BBoku+Dake+ga+Inai+Machi%5D%5B12%5D%5BGB%5D%5B720P%5D.mp4&tr=udp%3A%2F%2F%5B2604%3Aa880%3A1%3A20%3A%3A40%3A4001%5D%3A8000&tr=ws%3A%2F%2F%5B2604%3Aa880%3A1%3A20%3A%3A40%3A4001%5D%3A8000'})
   }
   render() {
     return (

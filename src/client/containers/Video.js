@@ -2,7 +2,7 @@ import React from 'react'
 // var WebTorrent = require('webtorrent')
 import WebTorrent from 'webtorrent/webtorrent.min'
 
-const client = new WebTorrent()
+const client = new WebTorrent({ dht: false })
 var torrentID = ''
 
 // Announces list

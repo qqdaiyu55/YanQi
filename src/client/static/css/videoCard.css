@@ -1,4 +1,4 @@
-.videoCard {
+.Video-card {
   width: 40vw;
   height: 80vh;
   position: fixed;
@@ -10,14 +10,14 @@
   overflow: auto;
 }
 
-.videoCard .cover-wrapper {
+.Video-card .cover-wrapper {
   width: 100%;
   height: 25%;
   overflow: hidden;
   position: relative;
 }
 
-.videoCard .cover-wrapper .cover {
+.Video-card .cover-wrapper .cover {
   cursor: pointer;
   padding: 20px;
   margin: 10px;
@@ -33,7 +33,7 @@
   /*text-shadow: -1px -1px #aa3030;*/
 }
 
-.coverImg-wrapper {
+.cover-img-wrapper {
   width: 100%;
   height: 100%;
   color: white;
@@ -42,15 +42,15 @@
   position: relative;
 }
 
-.coverImg-wrapper:hover > #coverImg {
+.cover-img-wrapper:hover > #cover-img {
   opacity: 0.3;
 }
 
-.coverImg-wrapper:hover div {
+.cover-img-wrapper:hover div {
   display: block;
 }
 
-.coverImg-wrapper div {
+.cover-img-wrapper div {
   display: none;
   cursor: pointer;
   border: 2px solid #ffffff;
@@ -64,7 +64,7 @@
   transform: translate(-50%, -50%);
 }
 
-.coverImg-wrapper div i {
+.cover-img-wrapper div i {
   display: -webkit-box;
   display: -webkit-flex;
   display: -ms-flexbox;
@@ -81,11 +81,11 @@
   height: 40px;
 }
 
-#coverImg {
+#cover-img {
   width: 100%;
 }
 
-.videoCard .title {
+.Video-card .title {
   position: relative;
   width: 80%;
   left: 10%;
@@ -101,16 +101,16 @@
   color: #BBDEFB;
 }
 
-.videoCard .title:focus {
+.Video-card .title:focus {
   outline: 0;
   color: #BBDEFB;
 }
 
-.videoCard .title::placeholder {
+.Video-card .title::placeholder {
   color: #1976D2;
 }
 
-.videoCard .horizonScroll {
+.Video-card .horizon-scroll {
   position: relative;
   box-sizing: border-box;
   width: 100%;
@@ -118,7 +118,7 @@
   margin: 0, 10px, 0, 10px;
 }
 
-.videoCard .horizonScroll .addButton {
+.Video-card .horizon-scroll .add-button {
   cursor: pointer;
   position: absolute;
   top: 10px;
@@ -127,7 +127,7 @@
   font-size: 25px;
 }
 
-.videoCard .horizonScroll .noResources {
+.Video-card .horizon-scroll .no-resources {
   position: absolute;
   width: 100%;
   bottom: 30%;
@@ -139,7 +139,26 @@
   color: #9a9a9a;
 }
 
-#editResourceCard {
+.Video-card .horizon-scroll .resource-cards {
+  position: absolute;
+  overflow: auto;
+  white-space: nowrap;
+}
+
+.Video-card .horizon-scroll .card {
+  position: flex;
+  width: 30px;
+  height: 20px;
+  border: 2px solid green;
+  border-radius: 3px;
+  margin: 5px, 10px, 5px, 10px;
+  padding: 2px;
+  text-decoration: none;
+  display: inline-block;
+}
+
+
+#edit-resource-card {
   display: none;
   position: fixed;
   width: 300px;
@@ -153,7 +172,7 @@
   z-index: 6;
 }
 
-#editResourceCard .Input {
+#edit-resource-card .Input {
   display: flex;
   flex-direction: row-reverse;
   border-bottom: 1px solid black;
@@ -161,7 +180,7 @@
   margin-bottom: 5px;
 }
 
-#editResourceCard .Input input {
+#edit-resource-card .Input input {
   outline: none;
   border: 0;
   color: black;
@@ -172,7 +191,7 @@
   font-weight: 300;
 }
 
-#editResourceCard .Input label::before {
+#edit-resource-card .Input label::before {
   align-items: center;
   color: black;
   display: flex;
@@ -181,24 +200,25 @@
   width: 30px;
 }
 
-#editResourceCard .Input input[name='title'] ~ label::before {
+#edit-resource-card .Input input[name='title'] ~ label::before {
   content: "\f15c";
 }
 
-#editResourceCard .Input input[name='size'] ~ label::before {
+#edit-resource-card .Input input[name='size'] ~ label::before {
   content: "\f07b";
 }
 
-#editResourceCard .Input input[name='magnet'] ~ label::before {
+#edit-resource-card .Input input[name='magnet'] ~ label::before {
   content: "\f076";
 }
 
-#editResourceCard .Input label {
+#edit-resource-card .Input label {
   font-family: FontAwesome;
   font-size: 13px;
 }
 
-.videoCard .intro {
+
+.Video-card .intro {
   position: relative;
   box-sizing: border-box;
   width: 100%;
@@ -211,6 +231,6 @@
   border-radius: 2px;
 }
 
-.videoCard .intro:focus {
+.Video-card .intro:focus {
   outline: 0;
 }

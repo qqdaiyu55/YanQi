@@ -20,10 +20,13 @@ class EditVideoCard extends React.Component {
 
     this.previewCover = this.previewCover.bind(this);
     this.removeCover = this.removeCover.bind(this);
+
     this.handleTagsChange = this.handleTagsChange.bind(this);
+
     this.addResource = this.addResource.bind(this);
     this.resourceInfoChange = this.resourceInfoChange.bind(this);
     this.submitResourceInfo = this.submitResourceInfo.bind(this);
+    this.cancelEditResource = this.cancelEditResource.bind(this);
   }
 
   // Preview uploaded cover
@@ -32,7 +35,7 @@ class EditVideoCard extends React.Component {
       var reader = new FileReader();
 
       reader.onload = (event) => {
-        $('#coverImg').attr('src', event.target.result);
+        $('#cover-img').attr('src', event.target.result);
       };
       reader.readAsDataURL(e.target.files[0]);
       this.setState({
@@ -43,7 +46,7 @@ class EditVideoCard extends React.Component {
 
   // Remove cover
   removeCover() {
-    $("#coverImg").attr('src', '#');
+    $("#cover-img").attr('src', '#');
     this.setState({
       isCoverUploaded: false
     });
@@ -51,9 +54,10 @@ class EditVideoCard extends React.Component {
 
   // create new resource card and add info
   addResource() {
-    $('#editResourceCard').show();
+    $('#edit-resource-card').show();
   }
 
+  // Clear text and hide the resource edit card when cancelling
   cancelEditResource() {
     this.setState({
       tempResourceInfo: {
@@ -62,9 +66,11 @@ class EditVideoCard extends React.Component {
         magnet: ''
       }
     });
-    $('#editResourceCard').hide();
+    $("#edit-resource-card").find("input").val("");
+    $('#edit-resource-card').hide();
   }
 
+  // Handle text changes in resource edit card
   resourceInfoChange(event) {
     let field = event.target.name;
     let tempResourceInfo = this.state.tempResourceInfo;
@@ -75,10 +81,11 @@ class EditVideoCard extends React.Component {
     });
   }
 
+  // Create new resource card
   submitResourceInfo() {
     let resourceLists = this.state.resourceLists;
-    let tempResourceInfo = this.state.tempResourceInfo;
-    resourceLists = resourceLists.concat(tempResourceInfo);
+    let tempResourceInfo = this.state.tempResourceInfo;;
+    resourceLists.push(tempResourceInfo);
     tempResourceInfo = {
       title: '',
       size: null,
@@ -89,10 +96,14 @@ class EditVideoCard extends React.Component {
       tempResourceInfo
     });
 
-    console.log(this.state.resourceLists);
-    console.log(this.state.tempResourceInfo);
+    // Clear text and hide edit card
+    $("#edit-resource-card").find("input").val("");
+    $("#edit-resource-card").hide();
 
-    $("#editResourceCard").hide();
+    // If the resources is none previously, set isResourceEmpty true create new resource card
+    if (this.state.isResourceEmpty) {
+      this.setState({isResourceEmpty: false});
+    }
   }
 
   // handle changes of tags
@@ -102,24 +113,28 @@ class EditVideoCard extends React.Component {
 
   render() {
     return (
-      <div className="videoCard">
+      <div className="Video-card">
         <div className="cover-wrapper">
           { this.state.isCoverUploaded &&
-            <div className="coverImg-wrapper">
+            <div className="cover-img-wrapper">
               <div onClick={this.removeCover}><i className="fa fa-fw fa-times"></i></div>
-              <img id="coverImg" src="#" />
+              <img id="cover-img" src="#" />
             </div>
           }
-          { !this.state.isCoverUploaded && <div className="cover" onClick={()=>{$('#uploadCover').click();}}>COVER</div> }
-          <input type="file" id="uploadCover" style={{display:"none"}} onChange={(e)=>this.previewCover(e)}/>
+          { !this.state.isCoverUploaded && <div className="cover" onClick={()=>{$('#upload-cover').click();}}>COVER</div> }
+          <input type="file" id="upload-cover" style={{display:"none"}} onChange={(e)=>this.previewCover(e)}/>
         </div>
         <input type="text" className="title" required placeholder="Input Title"></input>
-        <div className="horizonScroll">
-          <div className="addButton" onClick={this.addResource}><i className="fa fa-fw fa-plus"></i></div>
-          <EditResourceCard onSubmit={this.submitResourceInfo} cancel={this.cancelEditResource} onChange={this.resourceInfoChange} initialValue={this.state.tempResourceInfo}/>
+        <div className="horizon-scroll">
+          <div className="add-button" onClick={this.addResource}><i className="fa fa-fw fa-plus"></i></div>
+          <EditResourceCard onSubmit={this.submitResourceInfo} cancel={this.cancelEditResource} onChange={this.resourceInfoChange} />
           {
             this.state.isResourceEmpty &&
-            <div className="noResources">NO RESOURCES</div>
+            <div className="no-resources">NO RESOURCES</div>
+          }
+          {
+            !this.state.isResourceEmpty &&
+            <ResourceCardsList data={this.state.resourceLists} />
           }
         </div>
         <TagsInput value={this.state.tags} onChange={this.handleTagsChange} />
@@ -129,21 +144,57 @@ class EditVideoCard extends React.Component {
   }
 }
 
+class ResourceCardsList extends React.Component {
+  constructor(props) {
+    super(props);
+
+    this.test = this.props.data[0];
+  }
+  componentWillMount() {
+    console.log(this.test);
+  }
+  // componentWillReceiveProps(nextProps) {
+  //   if(nextProps.url !== this.props.url && nextProps.url !== ''){
+  //     this.setState({mounted:true,url:nextProps.url},()=>{
+  //       this.loadContent();
+  //     });
+  //   }
+  // }
+
+  render() {
+    return (
+      <div className="resource-cards">
+        <ResourceCard title={this.test.title} size={this.test.size} magnet={this.test.magnet} />
+      </div>
+    );
+  }
+}
+
+const ResourceCard = ({
+  title,
+  size,
+  magnet
+}) => (
+  <div className="card">
+    <div>{title}</div>
+    <div>{size}</div>
+    <div>{magnet}</div>
+  </div>
+);
+
 const EditResourceCard = ({
   onSubmit,
   cancel,
-  onChange,
-  initialValue
+  onChange
 }) => (
-  <div id="editResourceCard">
+  <div id="edit-resource-card">
     <form>
-      <ResourceCardInput name="title" type="text" placeholder="title" onChange={onChange} value={initialValue['title']} />
-      <ResourceCardInput name="size" type="text" placeholder="size" onChange={onChange} value={initialValue['size']} />
-      <ResourceCardInput name="magnet" type="text" placeholder="magnet" onChange={onChange} value={initialValue['magnet']} />
-      <button onClick={onSubmit}>Submit</button>
+      <ResourceCardInput name="title" type="text" placeholder="title" onChange={onChange} />
+      <ResourceCardInput name="size" type="text" placeholder="size" onChange={onChange} />
+      <ResourceCardInput name="magnet" type="text" placeholder="magnet" onChange={onChange} />
     </form>
-    {/* <button onClick={onSubmit}>Submit</button> */}
-    <button onClick={cancel}>Clear</button>
+    <button onClick={onSubmit}>Submit</button>
+    <button onClick={cancel}>Cancel</button>
   </div>
 );
 

@@ -70,7 +70,7 @@ class Homepage extends React.Component {
               <button onClick={this.closeNew}>Close</button>
           </div>
         </Modal> */}
-        {/* <EditVideoCard /> */}
+        <EditVideoCard />
         <TitleList title="Search Results" url={this.state.searchUrl} />
         {/* <TitleList title="Top TV picks for Jack" url='discover/tv?sort_by=popularity.desc&page=1' />
         <TitleList title="Trending now" url='discover/movie?sort_by=popularity.desc&page=1' />
@@ -83,13 +83,6 @@ class Homepage extends React.Component {
   }
 }
 
-
-const customStyle = {
-  height: "auto",
-  bottom: "auto",
-  top: "30%",
-  background: "white"
-};
 
 // Navigation
 const Navigation = ({
