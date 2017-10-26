@@ -1,5 +1,6 @@
 import React from 'react';
 import TagsInput from 'react-tagsinput';
+import {SortableContainer, SortableElement, arrayMove} from 'react-sortable-hoc';
 
 class EditVideoCard extends React.Component {
   constructor() {
@@ -144,31 +145,64 @@ class EditVideoCard extends React.Component {
   }
 }
 
-class ResourceCardsList extends React.Component {
-  constructor(props) {
-    super(props);
+// class ResourceCardsList extends React.Component {
+//   constructor(props) {
+//     super(props);
+//     this.cards = [];
+//
+//     this.loadContent = this.loadContent.bind(this);
+//   }
+//
+//   componentWillReceiveProps(nextProps) {
+//     if(nextProps.url !== this.props.url && nextProps.url !== ''){
+//       this.setState({mounted:true,url:nextProps.url},()=>{
+//         this.loadContent();
+//       });
+//     }
+//   }
+//
+//   loadContent() {
+//
+//   }
+//
+//   render() {
+//     let cards = [];
+//
+//     return (
+//       <div className="resource-cards">
+//         <ResourceCard title={this.test.title} size={this.test.size} magnet={this.test.magnet} />
+//       </div>
+//     );
+//   }
+// }
 
-    this.test = this.props.data[0];
-  }
-  componentWillMount() {
-    console.log(this.test);
-  }
-  // componentWillReceiveProps(nextProps) {
-  //   if(nextProps.url !== this.props.url && nextProps.url !== ''){
-  //     this.setState({mounted:true,url:nextProps.url},()=>{
-  //       this.loadContent();
-  //     });
-  //   }
-  // }
+// const SortableItem = SortableElement(({item}) =>
+//   <ResourceCard title={item.title} size={item.size} magnet={item.magnet} />
+// );
+//
+// const SortableList = SortableContainer(({items}) => {
+//   return (
+//     <ul>
+//       {items.map((value, index) => (
+//         <SortableItem key={`item-${index}`} index={index} value={value} />
+//       ))}
+//     </ul>
+//   );
+// });
 
-  render() {
-    return (
-      <div className="resource-cards">
-        <ResourceCard title={this.test.title} size={this.test.size} magnet={this.test.magnet} />
-      </div>
-    );
-  }
-}
+// class SortableComponent extends Component {
+//   constructor(props) {
+//     super(props);
+//   }
+//   onSortEnd = ({oldIndex, newIndex}) => {
+//     this.setState({
+//       items: arrayMove(this.state.items, oldIndex, newIndex)
+//     });
+//   };
+//   render() {
+//     return <SortableList axis="x" items={this.props.items} onSortEnd={this.onSortEnd} />;
+//   }
+// }
 
 const ResourceCard = ({
   title,

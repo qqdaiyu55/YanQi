@@ -43,7 +43,11 @@ footer, header, hgroup, menu, nav, section {
 }*/
 body {
   line-height: 1;
-  background: black;
+  color: #ffffff;
+  font-family: "Lato", sans-serif;
+  background: url('/img/GhostBlade_Aeolian.jpg') no-repeat center center fixed;
+  background-size: cover;
+  overflow: hidden;
 }
 ol, ul {
   list-style: none;
@@ -59,12 +63,6 @@ q:before, q:after {
 table {
   border-collapse: collapse;
   border-spacing: 0;
-}
-
-body {
-  /*background: #221f1f;*/
-  color: #ffffff;
-  font-family: "Lato", sans-serif;
 }
 
 h2, .TitleList .Title {
@@ -152,6 +150,53 @@ p {
   background: #e50914;
   cursor: pointer;
 }
+.Navigation .tags-box-wrapper {
+  position: relative;
+}
+.Navigation .tags-box {
+  visibility: hidden;
+  cursor: default;
+  position: absolute;
+  width: 300px;
+  height: 100px;
+  border-radius: 5px;
+  top: 40px;
+  left: -40px;
+  padding: 5px;
+  background: radial-gradient(transparent, black);
+  opacity: 0;
+  transition: opacity .3s;
+}
+.Navigation .tags-box::after {
+  content: "";
+  position: absolute;
+  bottom: 100%;
+  left: 63px;
+  margin-left: -7px;
+  border-width: 7px;
+  border-style: solid;
+  border-color: transparent transparent #e50914 transparent;
+}
+.Navigation .tags-box::before {
+  margin-top: -20px;
+  display: block;
+  content: "";
+  height: 20px;
+  width: 100%;
+}
+.tags-box-wrapper:hover > .tags-box {
+  visibility: visible;
+  opacity: 1;
+}
+.tags-box-buttons {
+  display: flex;
+  position: absolute;
+}
+.tags-box-buttons i{
+  /*padding: 5px, 5px;*/
+  margin: 5px, 5px;
+}
+
 
 .Search {
   -webkit-box-align: center;
