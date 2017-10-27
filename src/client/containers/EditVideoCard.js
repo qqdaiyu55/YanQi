@@ -1,6 +1,5 @@
 import React from 'react';
 import TagsInput from 'react-tagsinput';
-import {SortableContainer, SortableElement, arrayMove} from 'react-sortable-hoc';
 
 class EditVideoCard extends React.Component {
   constructor() {

@@ -100,12 +100,10 @@
   background: transparent;
   color: #BBDEFB;
 }
-
 .Video-card .title:focus {
   outline: 0;
   color: #BBDEFB;
 }
-
 .Video-card .title::placeholder {
   color: #1976D2;
 }
@@ -117,7 +115,6 @@
   height: 25%;
   margin: 0, 10px, 0, 10px;
 }
-
 .Video-card .horizon-scroll .add-button {
   cursor: pointer;
   position: absolute;
@@ -126,7 +123,6 @@
   color: rgb(119, 236, 96);
   font-size: 25px;
 }
-
 .Video-card .horizon-scroll .no-resources {
   position: absolute;
   width: 100%;
@@ -138,7 +134,6 @@
   vertical-align: middle;
   color: #9a9a9a;
 }
-
 .Video-card .horizon-scroll .resource-cards {
   position: absolute;
   box-sizing: border-box;
@@ -149,7 +144,6 @@
   overflow: auto;
   white-space: nowrap;
 }
-
 .Video-card .horizon-scroll .card {
   position: flex;
   width: 100px;

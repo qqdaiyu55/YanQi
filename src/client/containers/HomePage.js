@@ -5,7 +5,7 @@ import Hero from '../components/Hero.js';
 import TitleList from '../components/TitleList.js';
 import UserProfile from './UserProfile.js';
 import EditVideoCard from './EditVideoCard.js'
-import {SortableContainer, SortableElement, arrayMove} from 'react-sortable-hoc';
+import Modal from './Modal.js'
 // import Rodal from 'rodal';
 // import Modal from 'react-awesome-modal';
 
@@ -79,67 +79,75 @@ class Homepage extends React.Component {
   }
 }
 
-const SortableItem = SortableElement(({value}) =>
-  <li>{value}</li>
-);
-
-const SortableList = SortableContainer(({items}) => {
-  return (
-    <ul>
-      {items.map((value, index) => (
-        <SortableItem key={`item-${index}`} index={index} value={value} />
-      ))}
-    </ul>
-  );
-});
-
-class SortableComponent extends React.Component {
+// Navigation
+class Navigation extends React.Component {
   constructor() {
     super();
     this.state = {
-      items: ['电影', '动漫', 'MV', 'HBO']
+      isTagModalOpen: false,
+      tags: ['电影', '动漫', 'MV', 'HBO', 'AMV', '行尸走肉', '小埋']
     };
 
-    this.onSortEnd = this.onSortEnd.bind(this);
+    this.openTagModal = this.openTagModal.bind(this);
   }
-  onSortEnd({
-    oldIndex,
-    newIndex
-  }) {
-    this.setState({
-      items: arrayMove(this.state.items, oldIndex, newIndex),
+
+  openTagModal() {
+
+  }
+
+  componentDidMount() {
+    $('.tags-box').find("ul").sortable({
+      // If you want to use 'animation_direction' and 'animation' option, please include jquery-ui script in index.html
+      // animation_direction: 'x',
+      // animation: 200
     });
-  };
+    $(".tags-box").droppable({greedy: true});
+
+    $("body").droppable({
+      drop: function(e, ui) {
+        ui.draggable.remove();
+      }
+    });
+  }
+
+  componentWillUnmount() {
+    console.log("Over");
+  }
+
   render() {
-    return <SortableList axis="xy" items={this.state.items} onSortEnd={this.onSortEnd} />;
+    return (
+      <div id="navigation" className="Navigation">
+        <nav>
+          <ul>
+            <li className="tags-box-wrapper">
+              Tags
+              <div id="tagsbox" className="tags-box">
+                <div className="tags-box-buttons">
+                  {/* <i className="fa fw fa-plus-circle"></i> */}
+                  <i className="fa fw fa-plus-square" onClick={this.openTagModal}></i>
+                </div>
+                <ul>
+                  {this.state.tags.map(tag =>
+                    <li key={tag}>{tag}</li>
+                  )}
+                </ul>
+              </div>
+            </li>
+            <li>My list</li>
+            <li>New</li>
+            <li>FAQ</li>
+            <li><i className="fa fa-fw fa-plus"></i></li>
+          </ul>
+        </nav>
+        <Modal>
+          <div className="add-navigation-tag">
+            <input type="text"/>
+          </div>
+        </Modal>
+      </div>
+    );
   }
 }
-
-// Navigation
-const Navigation = ({
-  plusOnClick
-}) => (
-  <div id="navigation" className="Navigation">
-    <nav>
-      <ul>
-        <li className="tags-box-wrapper">
-          Tags
-          <div id="tagsbox" className="tags-box">
-            <div className="tags-box-buttons">
-              <i className="fa fw fa-plus"></i>
-              <i className="fa fw fa-trash-o"></i>
-            </div>
-            <SortableComponent />
-          </div>
-        </li>
-        <li>My lists</li>
-        <li>New</li>
-        <li>FAQ</li>
-        <li onClick={plusOnClick}><i className="fa fa-fw fa-plus"></i></li>
-      </ul>
-    </nav>
-  </div>
-)
 
 
 export default Homepage;
