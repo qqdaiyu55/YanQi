@@ -9,9 +9,10 @@ const UserSchema = new mongoose.Schema({
   },
   password: String,
   avatar: {
-    data: Buffer,
+    type: Buffer,
     contentype: String
-  }
+  },
+  tags: Array
 });
 
 

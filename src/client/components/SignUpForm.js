@@ -36,7 +36,7 @@ const SignUpForm = ({
             <Input
      				  name="reinput_password"
      				  type="password"
-     				  placeholder="re-input password"
+     				  placeholder="repeat password"
               onChange={onChange}
             />
             <button className="Button">Sign up</button>

@@ -40,5 +40,21 @@ router.post('/updateAvatar', (req, res, next) => {
   });
 });
 
+router.post('/updateTags', (req, res, next) => {
+  const info = JSON.parse(req.body.json);
+  const token = info.token;
+  const decode = jwt.verify(token, config.jwtSecret);
+  const subId = decode.sub;
+  const tags = info.tags;
+
+  User.findOneAndUpdate({_id: subId}, {tags: tags}, {upsert: true}, (err, res) => {
+    if (err) {
+      res.status(400).json({
+        error: 'Failure in updating tags!'
+      });
+    }
+  });
+});
+
 
 module.exports = router;

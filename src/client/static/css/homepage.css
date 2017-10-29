@@ -202,27 +202,66 @@ p {
 }
 
 .add-navigation-tag {
-  visibility: hidden;
-  opacity: 0;
-  transition: opacity, .3s;
-}
-
-.add-navigation-tag input {
   position: absolute;
+  height: 50px;
   top: 50%;
   left: 50%;
+  transform: translate(-50%, -50%);
+  display: flex;
+  flex-wrap: nowrap;
+}
+.add-navigation-tag input[type="text"] {
+  position: relative;
   width: 300px;
   height: 50px;
-  transform: translate(-50%, -50%);
-  border: 3px solid red;
+  border: 3px solid #e50914;
   background: transparent;
-  border-radius: 25px;
-  color: rgb(164, 162, 162);
+  border-radius: 50px;
+  color: rgb(222, 222, 222);
   font-size: 40px;
   text-align: center;
+  padding: 3px 7px;
 }
 .add-navigation-tag input[type="text"]:focus {
   outline: none;
+}
+.tag-modal-buttons {
+  position: relative;
+  cursor: pointer;
+  width: 50px;
+  height: 50px;
+  margin-left: 10px;
+  border: 2px solid #e50914;
+  border-radius: 50px;
+  font-size: 25px;
+  overflow: hidden;
+}
+.tag-modal-buttons:hover {
+  background: #e50914;
+}
+.tag-modal-buttons div {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 50px;
+  height: 100px;
+  transition: .125s ease;
+}
+.tag-modal-buttons div i {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-align: center;
+  -webkit-align-items: center;
+      -ms-flex-align: center;
+          align-items: center;
+  -webkit-box-pack: center;
+  -webkit-justify-content: center;
+      -ms-flex-pack: center;
+          justify-content: center;
+  height: 50px;
+  width: 50px;
 }
 
 
@@ -237,7 +276,7 @@ p {
           justify-content: center;
   width: 100%;
   position: absolute;
-  left:0;
+  left: 5%;
   display: -webkit-box;
   display: -webkit-flex;
   display: -ms-flexbox;
@@ -270,7 +309,7 @@ p {
 }
 .Search input:focus {
   border: 2px solid #e50914;
-  width: 30%;
+  width: 28%;
 }
 
 .Hero {
