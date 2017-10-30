@@ -143,7 +143,7 @@ class Navigation extends React.Component {
   }
   // open edit-video-card
   openEditVideoModal() {
-    $("#edit-video-card").css({"visibility":"visibile", "opacity":"1"});
+    $("#edit-video-card").css({"visibility":"visible", "opacity":"1"});
   }
   render() {
     return (
@@ -167,7 +167,7 @@ class Navigation extends React.Component {
             <li>New</li>
             <li>Download</li>
             <li>FAQ</li>
-            <li><i className="fa fa-fw fa-plus" onClick={this.openEditVideoModal}></i></li>
+            <li onClick={this.openEditVideoModal}><i className="fa fa-fw fa-plus"></i></li>
           </ul>
         </nav>
         <Modal id="add-tag-modal">
@@ -181,7 +181,7 @@ class Navigation extends React.Component {
             </div>
           </div>
         </Modal>
-        <Modal id="edit-video-card">
+        <Modal id="edit-video-card" show={true}>
           <EditVideoCard />
         </Modal>
       </div>
