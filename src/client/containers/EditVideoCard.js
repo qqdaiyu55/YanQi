@@ -84,7 +84,7 @@ class EditVideoCard extends React.Component {
   // Create new resource card
   submitResourceInfo() {
     let resourceLists = this.state.resourceLists;
-    let tempResourceInfo = this.state.tempResourceInfo;;
+    let tempResourceInfo = this.state.tempResourceInfo;
     resourceLists.push(tempResourceInfo);
     tempResourceInfo = {
       title: '',
@@ -124,84 +124,18 @@ class EditVideoCard extends React.Component {
           { !this.state.isCoverUploaded && <div className="cover" onClick={()=>{$('#upload-cover').click();}}>COVER</div> }
           <input type="file" id="upload-cover" style={{display:"none"}} onChange={(e)=>this.previewCover(e)}/>
         </div>
-        <input type="text" className="title" required placeholder="Input Title"></input>
+        <input type="text" className="title" required placeholder="Title"></input>
         <div className="horizon-scroll">
           <div className="add-button" onClick={this.addResource}><i className="fa fa-fw fa-plus"></i></div>
           <EditResourceCard onSubmit={this.submitResourceInfo} cancel={this.cancelEditResource} onChange={this.resourceInfoChange} />
-          {
-            this.state.isResourceEmpty &&
-            <div className="no-resources">NO RESOURCES</div>
-          }
-          {
-            !this.state.isResourceEmpty &&
-            <ResourceCardsList data={this.state.resourceLists} />
-          }
+          {/* <ResourceCardsList data={this.state.resourceLists} /> */}
         </div>
         <TagsInput value={this.state.tags} onChange={this.handleTagsChange} />
-        <input type="text" className="intro" required placeholder="Input introduction.."></input>
+        <textarea className="intro" required placeholder="Input introduction.."></textarea>
       </div>
     );
   }
 }
-
-// class ResourceCardsList extends React.Component {
-//   constructor(props) {
-//     super(props);
-//     this.cards = [];
-//
-//     this.loadContent = this.loadContent.bind(this);
-//   }
-//
-//   componentWillReceiveProps(nextProps) {
-//     if(nextProps.url !== this.props.url && nextProps.url !== ''){
-//       this.setState({mounted:true,url:nextProps.url},()=>{
-//         this.loadContent();
-//       });
-//     }
-//   }
-//
-//   loadContent() {
-//
-//   }
-//
-//   render() {
-//     let cards = [];
-//
-//     return (
-//       <div className="resource-cards">
-//         <ResourceCard title={this.test.title} size={this.test.size} magnet={this.test.magnet} />
-//       </div>
-//     );
-//   }
-// }
-
-// const SortableItem = SortableElement(({item}) =>
-//   <ResourceCard title={item.title} size={item.size} magnet={item.magnet} />
-// );
-//
-// const SortableList = SortableContainer(({items}) => {
-//   return (
-//     <ul>
-//       {items.map((value, index) => (
-//         <SortableItem key={`item-${index}`} index={index} value={value} />
-//       ))}
-//     </ul>
-//   );
-// });
-
-// class SortableComponent extends Component {
-//   constructor(props) {
-//     super(props);
-//   }
-//   onSortEnd = ({oldIndex, newIndex}) => {
-//     this.setState({
-//       items: arrayMove(this.state.items, oldIndex, newIndex)
-//     });
-//   };
-//   render() {
-//     return <SortableList axis="x" items={this.props.items} onSortEnd={this.onSortEnd} />;
-//   }
-// }
 
 const ResourceCard = ({
   title,
