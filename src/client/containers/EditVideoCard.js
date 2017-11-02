@@ -29,6 +29,16 @@ class EditVideoCard extends React.Component {
     this.cancelEditResource = this.cancelEditResource.bind(this);
   }
 
+  componentDidMount() {
+    $(".horizon-scroll ul").sortable({
+      axis: 'x',
+      animation_direction: 'x',
+      animation: 200
+    });
+
+    $(".Video-card").droppable({greedy: true});
+  }
+
   // Preview uploaded cover
   previewCover(e) {
     if (e.target.files && e.target.files[0]) {
@@ -54,7 +64,7 @@ class EditVideoCard extends React.Component {
 
   // create new resource card and add info
   addResource() {
-    $('#edit-resource-card').show();
+    $('#edit-resource-card').css({"visibility":"visible", "opacity":"1", "top":"50%"});
   }
 
   // Clear text and hide the resource edit card when cancelling
@@ -66,8 +76,8 @@ class EditVideoCard extends React.Component {
         magnet: ''
       }
     });
-    $("#edit-resource-card").find("input").val("");
-    $('#edit-resource-card').hide();
+    $("#edit-resource-card input").val("");
+    $('#edit-resource-card').css({"visibility":"hidden", "opacity":"0", "top":"60%"});
   }
 
   // Handle text changes in resource edit card
@@ -83,27 +93,32 @@ class EditVideoCard extends React.Component {
 
   // Create new resource card
   submitResourceInfo() {
-    let resourceLists = this.state.resourceLists;
-    let tempResourceInfo = this.state.tempResourceInfo;
-    resourceLists.push(tempResourceInfo);
-    tempResourceInfo = {
-      title: '',
-      size: null,
-      magnet: ''
-    };
-    this.setState({
-      resourceLists,
-      tempResourceInfo
-    });
+    // let resourceLists = this.state.resourceLists;
+    // let tempResourceInfo = this.state.tempResourceInfo;
+    // resourceLists.push(tempResourceInfo);
+    // tempResourceInfo = {
+    //   title: '',
+    //   size: null,
+    //   magnet: ''
+    // };
+    // this.setState({
+    //   resourceLists,
+    //   tempResourceInfo
+    // });
+    const tempResourceInfo = $("#edit-resource-card input").map(function() {
+      return this.value;
+    }).get();
+
+    $(".horizon-scroll ul").append(
+      '<li class="ui-sortable-handle">'+
+      '<div>'+tempResourceInfo[0]+'</div>'+
+      '<div>'+tempResourceInfo[1]+'</div>'+
+      '<div>'+tempResourceInfo[2]+'</div>'+
+      '</div></li>');
 
     // Clear text and hide edit card
-    $("#edit-resource-card").find("input").val("");
-    $("#edit-resource-card").hide();
-
-    // If the resources is none previously, set isResourceEmpty true create new resource card
-    if (this.state.isResourceEmpty) {
-      this.setState({isResourceEmpty: false});
-    }
+    $("#edit-resource-card input").val("");
+    $("#edit-resource-card").css({"visibility":"hidden", "opacity":"0", "top":"60%"});
   }
 
   // handle changes of tags
@@ -126,9 +141,10 @@ class EditVideoCard extends React.Component {
         </div>
         <input type="text" className="title" required placeholder="Title"></input>
         <div className="horizon-scroll">
-          <div className="add-button" onClick={this.addResource}><i className="fa fa-fw fa-plus"></i></div>
+          <a class="add-button" onClick={this.addResource}>+</a>
           <EditResourceCard onSubmit={this.submitResourceInfo} cancel={this.cancelEditResource} onChange={this.resourceInfoChange} />
           {/* <ResourceCardsList data={this.state.resourceLists} /> */}
+          <div className="cards-wrapper"><ul></ul></div>
         </div>
         <TagsInput value={this.state.tags} onChange={this.handleTagsChange} />
         <textarea className="intro" required placeholder="Input introduction.."></textarea>
@@ -160,8 +176,8 @@ const EditResourceCard = ({
       <ResourceCardInput name="size" type="text" placeholder="size" onChange={onChange} />
       <ResourceCardInput name="magnet" type="text" placeholder="magnet" onChange={onChange} />
     </form>
-    <button onClick={onSubmit}>Submit</button>
-    <button onClick={cancel}>Cancel</button>
+    <button name="submit" onClick={onSubmit}>Submit</button>
+    <button name="cancel" onClick={cancel}>Cancel</button>
   </div>
 );
 
@@ -171,7 +187,7 @@ const ResourceCardInput = ({
   placeholder,
   onChange
 }) => (
-  <div className="Input">
+  <div className="resource-text-input">
 		<input
       name={name}
 			autoComplete="false"

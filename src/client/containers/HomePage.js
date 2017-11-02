@@ -71,11 +71,7 @@ class Navigation extends React.Component {
   }
 
   componentDidMount() {
-    $(".tags-box ul").sortable({
-      // If you want to use 'animation_direction' and 'animation' option, please include jquery-ui script in index.html
-      // animation_direction: 'x',
-      // animation: 200
-    });
+    $(".tags-box ul").sortable();
     $(".tags-box").droppable({greedy: true});
     $("body").droppable({
       drop: function(e, ui) {

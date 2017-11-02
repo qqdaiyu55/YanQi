@@ -378,6 +378,8 @@ p {
   -webkit-justify-content: center;
       -ms-flex-pack: center;
           justify-content: center;
+  cursor: pointer;
+  text-decoration: none;
   color: #ffffff;
   padding: 20px;
   box-sizing: border-box;
@@ -389,7 +391,6 @@ p {
   transition: border .125s ease, background .125s ease;
 }
 .Hero .Button:hover {
-  cursor: pointer;
   border: 2px solid #f5f5f1;
 }
 .Hero .Button[data-primary='true'] {

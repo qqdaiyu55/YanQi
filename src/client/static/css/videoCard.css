@@ -6,15 +6,8 @@
   top: 50%;
   transform: translate(-50%, -50%);
   border-radius: 5px;
-  /*background: white;*/
-  /*background-image: linear-gradient(135deg, #30E3CA 0%, #11999E 46%);*/
   background: url('/img/editcard_bg.png');
-  /*background: linear-gradient(to right, #0f0c29, #302b63, #24243e);*/
-  /*background: url('https://i.pinimg.com/474x/1f/bf/cf/1fbfcf22ee51b4f9417b7d87f5d3980e--star-night-sky-night-skies.jpg');
-  background-size: cover;*/
-  /*box-shadow: 0 8px 16px 0 rgba(255, 255, 255, 0.5), 0 6px 20px 0 rgba(255, 255, 255, 0.5);*/
   overflow: hidden;
-  /*filter: blur(2px);*/
 }
 .Video-card .cover-wrapper {
   width: 100%;
@@ -97,8 +90,9 @@
   border-bottom: 1px solid rgba(255,255,255,.8);
   font-family: 'times', serif;
   font-size: 30px;
-  line-height: 35px;
-  /*height: 70px;*/
+  line-height: 30px;
+  height: 3%;
+  margin-top: 5px;
   text-align: center;
   padding: 10px;
   background: transparent;
@@ -116,72 +110,109 @@
   position: relative;
   box-sizing: border-box;
   width: 100%;
-  height: 22%;
+  height: 25%;
   margin: 0, 10px, 0, 10px;
 }
-.Video-card .horizon-scroll .add-button {
+.horizon-scroll .add-button {
+  background: rgb(43, 199, 110);
+  border-radius: 50%;
+  color: #e4ecfa;
   cursor: pointer;
+  width: 32px;
+  height: 32px;
+  line-height: 32px;
   position: absolute;
   top: 10px;
   right: 20px;
-  color: rgb(119, 236, 96);
-  font-size: 25px;
-}
-.Video-card .horizon-scroll .no-resources {
-  position: absolute;
-  width: 100%;
-  bottom: 30%;
-  font-weight: bold;
-  font-size: 40px;
-  line-height: 1.3em;
+  transition: 0.5s;
+  z-index: 6;
+
   text-align: center;
-  vertical-align: middle;
-  color: #9a9a9a;
+  text-decoration: none;
+  font-size: 23px;
+  font-weight: 100;
+  font-family: "Segoe UI";
 }
-.Video-card .horizon-scroll .resource-cards {
+.horizon-scroll .add-button:hover {
+  background: rgb(111, 228, 161);
+  padding: -2px;
+}
+.horizon-scroll .add-button:before {
+  border-radius: 50%;
+  border: 2px solid rgb(43, 199, 110);
+  box-shadow: 0 0px 15px rgb(43, 199, 110), 0 0px 15px rgb(43, 199, 110) inset;
+  content: "";
   position: absolute;
-  box-sizing: border-box;
+  height: 38px;
+  width: 38px;
+  top: 50%;
+  left: 50%;
+  margin-left: -21px;
+  margin-top: -21px;
+  opacity: 1;
+  transform: scale(1);
+  transition: all 300ms;
+}
+.horizon-scroll .add-button:hover:before {
+  transform: scale(1.05);
+}
+
+.Video-card .horizon-scroll .cards-wrapper {
+  position: absolute;
   width: 100%;
   height: 70%;
   top: 25%;
-  margin: 5px, 10px, 5px, 10px;
   overflow: auto;
-  white-space: nowrap;
 }
-.Video-card .horizon-scroll .card {
-  position: flex;
+.Video-card .horizon-scroll ul {
+  position: absolute;
+  display: flex;
+  height: 100%;
+}
+.Video-card .horizon-scroll ul li {
+  cursor: auto;
   width: 100px;
   height: 70px;
-  margin: 0, 5px, 0, 5px;
-  border: 3px solid green;
-  border-radius: 3px;
+  margin-left: 7px;
+  background: transparent;
+  border: 2px solid rgb(43, 199, 110);
+  border-radius: 10px;
+  box-shadow: 0 0px 15px rgb(43, 199, 110), 0 0px 15px rgb(43, 199, 110) inset;
   padding: 2px;
-  text-decoration: none;
-  display: inline-block;
+  transition: .2s;
+}
+.Video-card .horizon-scroll ul li:hover {
+  width: 110px;
+  height: 80px;
 }
 
 
 #edit-resource-card {
-  display: none;
+  visibility: hidden;
   position: fixed;
   width: 300px;
-  height: 200px;
-  top: 50%;
+  height: 160px;
+  top: 60%;
   left: 50%;
   transform: translate(-50%, -50%);
-  background-color: #2ecc71;
+  /*background-color: #2ecc71;*/
+  background-color: rgb(63, 224, 105);
   color: black;
+  box-shadow: 0 19px 38px 15px rgba(0,0,0,0.30), 0 15px 12px rgba(0,0,0,0.22);
   border-radius: 5px;
-  z-index: 6;
+  z-index: 7;
+  opacity: 0;
+  overflow: hidden;
+  transition: opacity .8s, top .4s ease;
 }
-#edit-resource-card .Input {
+#edit-resource-card .resource-text-input {
   display: flex;
   flex-direction: row-reverse;
   border-bottom: 1px solid black;
   padding-bottom: 3px;
   margin-bottom: 5px;
 }
-#edit-resource-card .Input input {
+#edit-resource-card .resource-text-input input {
   outline: none;
   border: 0;
   color: black;
@@ -189,9 +220,9 @@
   font-family: "Lato", sans-serif;
   flex: 1 0 auto;
   font-size: 14px;
-  font-weight: 300;
+  font-weight: 400;
 }
-#edit-resource-card .Input label::before {
+#edit-resource-card .resource-text-input label::before {
   align-items: center;
   color: black;
   display: flex;
@@ -199,19 +230,47 @@
   justify-content: center;
   width: 30px;
 }
-#edit-resource-card .Input input[name='title'] ~ label::before {
+#edit-resource-card .resource-text-input input[name='title'] ~ label::before {
   content: "\f15c";
 }
-#edit-resource-card .Input input[name='size'] ~ label::before {
+#edit-resource-card .resource-text-input input[name='size'] ~ label::before {
   content: "\f07b";
 }
-#edit-resource-card .Input input[name='magnet'] ~ label::before {
+#edit-resource-card .resource-text-input input[name='magnet'] ~ label::before {
   content: "\f076";
 }
-#edit-resource-card .Input label {
+#edit-resource-card .resource-text-input label {
   font-family: FontAwesome;
   font-size: 13px;
 }
+#edit-resource-card button {
+  background: transparent;
+  position: absolute;
+  cursor: pointer;
+  width: 50%;
+  height: 30px;
+  bottom: 0;
+  border: 0;
+  border-radius: 0;
+  font-size: 18px;
+  font-weight: 500px;
+  background: transparent;
+  transition: transform .3s;
+}
+#edit-resource-card button:hover {
+  /*transform: rotateX(60deg);*/
+}
+#edit-resource-card button[name="submit"] {
+  left: 0;
+  color: white;
+  background-color: rgb(50, 180, 84);
+}
+#edit-resource-card button[name="cancel"] {
+  left: 50%;
+  color: white;
+  background-color: rgb(159, 190, 167);
+}
+
 
 .Video-card .intro {
   position: absolute;
@@ -232,4 +291,7 @@
 }
 .Video-card .intro:focus {
   outline: 0;
+}
+textarea.intro {
+  resize: none;
 }

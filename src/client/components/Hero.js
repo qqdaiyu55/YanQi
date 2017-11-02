@@ -29,7 +29,8 @@ class HeroButton extends React.Component {
   }
   render() {
     return (
-      <button onClick={this.handleClick} className="Button" data-primary={this.props.primary}>{this.props.text}</button>
+      // <button onClick={this.handleClick} className="Button" data-primary={this.props.primary}>{this.props.text}</button>
+      <a onClick={this.handleClick} className="Button" data-primary={this.props.primary}>{this.props.text}</a>
     );
   }
 }
