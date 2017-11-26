@@ -164,28 +164,49 @@
   top: 25%;
   overflow: auto;
 }
-.Video-card .horizon-scroll ul {
+.cards-wrapper ul {
   position: absolute;
   display: flex;
   height: 100%;
 }
-.Video-card .horizon-scroll ul li {
-  cursor: auto;
+.cards-wrapper ul li {
+  cursor: default;
   width: 100px;
   height: 70px;
   margin-left: 7px;
-  background: transparent;
   border: 2px solid rgb(43, 199, 110);
   border-radius: 10px;
   box-shadow: 0 0px 15px rgb(43, 199, 110), 0 0px 15px rgb(43, 199, 110) inset;
-  padding: 2px;
+  padding: 3px;
   transition: .2s;
 }
-.Video-card .horizon-scroll ul li:hover {
+.cards-wrapper ul li:hover {
   width: 110px;
   height: 80px;
 }
+.cards-wrapper li > div {
+  width: 100%;
+  height: 33%;
+  font-size: 12px;
+  white-space: nowrap;
+  text-align: center;
+  overflow: hidden;
+}
+.cards-wrapper .rsc-magnet {
+  cursor: pointer;
+  font-size: 20px;
+  color: rgb(246, 86, 130);
+  transition: .2s ease;
+}
+.cards-wrapper .rsc-magnet:hover {
+  color: rgb(250, 150, 177);
+}
+.cards-wrapper .rsc-magnet:active {
 
+}
+.cards-wrapper .magnet-content {
+  display: none;
+}
 
 #edit-resource-card {
   visibility: hidden;
@@ -294,4 +315,18 @@
 }
 textarea.intro {
   resize: none;
+}
+
+
+#edit-video-card .button-wrapper {
+  width: 30px;
+  height: 100px;
+  font-size: 25px;
+  position: fixed;
+  left: 50%;
+  top: 50%;
+  transform: translate(260px, -300px);
+}
+#edit-video-card .button-wrapper i {
+  cursor: pointer;
 }

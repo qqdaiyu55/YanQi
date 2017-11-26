@@ -3623,10 +3623,6 @@ react-avatar-editor@^10.3.0:
   dependencies:
     prop-types "^15.5.8"
 
-react-awesome-modal@^2.0.1:
-  version "2.0.1"
-  resolved "https://registry.yarnpkg.com/react-awesome-modal/-/react-awesome-modal-2.0.1.tgz#51246812330337e094c588d990570c264818b0b8"
-
 react-dom@^16.0.0:
   version "16.0.0"
   resolved "https://registry.yarnpkg.com/react-dom/-/react-dom-16.0.0.tgz#9cc3079c3dcd70d4c6e01b84aab2a7e34c303f58"

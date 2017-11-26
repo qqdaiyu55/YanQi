@@ -8,7 +8,6 @@ class EditVideoCard extends React.Component {
     this.state = {
       cover: null,
       isCoverUploaded: false,
-      isResourceEmpty: true,
       resourceLists: [],
       tempResourceInfo: {
         title: '',
@@ -113,7 +112,7 @@ class EditVideoCard extends React.Component {
       '<li class="ui-sortable-handle">'+
       '<div>'+tempResourceInfo[0]+'</div>'+
       '<div>'+tempResourceInfo[1]+'</div>'+
-      '<div>'+tempResourceInfo[2]+'</div>'+
+      '<div>'+'<i class="fa fa-magnet rsc-magnet"></i>'+'<div class="magnet-content">'+tempResourceInfo[2]+'</div>'+'</div>'+
       '</div></li>');
 
     // Clear text and hide edit card
@@ -141,7 +140,7 @@ class EditVideoCard extends React.Component {
         </div>
         <input type="text" className="title" required placeholder="Title"></input>
         <div className="horizon-scroll">
-          <a class="add-button" onClick={this.addResource}>+</a>
+          <a className="add-button" onClick={this.addResource}>+</a>
           <EditResourceCard onSubmit={this.submitResourceInfo} cancel={this.cancelEditResource} onChange={this.resourceInfoChange} />
           {/* <ResourceCardsList data={this.state.resourceLists} /> */}
           <div className="cards-wrapper"><ul></ul></div>
