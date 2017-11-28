@@ -1,7 +1,9 @@
 const express = require('express');
 const User = require('mongoose').model('User');
+const Video = require('mongoose').model('Video');
 const jwt = require('jsonwebtoken');
 const config = require('../config');
+const multer = require('multer');
 
 const router = new express.Router();
 
@@ -56,5 +58,44 @@ router.post('/updateTags', (req, res, next) => {
   });
 });
 
+router.post('/uploadVideos', (req, res, next) => {
+  const info = req.body;
+
+  Video.create([{
+    title: info.title,
+    coverFile: info.coverFile,
+    rscInfo: info.rscInfo,
+    tags: info.tags,
+    introduction: info.introduction
+    }], (err, res) => {
+      if (err) {
+        res.status(400).json({
+          error: 'Failure in uploading videos!'
+        });
+      }
+  })
+});
+
+
+var storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, 'public/')
+  },
+  filename: function (req, file, cb) {
+    cb(null, file.originalname)
+  }
+});
+var upload = multer({ storage: storage }).single('cover');
+router.post('/uploadCover', (req, res, next) => {
+  upload(req, res, (err) => {
+    console.log(req.body);
+    console.log(req.file);
+    if (err) {
+      res.status(400).json({
+        error: 'Something wrong when uploading cover.'
+      });
+    }
+  });
+});
 
 module.exports = router;

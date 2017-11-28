@@ -1,5 +1,6 @@
 import React from 'react';
 import TagsInput from 'react-tagsinput';
+import Auth from '../modules/Auth';
 
 class EditVideoCard extends React.Component {
   constructor() {
@@ -8,7 +9,6 @@ class EditVideoCard extends React.Component {
     this.state = {
       cover: null,
       isCoverUploaded: false,
-      resourceLists: [],
       tempResourceInfo: {
         title: '',
         size: null,
@@ -26,6 +26,9 @@ class EditVideoCard extends React.Component {
     this.resourceInfoChange = this.resourceInfoChange.bind(this);
     this.submitResourceInfo = this.submitResourceInfo.bind(this);
     this.cancelEditResource = this.cancelEditResource.bind(this);
+
+    this.closeCard = this.closeCard.bind(this);
+    this.submitCard = this.submitCard.bind(this);
   }
 
   componentDidMount() {
@@ -120,9 +123,90 @@ class EditVideoCard extends React.Component {
     $("#edit-resource-card").css({"visibility":"hidden", "opacity":"0", "top":"60%"});
   }
 
-  // handle changes of tags
+  // Handle changes of tags
   handleTagsChange(tags) {
     this.setState({tags});
+  }
+
+  // Close card and clear content
+  closeCard() {
+    $("#edit-video-card").css({"visibility":"hidden", "opacity":"0"});
+    this.removeCover();
+    $("#edit-video-card .title").val("");
+    this.cancelEditResource();
+    this.setState({
+      tags: []
+    });
+    $("#edit-video-card .horizon-scroll ul").html("");
+    $("#edit-video-card .intro").val("");
+  }
+
+  // Submit all information to server
+  submitCard() {
+    const title = $("#edit-video-card .title").val();
+    const htmlRscInfo = $("#edit-video-card .horizon-scroll ul").children().map(function() {
+      return this.innerHTML;
+    }).get();
+    var rscInfo = []
+    htmlRscInfo.forEach(function(e){
+      var tmp = e.match('<div>(.*?)</div><div>(.*?)</div><div>.*?content">(.*?)</div></div>');
+      tmp = [tmp[1], tmp[2], tmp[3]];
+      rscInfo.push(tmp);
+    });
+    const tags = this.state.tags;
+    const introduction = $("#edit-video-card .intro").val();
+
+    // Cover file
+    var cover = $("#upload-cover")[0];
+    var file = cover.files[0];;
+
+    // Genrate a random unique filename
+    var splitFileName = file.name.split('.');
+    const coverFile = Math.random().toString(36).substr(2, 9) + '.' + splitFileName[splitFileName.length-1];
+
+    // Get jwt token
+    const token = encodeURIComponent(Auth.getToken());
+    const formData = `token=${token}`;
+
+    // create an AJAX request
+    var xhr = new XMLHttpRequest();
+    xhr.open('post', '/api/uploadVideos');
+    xhr.setRequestHeader('Content-type', 'application/json');
+    // set the authorization HTTP header
+    xhr.setRequestHeader('Authorization', `bearer ${token}`);
+    xhr.responseType = 'json';
+    xhr.addEventListener('load', () => {
+      if (xhr.status === 400) {
+        const error = xhr.response.error;
+        console.log(error);
+      }
+    });
+
+    xhr.send(JSON.stringify({
+      title: title,
+      coverFile: coverFile,
+      rscInfo: rscInfo,
+      tags: tags,
+      introduction: introduction
+    }));
+
+    // Send cover to server
+    var fd = new FormData();
+    // Append cover file and change the name
+    fd.append("cover", file, coverFile);
+    // fd.append("filename", coverFile, );
+    // A trick: set contentType to false, so the boundary will be added automatically
+    $.ajax({
+      url: '/api/uploadCover',
+      headers: {"Authorization": `bearer ${token}`},
+      data: fd,
+      cache: false,
+      contentType: false,
+      processData: false,
+      method: 'POST'
+    });
+
+    this.closeCard();
   }
 
   render() {
@@ -147,6 +231,11 @@ class EditVideoCard extends React.Component {
         </div>
         <TagsInput value={this.state.tags} onChange={this.handleTagsChange} />
         <textarea className="intro" required placeholder="Input introduction.."></textarea>
+        <div className="button-wrapper">
+          <i onClick={this.closeCard} className="fa fa-fw fa-times"></i>
+          <i onClick={this.submitCard} className="fa fa-fw fa-check"></i>
+          {/* <span className="close">&times;</span> */}
+        </div>
       </div>
     );
   }

@@ -179,11 +179,6 @@ class Navigation extends React.Component {
         </Modal>
         <Modal id="edit-video-card" show={true}>
           <EditVideoCard />
-          <div className="button-wrapper">
-            <i onclick={} className="fa fa-fw fa-times"></i>
-            <i onclick={} className="fa fa-fw fa-check"></i>
-            {/* <span className="close">&times;</span> */}
-          </div>
         </Modal>
       </div>
     );
