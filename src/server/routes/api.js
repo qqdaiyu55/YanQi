@@ -1,4 +1,5 @@
 const express = require('express');
+const mongoose = require('mongoose');
 const User = require('mongoose').model('User');
 const Video = require('mongoose').model('Video');
 const jwt = require('jsonwebtoken');
@@ -60,10 +61,12 @@ router.post('/updateTags', (req, res, next) => {
 
 router.post('/uploadVideos', (req, res, next) => {
   const info = req.body;
+  const _id = mongoose.mongo.ObjectId();
 
   Video.create([{
+    // "_id": mongoose.mongo.ObjectId(),
     title: info.title,
-    coverFile: info.coverFile,
+    backDrop: info.backDrop,
     rscInfo: info.rscInfo,
     tags: info.tags,
     introduction: info.introduction
@@ -79,22 +82,32 @@ router.post('/uploadVideos', (req, res, next) => {
 
 var storage = multer.diskStorage({
   destination: function (req, file, cb) {
-    cb(null, 'public/')
+    cb(null, 'public/backdrop/')
   },
   filename: function (req, file, cb) {
     cb(null, file.originalname)
   }
 });
 var upload = multer({ storage: storage }).single('cover');
-router.post('/uploadCover', (req, res, next) => {
+router.post('/uploadCover', (req, res) => {
   upload(req, res, (err) => {
-    console.log(req.body);
-    console.log(req.file);
     if (err) {
       res.status(400).json({
         error: 'Something wrong when uploading cover.'
       });
     }
+  });
+});
+
+router.get('/videos', (req, res) => {
+  Video.search({
+    "match": { "title" : req.query.q }
+  }, (err, results) => {
+    if (err) throw err;
+    res.json({
+      num: results.hits.total,
+      hits: results.hits.hits
+    });
   });
 });
 

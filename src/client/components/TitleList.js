@@ -1,21 +1,26 @@
 import React from 'react';
+import Auth from '../modules/Auth';
 
 class TitleList extends React.Component {
   constructor(props) {
     super(props);
-    this.apiKey = '87dfa1c669eea853da609d4968d294be';
     this.state = {data: [], mounted: false};
 
     this.loadContent = this.loadContent.bind(this);
   }
   loadContent() {
-    let requestUrl = 'https://api.themoviedb.org/3/' + this.props.url + '&api_key=' + this.apiKey;
-    fetch(requestUrl).then((response)=>{
-        return response.json();
-    }).then((data)=>{
-        this.setState({data : data});
-    }).catch((err)=>{
-        console.log("There has been an error");
+    let requestUrl = '/api/videos' + this.props.url;
+    const token = encodeURIComponent(Auth.getToken());
+    $.ajax({
+      url: requestUrl,
+      headers: {"Authorization": `bearer ${token}`},
+      cache: false,
+      contentType: 'application/x-www-form-urlencoded',
+      method: 'GET'
+    }).done((data)=>{
+      this.setState({data: data});
+    }).fail(()=>{
+      console.log("There has an error on searching.");
     });
   }
   componentWillReceiveProps(nextProps) {
@@ -33,22 +38,18 @@ class TitleList extends React.Component {
   }
   render() {
     let titles ='';
-    if(this.state.data.results) {
-      titles = this.state.data.results.map(function(title, i) {
+    if(this.state.data.hits) {
+      titles = this.state.data.hits.map(function(v, i) {
         if (i < 5) {
-          var name = '';
-          var backDrop = 'http://image.tmdb.org/t/p/original' + title.backdrop_path;
-          if(!title.name) {
-            name = title.original_title;
-          } else {
-            name = title.name;
-          }
+          var name = v._source.title;
+          var backDrop = '/backdrop/' + v._source.backDrop;
+          console.log(backDrop);
 
           return (
-            <Item key={title.id} title={name} score={title.vote_average} overview={title.overview} backdrop={backDrop} />
+            <Item key={v._id} title={name} backdrop={backDrop} />
           );
 
-        }else{
+        } else {
           return (<div key={title.id}></div>);
         }
       });
@@ -75,10 +76,8 @@ class Item extends React.Component {
       <div className="Item" style={{backgroundImage: 'url(' + this.props.backdrop + ')'}} >
         <div className="overlay">
           <div className="title">{this.props.title}</div>
-          <div className="rating">{this.props.score} / 10</div>
-          <div className="plot">{this.props.overview}</div>
-          <ListToggle />
         </div>
+        <ListToggle />
       </div>
     );
   }

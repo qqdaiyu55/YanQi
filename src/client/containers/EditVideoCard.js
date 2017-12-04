@@ -162,7 +162,7 @@ class EditVideoCard extends React.Component {
 
     // Genrate a random unique filename
     var splitFileName = file.name.split('.');
-    const coverFile = Math.random().toString(36).substr(2, 9) + '.' + splitFileName[splitFileName.length-1];
+    const backDrop = Math.random().toString(36).substr(2, 9) + '.' + splitFileName[splitFileName.length-1];
 
     // Get jwt token
     const token = encodeURIComponent(Auth.getToken());
@@ -184,7 +184,7 @@ class EditVideoCard extends React.Component {
 
     xhr.send(JSON.stringify({
       title: title,
-      coverFile: coverFile,
+      backDrop: backDrop,
       rscInfo: rscInfo,
       tags: tags,
       introduction: introduction
@@ -193,8 +193,8 @@ class EditVideoCard extends React.Component {
     // Send cover to server
     var fd = new FormData();
     // Append cover file and change the name
-    fd.append("cover", file, coverFile);
-    // fd.append("filename", coverFile, );
+    fd.append("cover", file, backDrop);
+    // fd.append("filename", backDrop, );
     // A trick: set contentType to false, so the boundary will be added automatically
     $.ajax({
       url: '/api/uploadCover',

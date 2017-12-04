@@ -7,7 +7,7 @@ import {
   Switch,
   Route
 } from 'react-router-dom';
-// import routes from './routes.js';
+
 import HomePage from './containers/HomePage';
 import LoginPage from './containers/LoginPage';
 import SignUpPage from './containers/SignUpPage';
@@ -17,7 +17,7 @@ ReactDOM.render(
   // <Router history={browserHistory} routes={routes}/>,
   <Router history={browserHistory}>
     <Switch>
-      <Route exact path='/' render={() => (
+      <Route path='/' render={() => (
         Auth.isUserAuthenticated() ? (
           <HomePage/>
         ) : (
