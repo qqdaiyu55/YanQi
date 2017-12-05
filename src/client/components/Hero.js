@@ -2,7 +2,7 @@ import React from 'react';
 import { displayVideo } from '../containers/Video.js';
 
 const Hero = () => (
-  <div id="hero" className="Hero" >
+  <div id="hero" className="Hero" style={{backgroundImage: 'url(/img/GhostBlade_Aeolian.jpg)'}}>
     <div className="content">
       <img className="logo" src="http://www.returndates.com/backgrounds/narcos.logo.png" alt="narcos background" />
       <h2>Season 2 now available</h2>

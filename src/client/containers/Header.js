@@ -1,9 +1,11 @@
 import React from 'react';
+import { withRouter } from 'react-router-dom';
 import Logo from '../components/Logo.js';
 import UserProfile from './UserProfile.js';
 import Modal from './Modal.js';
 import EditVideoCard from './EditVideoCard.js';
 import Auth from '../modules/Auth';
+import TitleList from '../components/TitleList'
 
 // User tags
 var tags = ['电影', '动漫', 'MV', 'HBO', 'AMV', '行尸走肉', '小埋'];
@@ -11,11 +13,11 @@ var tags = ['电影', '动漫', 'MV', 'HBO', 'AMV', '行尸走肉', '小埋'];
 // Navigation
 // Note: There has to update modal state manually instead of pass show property of modal, or there'll be a conflict with droppable ul when rerendering: **Failed to execute 'removeChild' on 'Node': The node to be removed is not a child of this node**.
 class Header extends React.Component {
-  constructor() {
-    super();
+  constructor(props) {
+    super(props);
+
     this.state = {
-      searchTerm: '',
-      searchUrl: ''
+      searchTerm: ''
     };
 
     this.handleKeyUp = this.handleKeyUp.bind(this);
@@ -24,8 +26,9 @@ class Header extends React.Component {
   // Process the search
   handleKeyUp(e) {
     if (e.key === 'Enter' && this.state.searchTerm !== '') {
-      let searchUrl = "?q=" + this.state.searchTerm;
-      this.setState({searchUrl: searchUrl});
+
+      // Redirect to /search
+      this.props.history.push('/search/'+this.state.searchTerm);
     }
   }
   // Set the state when search term is changed
@@ -183,4 +186,4 @@ var arraysEqual = (arr1, arr2) => {
     return true;
 };
 
-export default Header;
+export default withRouter(Header);

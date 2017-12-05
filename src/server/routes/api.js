@@ -111,4 +111,14 @@ router.get('/videos', (req, res) => {
   });
 });
 
+router.get('/video', (req, res) => {
+  const id = req.query.id;
+
+  Video.findById(id, (err, video) => {
+    if (err) throw err;
+
+    res.status(200).json(video);
+  });
+});
+
 module.exports = router;

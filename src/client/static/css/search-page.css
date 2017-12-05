@@ -1,0 +1,151 @@
+.search-results-wrapper {
+  width: 100vw;
+  height: calc(100vh - 110px);
+  top: 110px;
+  position: fixed;
+  /*background: rgba(0, 0, 0, 0.8);*/
+}
+
+.TitleList {
+  padding: 20px 40px;
+  box-sizing: border-box;
+  -webkit-transition: opacity 3s ease;
+  transition: opacity 3s ease;
+  opacity: 0;
+  position: relative;
+  z-index: 4;
+}
+.TitleList .titles-wrapper {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: block;
+  -webkit-flex-wrap: wrap;
+      -ms-flex-wrap: wrap;
+          flex-wrap: wrap;
+  margin: 20px 0;
+  width: calc(100vw - 80px);
+  box-sizing: border-box;
+  -webkit-box-pack: justify;
+  -webkit-justify-content: space-between;
+      -ms-flex-pack: justify;
+          justify-content: space-between;
+}
+.TitleList[data-loaded='true'] {
+  opacity: 1;
+}
+
+.Item {
+  position: relative;
+  cursor: pointer;
+  display: inline-block;
+  width: calc(20% - 15px);
+  min-width: calc(20% - 15px);
+  background-color: #000000;
+  -webkit-box-flex: 1;
+  -webkit-flex: 1 0 auto;
+      -ms-flex: 1 0 auto;
+          flex: 1 0 auto;
+  background-position: center;
+  background-size: 100%;
+  height: 180px;
+  background-repeat: no-repeat;
+  overflow: hidden;
+  margin-right: 10px;
+  -webkit-transition: background 1s ease;
+  transition: background 1s ease;
+}
+.Item:nth-child(n+6) {
+  margin-top: 30px;
+}
+.Item:last-child {
+  margin-right: 0;
+}
+.Item .overlay {
+  /* FF3.6-15 */
+  background: -webkit-linear-gradient(top, rgba(0, 0, 0, 0.4) 0%, transparent 100%);
+  /* Chrome10-25,Safari5.1-6 */
+  background: linear-gradient(to bottom, rgba(0, 0, 0, 0.4) 0%, transparent 100%);
+  /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
+  filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#a6000000', endColorstr='#00000000',GradientType=0 );
+  /* IE6-9 */
+  color: white;
+  position: relative;
+  height: 100%;
+  pointer-events: none;
+  opacity: 1;
+  -webkit-transition: opacity .125s ease;
+  transition: opacity .125s ease;
+}
+.Item .overlay .title {
+  position: relative;
+  text-align: center;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 22px;
+  font-weight: 200;
+  opacity: 1;
+  -webkit-transition: opacity .25s ease;
+  transition: opacity .25s ease;
+}
+.Item:hover {
+  background-size: 150%;
+}
+.Item:hover .overlay {
+  opacity: 0;
+  pointer-events: all;
+}
+.Item:hover .overlay .title {
+  opacity: 0;
+}
+
+.ListToggle {
+  border: 2px solid rgba(255, 255, 255, 0.2);
+  width: 32px;
+  height: 32px;
+  font-size: 16px;
+  border-radius: 32px;
+  overflow: hidden;
+  position: absolute;
+  right: 20px;
+  top: 20px;
+  opacity: 1;
+}
+.ListToggle:hover {
+  border: 2px solid #ffffff;
+}
+.ListToggle:hover div {
+  top: -32px;
+}
+.ListToggle[data-toggled="true"] {
+  background: #e50914;
+  border: 2px solid #e50914;
+}
+.ListToggle[data-toggled="true"] div {
+  top: -32px;
+}
+.ListToggle div {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 64px;
+  width: 32px;
+  -webkit-transition: .125s ease;
+  transition: .125s ease;
+}
+.ListToggle div i {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-align: center;
+  -webkit-align-items: center;
+      -ms-flex-align: center;
+          align-items: center;
+  -webkit-box-pack: center;
+  -webkit-justify-content: center;
+      -ms-flex-pack: center;
+          justify-content: center;
+  height: 32px;
+  width: 32px;
+}

@@ -1,10 +1,14 @@
 import React from 'react';
 import Auth from '../modules/Auth';
+import { Link } from 'react-router-dom';
 
 class TitleList extends React.Component {
   constructor(props) {
     super(props);
-    this.state = {data: [], mounted: false};
+    this.state = {
+      data: [],
+      mounted: false
+    };
 
     this.loadContent = this.loadContent.bind(this);
   }
@@ -41,16 +45,16 @@ class TitleList extends React.Component {
     if(this.state.data.hits) {
       titles = this.state.data.hits.map(function(v, i) {
         if (i < 5) {
-          var name = v._source.title;
-          var backDrop = '/backdrop/' + v._source.backDrop;
-          console.log(backDrop);
+          let name = v._source.title;
+          let backDrop = '/backdrop/' + v._source.backDrop;
+          let id = v._id;
 
           return (
-            <Item key={v._id} title={name} backdrop={backDrop} />
+            <Item key={id} id={id} title={name} backdrop={backDrop} />
           );
 
         } else {
-          return (<div key={title.id}></div>);
+          return (<div key={v._id}></div>);
         }
       });
 
@@ -74,9 +78,11 @@ class Item extends React.Component {
   render() {
     return (
       <div className="Item" style={{backgroundImage: 'url(' + this.props.backdrop + ')'}} >
-        <div className="overlay">
-          <div className="title">{this.props.title}</div>
-        </div>
+        <Link to={"/video/"+this.props.id} style={{ textDecoration: 'none' }}>
+          <div className="overlay">
+            <div className="title">{this.props.title}</div>
+          </div>
+        </Link>
         <ListToggle />
       </div>
     );
