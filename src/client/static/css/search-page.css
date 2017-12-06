@@ -9,8 +9,8 @@
 .TitleList {
   padding: 20px 40px;
   box-sizing: border-box;
-  -webkit-transition: opacity 3s ease;
-  transition: opacity 3s ease;
+  -webkit-transition: opacity 1.5s ease;
+  transition: opacity 1.5s ease;
   opacity: 0;
   position: relative;
   z-index: 4;

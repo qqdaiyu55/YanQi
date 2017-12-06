@@ -95,18 +95,6 @@ class EditVideoCard extends React.Component {
 
   // Create new resource card
   submitResourceInfo() {
-    // let resourceLists = this.state.resourceLists;
-    // let tempResourceInfo = this.state.tempResourceInfo;
-    // resourceLists.push(tempResourceInfo);
-    // tempResourceInfo = {
-    //   title: '',
-    //   size: null,
-    //   magnet: ''
-    // };
-    // this.setState({
-    //   resourceLists,
-    //   tempResourceInfo
-    // });
     const tempResourceInfo = $("#edit-resource-card input").map(function() {
       return this.value;
     }).get();
@@ -234,7 +222,6 @@ class EditVideoCard extends React.Component {
         <div className="button-wrapper">
           <i onClick={this.closeCard} className="fa fa-fw fa-times"></i>
           <i onClick={this.submitCard} className="fa fa-fw fa-check"></i>
-          {/* <span className="close">&times;</span> */}
         </div>
       </div>
     );

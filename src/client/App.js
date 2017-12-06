@@ -13,11 +13,14 @@ import LoginPage from './containers/LoginPage';
 import SignUpPage from './containers/SignUpPage';
 import Auth from './modules/Auth';
 
+import Hero from './components/Hero.js';
+import SearchPage from './containers/SearchPage.js';
+import VideoPage from './containers/VideoPage.js';
+
 ReactDOM.render(
-  // <Router history={browserHistory} routes={routes}/>,
   <Router history={browserHistory}>
     <Switch>
-      <Route path='/' render={() => (
+      <Route exact path='/' render={() => (
         Auth.isUserAuthenticated() ? (
           <HomePage/>
         ) : (
@@ -26,6 +29,11 @@ ReactDOM.render(
       )} />
       <Route path='/login' component={LoginPage} />
       <Route path='/signup' component={SignUpPage} />
+      <HomePage>
+        <Route exact path="/" component={Hero} />
+        <Route path="/search/:term" component={SearchPage} />
+        <Route path="/video/:id" component={VideoPage} />
+      </HomePage>
     </Switch>
   </Router>,
   document.getElementById('root')
