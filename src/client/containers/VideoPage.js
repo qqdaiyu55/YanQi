@@ -1,5 +1,6 @@
 import React from 'react';
 import Auth from '../modules/Auth';
+import { displayVideo, switchVideo } from '../containers/Video.js';
 
 class VideoPage extends React.Component {
   constructor(props) {
@@ -47,11 +48,7 @@ class VideoPage extends React.Component {
     if (rscInfo) {
       var rsc = rscInfo.map(function(t, i) {
         return(
-          <li>
-            <div>{t[0]}</div>
-            <div>{t[1]}</div>
-            <div><i className="fa fa-magnet rsc-magnet"></i><div className="magnet-content">{t[2]}</div></div>
-          </li>
+          <RscCard data={t} />
         )
       })
     }
@@ -76,8 +73,34 @@ class VideoPage extends React.Component {
             <p>{introduction}</p>
           </div>
       </div>
-
     )
+  }
+}
+
+class RscCard extends React.Component {
+  constructor(props) {
+    super(props);
+
+    this.handleClick = this.handleClick.bind(this);
+  }
+  handleClick() {
+    if ($("#video-popup").css("display") == "none") {
+      $("#video-popup").show();
+      displayVideo({torrentID: this.props.data[2]});
+    }
+    else {
+      switchVideo({torrentID: this.props.data[2]});
+    }
+  }
+  render() {
+    const data = this.props.data;
+    return (
+      <li onClick={this.handleClick}>
+        <div>{data[0]}</div>
+        <div>{data[1]}</div>
+        <div><i className="fa fa-magnet rsc-magnet"></i><div className="magnet-content">{data[2]}</div></div>
+      </li>
+    );
   }
 }
 

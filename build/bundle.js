@@ -2498,12 +2498,12 @@ var isExtraneousPopstateEvent = function isExtraneousPopstateEvent(event) {
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-
+/* WEBPACK VAR INJECTION */(function(global) {
 
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.displayVideo = exports.Video = undefined;
+exports.switchVideo = exports.displayVideo = exports.Video = undefined;
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
@@ -2529,7 +2529,7 @@ var client = new _webtorrent2.default({ dht: false });
 var torrentID = '';
 
 // Announces list
-// global.WEBTORRENT_ANNOUNCE = [ 'wss://tracker.fastcast.nz' ]
+global.WEBTORRENT_ANNOUNCE = ['udp://[2604:a880:1:20::f:e001]:8000', 'ws://[2604:a880:1:20::f:e001]:8000'];
 
 // Display webtorrent video
 function displayVideo(props) {
@@ -2538,10 +2538,22 @@ function displayVideo(props) {
       return file.name.endsWith('.mp4');
     });
 
-    file.appendTo('#videoWarp');
+    file.appendTo("#video-popup .video-wrapper");
+
+    // A trick to get loaded video intrinsic height
+    setTimeout(function () {
+      var video_height = $("#video-popup video").height();
+      $('#video-popup .video-wrapper').css('height', video_height);
+    }, 1000);
   });
 
   torrentID = props.torrentID;
+}
+function switchVideo(props) {
+  client.remove(torrentID);
+  $("#video-popup .video-wrapper").html('');
+
+  displayVideo(props);
 }
 
 var Video = function (_React$Component) {
@@ -2555,30 +2567,34 @@ var Video = function (_React$Component) {
     _this.closeVideo = _this.closeVideo.bind(_this);
     return _this;
   }
-  // close the popup (hide it) and remove video
-
 
   _createClass(Video, [{
+    key: 'componentDidMount',
+    value: function componentDidMount() {
+      $("#video-popup").draggable();
+    }
+    // close the popup (hide it) and remove video
+
+  }, {
     key: 'closeVideo',
     value: function closeVideo() {
-      document.getElementsByClassName("VideoPopup")[0].style.display = 'none';
+      $("#video-popup").hide();
       client.remove(torrentID);
 
-      var video = document.getElementById("videoWarp");
-      video.removeChild(video.firstChild);
+      $("#video-popup .video-wrapper").html('');
     }
   }, {
     key: 'render',
     value: function render() {
       return _react2.default.createElement(
         'div',
-        { className: 'VideoPopup' },
+        { id: 'video-popup' },
         _react2.default.createElement(
           'span',
           { onClick: this.closeVideo, className: 'close' },
           '\xD7'
         ),
-        _react2.default.createElement('div', { id: 'videoWarp' })
+        _react2.default.createElement('div', { className: 'video-wrapper' })
       );
     }
   }]);
@@ -2588,6 +2604,8 @@ var Video = function (_React$Component) {
 
 exports.Video = Video;
 exports.displayVideo = displayVideo;
+exports.switchVideo = switchVideo;
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(38)))
 
 /***/ }),
 /* 38 */
@@ -26000,6 +26018,7 @@ var Homepage = function Homepage() {
     'div',
     null,
     _react2.default.createElement(_Header2.default, null),
+    _react2.default.createElement(_Video.Video, null),
     _react2.default.createElement(_reactRouterDom.Route, { exact: true, path: '/', component: _Hero2.default }),
     _react2.default.createElement(_reactRouterDom.Route, { path: '/search/:term', component: _SearchPage2.default }),
     _react2.default.createElement(_reactRouterDom.Route, { path: '/video/:id', component: _VideoPage2.default })
@@ -26349,21 +26368,13 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
 var _react = __webpack_require__(0);
 
 var _react2 = _interopRequireDefault(_react);
 
-var _Video = __webpack_require__(37);
+var _reactRouterDom = __webpack_require__(8);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
-
-function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
 var Hero = function Hero() {
   return _react2.default.createElement(
@@ -26386,50 +26397,21 @@ var Hero = function Hero() {
       _react2.default.createElement(
         'div',
         { className: 'button-wrapper' },
-        _react2.default.createElement(HeroButton, { primary: true, text: 'Watch now' }),
-        _react2.default.createElement(HeroButton, { primary: false, text: '+ My list' })
+        _react2.default.createElement(
+          _reactRouterDom.Link,
+          { to: '/video/5a2913a374e691930feb1601', className: 'Button', 'data-primary': true, style: { textDecoration: 'none' } },
+          'Watch now'
+        ),
+        _react2.default.createElement(
+          'a',
+          { className: 'Button', 'data-primary': false },
+          '+ My list'
+        )
       )
     ),
     _react2.default.createElement('div', { className: 'overlay' })
   );
 };
-
-// Hero Button
-
-var HeroButton = function (_React$Component) {
-  _inherits(HeroButton, _React$Component);
-
-  function HeroButton(props) {
-    _classCallCheck(this, HeroButton);
-
-    var _this = _possibleConstructorReturn(this, (HeroButton.__proto__ || Object.getPrototypeOf(HeroButton)).call(this, props));
-
-    _this.handleClick = _this.handleClick.bind(_this);
-    return _this;
-  }
-
-  _createClass(HeroButton, [{
-    key: 'handleClick',
-    value: function handleClick() {
-      document.getElementsByClassName("VideoPopup")[0].style.display = 'block';
-      (0, _Video.displayVideo)({ torrentID: 'magnet:?xt=urn:btih:6760314e7f754a2184fe3dff4b8c6d1b33f49fd9&dn=%5BJYFanSub%5D%5BBoku+Dake+ga+Inai+Machi%5D%5B12%5D%5BGB%5D%5B720P%5D.mp4&tr=udp%3A%2F%2F%5B2604%3Aa880%3A1%3A20%3A%3A40%3A4001%5D%3A8000&tr=ws%3A%2F%2F%5B2604%3Aa880%3A1%3A20%3A%3A40%3A4001%5D%3A8000' });
-    }
-  }, {
-    key: 'render',
-    value: function render() {
-      return (
-        // <button onClick={this.handleClick} className="Button" data-primary={this.props.primary}>{this.props.text}</button>
-        _react2.default.createElement(
-          'a',
-          { onClick: this.handleClick, className: 'Button', 'data-primary': this.props.primary },
-          this.props.text
-        )
-      );
-    }
-  }]);
-
-  return HeroButton;
-}(_react2.default.Component);
 
 exports.default = Hero;
 
@@ -27087,7 +27069,7 @@ var EditVideoCard = function (_React$Component) {
       var rscInfo = [];
       htmlRscInfo.forEach(function (e) {
         var tmp = e.match('<div>(.*?)</div><div>(.*?)</div><div>.*?content">(.*?)</div></div>');
-        tmp = [tmp[1], tmp[2], tmp[3]];
+        tmp = [tmp[1], tmp[2], tmp[3].split('&')[0]];
         rscInfo.push(tmp);
       });
       var tags = this.state.tags;
@@ -29638,11 +29620,15 @@ var Navigation = function (_React$Component2) {
     key: 'componentDidMount',
     value: function componentDidMount() {
       $(".tags-box ul").sortable();
-      $(".tags-box").droppable({ greedy: true });
+      $(".tags-box").droppable({
+        greedy: true,
+        accepet: ".ui-sortable-handle"
+      });
       $("body").droppable({
         drop: function drop(e, ui) {
           ui.draggable.remove();
-        }
+        },
+        accept: ".ui-sortable-handle"
       });
 
       // Send updated tags to server if they were changed
@@ -29925,6 +29911,8 @@ var _Auth = __webpack_require__(11);
 
 var _Auth2 = _interopRequireDefault(_Auth);
 
+var _Video = __webpack_require__(37);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -29996,30 +29984,7 @@ var VideoPage = function (_React$Component) {
       }
       if (rscInfo) {
         var rsc = rscInfo.map(function (t, i) {
-          return _react2.default.createElement(
-            'li',
-            null,
-            _react2.default.createElement(
-              'div',
-              null,
-              t[0]
-            ),
-            _react2.default.createElement(
-              'div',
-              null,
-              t[1]
-            ),
-            _react2.default.createElement(
-              'div',
-              null,
-              _react2.default.createElement('i', { className: 'fa fa-magnet rsc-magnet' }),
-              _react2.default.createElement(
-                'div',
-                { className: 'magnet-content' },
-                t[2]
-              )
-            )
-          );
+          return _react2.default.createElement(RscCard, { data: t });
         });
       }
       return typeof title !== "undefined" && _react2.default.createElement(
@@ -30075,6 +30040,62 @@ var VideoPage = function (_React$Component) {
   }]);
 
   return VideoPage;
+}(_react2.default.Component);
+
+var RscCard = function (_React$Component2) {
+  _inherits(RscCard, _React$Component2);
+
+  function RscCard(props) {
+    _classCallCheck(this, RscCard);
+
+    var _this3 = _possibleConstructorReturn(this, (RscCard.__proto__ || Object.getPrototypeOf(RscCard)).call(this, props));
+
+    _this3.handleClick = _this3.handleClick.bind(_this3);
+    return _this3;
+  }
+
+  _createClass(RscCard, [{
+    key: 'handleClick',
+    value: function handleClick() {
+      if ($("#video-popup").css("display") == "none") {
+        $("#video-popup").show();
+        (0, _Video.displayVideo)({ torrentID: this.props.data[2] });
+      } else {
+        (0, _Video.switchVideo)({ torrentID: this.props.data[2] });
+      }
+    }
+  }, {
+    key: 'render',
+    value: function render() {
+      var data = this.props.data;
+      return _react2.default.createElement(
+        'li',
+        { onClick: this.handleClick },
+        _react2.default.createElement(
+          'div',
+          null,
+          data[0]
+        ),
+        _react2.default.createElement(
+          'div',
+          null,
+          data[1]
+        ),
+        _react2.default.createElement(
+          'div',
+          null,
+          _react2.default.createElement('i', { className: 'fa fa-magnet rsc-magnet' }),
+          _react2.default.createElement(
+            'div',
+            { className: 'magnet-content' },
+            data[2]
+          )
+        )
+      );
+    }
+  }]);
+
+  return RscCard;
 }(_react2.default.Component);
 
 exports.default = VideoPage;

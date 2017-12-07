@@ -138,7 +138,7 @@ class EditVideoCard extends React.Component {
     var rscInfo = []
     htmlRscInfo.forEach(function(e){
       var tmp = e.match('<div>(.*?)</div><div>(.*?)</div><div>.*?content">(.*?)</div></div>');
-      tmp = [tmp[1], tmp[2], tmp[3]];
+      tmp = [tmp[1], tmp[2], tmp[3].split('&')[0]];
       rscInfo.push(tmp);
     });
     const tags = this.state.tags;

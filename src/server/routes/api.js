@@ -61,10 +61,8 @@ router.post('/updateTags', (req, res, next) => {
 
 router.post('/uploadVideos', (req, res, next) => {
   const info = req.body;
-  const _id = mongoose.mongo.ObjectId();
 
   Video.create([{
-    // "_id": mongoose.mongo.ObjectId(),
     title: info.title,
     backDrop: info.backDrop,
     rscInfo: info.rscInfo,

@@ -14,6 +14,7 @@ import VideoPage from './VideoPage.js';
 const Homepage = () => (
   <div>
     <Header />
+    <Video />
     <Route exact path="/" component={Hero} />
     <Route path="/search/:term" component={SearchPage} />
     <Route path="/video/:id" component={VideoPage} />

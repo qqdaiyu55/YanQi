@@ -61,11 +61,15 @@ class Navigation extends React.Component {
   }
   componentDidMount() {
     $(".tags-box ul").sortable();
-    $(".tags-box").droppable({greedy: true});
+    $(".tags-box").droppable({
+      greedy: true,
+      accepet: ".ui-sortable-handle"
+    });
     $("body").droppable({
       drop: function(e, ui) {
         ui.draggable.remove();
-      }
+      },
+      accept: ".ui-sortable-handle"
     });
 
     // Send updated tags to server if they were changed

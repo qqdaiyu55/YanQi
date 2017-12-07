@@ -1,45 +1,45 @@
-.VideoPopup {
-  width: 60%;
-  height: 80%;
+#video-popup {
+  width: 800px;
   position: fixed;
   display: none;
-  left: 20%;
-  bottom: 15%;
+  left: 300px;
+  top: 150px;
+  /*transform: translate(-50%, -50%);*/
   z-index: 6;
 }
 
 /* The video close button */
-.VideoPopup .close {
-    position: absolute;
-    top: 5px;
-    right: 5px;
-    color: #f1f1f1;
-    font-size: 40px;
-    font-weight: bold;
-    transition: 0.3s;
+#video-popup .close {
+  display: block;
+  position: absolute;
+  right: -30px;
+  color: #f1f1f1;
+  font-size: 40px;
+  font-weight: bold;
+  transition: 0.3s;
 }
 
-.VideoPopup .close:hover,
-.VideoPopup .close:focus {
+#video-popup .close:hover,
+#video-popup .close:focus {
     color: #bbb;
     text-decoration: none;
     cursor: pointer;
 }
 
 /* Webtorrent video */
-#videoWarp {
+#video-popup .video-wrapper {
+  background: #221f1f;
   width: 100%;
-  height: 70%;
+  height: 420px;
   margin: 0 auto;
-  position: absolute;
-  top: 60px;
+  position: relative;
   border-radius: 5px;
+  box-shadow: 0px 0px 20px #000000;
   overflow: hidden;
-  background-color: white;
 }
 
 
-#videoWarp .video {
+/*#video-popup .video-wrapper .video {
   float: right;
   max-height: 295px;
   border: 1px solid rgba(255,255,255,0.4);
@@ -48,7 +48,7 @@
   position: relative;
   top: 50%;
   transform: translateY(-50%);
-}
+}*/
 
 video {
   width: 100%;
