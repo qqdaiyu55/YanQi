@@ -2541,9 +2541,12 @@ function displayVideo(props) {
     file.appendTo("#video-popup .video-wrapper");
 
     // A trick to get loaded video intrinsic height
-    setTimeout(function () {
+    setInterval(function () {
       var video_height = $("#video-popup video").height();
-      $('#video-popup .video-wrapper').css('height', video_height);
+      var video_wrapper_height = $("#video-popup .video-wrapper").height();
+      if (video_height !== video_wrapper_height) {
+        $('#video-popup .video-wrapper').css('height', video_height);
+      }
     }, 1000);
   });
 
@@ -26507,7 +26510,7 @@ var TitleList = function (_React$Component) {
       var titles = '';
       if (this.state.data.hits) {
         titles = this.state.data.hits.map(function (v, i) {
-          if (i < 5) {
+          if (i < 30) {
             var name = v._source.title;
             var backDrop = '/backdrop/' + v._source.backDrop;
             var id = v._id;
@@ -26524,17 +26527,8 @@ var TitleList = function (_React$Component) {
         { ref: 'titlecategory', className: 'TitleList', 'data-loaded': this.state.mounted },
         _react2.default.createElement(
           'div',
-          { className: 'Title' },
-          _react2.default.createElement(
-            'h1',
-            null,
-            this.props.title
-          ),
-          _react2.default.createElement(
-            'div',
-            { className: 'titles-wrapper' },
-            titles
-          )
+          { className: 'titles-wrapper' },
+          titles
         )
       );
     }
@@ -26912,6 +26906,11 @@ var EditVideoCard = function (_React$Component) {
 
     var _this = _possibleConstructorReturn(this, (EditVideoCard.__proto__ || Object.getPrototypeOf(EditVideoCard)).call(this));
 
+    _this.rscCardStatus = {
+      addNew: true,
+      rscId: '',
+      count: 1
+    };
     _this.state = {
       cover: null,
       isCoverUploaded: false,
@@ -26929,7 +26928,6 @@ var EditVideoCard = function (_React$Component) {
     _this.handleTagsChange = _this.handleTagsChange.bind(_this);
 
     _this.addResource = _this.addResource.bind(_this);
-    _this.resourceInfoChange = _this.resourceInfoChange.bind(_this);
     _this.submitResourceInfo = _this.submitResourceInfo.bind(_this);
     _this.cancelEditResource = _this.cancelEditResource.bind(_this);
 
@@ -26984,6 +26982,8 @@ var EditVideoCard = function (_React$Component) {
   }, {
     key: 'addResource',
     value: function addResource() {
+      this.rscCardStatus.addNew = true;
+      $("#edit-resource-card input").val("");
       $('#edit-resource-card').css({ "visibility": "visible", "opacity": "1", "top": "50%" });
     }
 
@@ -27003,30 +27003,71 @@ var EditVideoCard = function (_React$Component) {
       $('#edit-resource-card').css({ "visibility": "hidden", "opacity": "0", "top": "60%" });
     }
 
-    // Handle text changes in resource edit card
-
-  }, {
-    key: 'resourceInfoChange',
-    value: function resourceInfoChange(event) {
-      var field = event.target.name;
-      var tempResourceInfo = this.state.tempResourceInfo;
-      tempResourceInfo[field] = event.target.value;
-
-      this.setState({
-        tempResourceInfo: tempResourceInfo
-      });
-    }
-
     // Create new resource card
 
   }, {
     key: 'submitResourceInfo',
     value: function submitResourceInfo() {
+      var _this2 = this;
+
       var tempResourceInfo = $("#edit-resource-card input").map(function () {
         return this.value;
       }).get();
+      var title = tempResourceInfo[0],
+          size = tempResourceInfo[1],
+          size_type = $("#edit-resource-card select").val(),
+          magnet = tempResourceInfo[2];
 
-      $(".horizon-scroll ul").append('<li class="ui-sortable-handle">' + '<div>' + tempResourceInfo[0] + '</div>' + '<div>' + tempResourceInfo[1] + '</div>' + '<div>' + '<i class="fa fa-magnet rsc-magnet"></i>' + '<div class="magnet-content">' + tempResourceInfo[2] + '</div>' + '</div>' + '</div></li>');
+      // Check if there's an empty field
+      if (!title || !size || !magnet) {
+        alert('Please check if all the values are filled.');
+        return;
+      }
+
+      // Check if size has non-numeric character
+      if (size.match(/[^$.\d]/)) {
+        alert('Size cannot contain non numeric characters.');
+        return;
+      }
+
+      // Verify the magnet link
+      if (!magnet.match(/magnet:\?xt=urn:btih:[a-z0-9]{20,50}/i)) {
+        alert('Please check the magnet link format.');
+        return;
+      }
+
+      size = size + ' ' + size_type;
+
+      if (this.rscCardStatus.addNew) {
+        var rsc_id = this.rscCardStatus.count.toString();
+
+        $(".horizon-scroll ul").append('<li class="ui-sortable-handle" id="rsc-card-' + rsc_id + '">' + '<div class="item">' + title + '</div>' + '<div class="item">' + size + '</div>' + '<div class="item">' + '<i class="fa fa-magnet rsc-magnet"></i>' + '<div  class="magnet-content">' + magnet + '</div></div>' + '</li>');
+
+        // Edit the resource when clicking
+        $("#rsc-card-" + rsc_id).click(function (e) {
+          var rsc = $(e.target).parent('.ui-sortable-handle');
+          var rsc_id = rsc.attr('id');
+          var rsc_info = rsc.html();
+          var tmp = rsc_info.match('<div class="item">(.*?)</div><div class="item">(.*?)</div><div class="item">.*?content">(.*?)</div></div>');
+
+          $('#edit-resource-card input[name="title"]').val(tmp[1]);
+          $('#edit-resource-card input[name="size"]').val(tmp[2].split(' ')[0]);
+          $('#edit-resource-card select').val(tmp[2].split(' ')[1]);
+          $('#edit-resource-card input[name="magnet"]').val(tmp[3]);
+          _this2.rscCardStatus.addNew = false;
+          _this2.rscCardStatus.rscId = rsc_id;
+          $('#edit-resource-card').css({ "visibility": "visible", "opacity": "1", "top": "50%" });
+        });
+
+        this.rscCardStatus.count += 1;
+      } else {
+        var rsc = $('#' + this.rscCardStatus.rscId);
+
+        // Assign new value
+        rsc.children().eq(0).html(title);
+        rsc.children().eq(1).html(size);
+        rsc.children().eq(2).children('div').html(magnet);
+      }
 
       // Clear text and hide edit card
       $("#edit-resource-card input").val("");
@@ -27068,16 +27109,51 @@ var EditVideoCard = function (_React$Component) {
       }).get();
       var rscInfo = [];
       htmlRscInfo.forEach(function (e) {
-        var tmp = e.match('<div>(.*?)</div><div>(.*?)</div><div>.*?content">(.*?)</div></div>');
+        var tmp = e.match('<div class="item">(.*?)</div><div class="item">(.*?)</div><div class="item">.*?content">(.*?)</div></div>');
         tmp = [tmp[1], tmp[2], tmp[3].split('&')[0]];
         rscInfo.push(tmp);
       });
       var tags = this.state.tags;
       var introduction = $("#edit-video-card .intro").val();
 
+      // Check if title or rscInfo is empty
+      if (!title) {
+        alert('Title is empty!');
+        return;
+      }
+      if (!rscInfo.length) {
+        alert('Resource Information is empty!');
+        return;
+      }
+      // Check if fields of resource information are available
+      // e.g. if size has non numeric characters or magnet link format is right
+      var isRight = true;
+      rscInfo.forEach(function (t) {
+        var title = t[0];
+        var size = t[1].split(' ')[0];
+        var magnet = t[2];
+
+        // Check if size has non-numeric character
+        if (size.match(/[^$.\d]/)) {
+          alert(title + ':\nSize cannot contain non numeric characters.');
+          isRight = false;
+        }
+
+        // Verify the magnet link
+        if (!magnet.match(/magnet:\?xt=urn:btih:[a-z0-9]{20,50}/i)) {
+          alert(title + ':\nPlease check the magnet link format.');
+          isRight = false;
+        }
+      });
+      if (!isRight) return;
+
       // Cover file
       var cover = $("#upload-cover")[0];
-      var file = cover.files[0];;
+      var file = cover.files[0];
+      if (!file) {
+        alert('Cover is empty.');
+        return;
+      }
 
       // Genrate a random unique filename
       var splitFileName = file.name.split('.');
@@ -27130,7 +27206,7 @@ var EditVideoCard = function (_React$Component) {
   }, {
     key: 'render',
     value: function render() {
-      var _this2 = this;
+      var _this3 = this;
 
       return _react2.default.createElement(
         'div',
@@ -27156,7 +27232,7 @@ var EditVideoCard = function (_React$Component) {
             'COVER'
           ),
           _react2.default.createElement('input', { type: 'file', id: 'upload-cover', style: { display: "none" }, onChange: function onChange(e) {
-              return _this2.previewCover(e);
+              return _this3.previewCover(e);
             } })
         ),
         _react2.default.createElement('input', { type: 'text', className: 'title', required: true, placeholder: 'Title' }),
@@ -27168,7 +27244,7 @@ var EditVideoCard = function (_React$Component) {
             { className: 'add-button', onClick: this.addResource },
             '+'
           ),
-          _react2.default.createElement(EditResourceCard, { onSubmit: this.submitResourceInfo, cancel: this.cancelEditResource, onChange: this.resourceInfoChange }),
+          _react2.default.createElement(EditResourceCard, { onSubmit: this.submitResourceInfo, cancel: this.cancelEditResource }),
           _react2.default.createElement(
             'div',
             { className: 'cards-wrapper' },
@@ -27190,44 +27266,18 @@ var EditVideoCard = function (_React$Component) {
   return EditVideoCard;
 }(_react2.default.Component);
 
-var ResourceCard = function ResourceCard(_ref) {
-  var title = _ref.title,
-      size = _ref.size,
-      magnet = _ref.magnet;
-  return _react2.default.createElement(
-    'div',
-    { className: 'card' },
-    _react2.default.createElement(
-      'div',
-      null,
-      title
-    ),
-    _react2.default.createElement(
-      'div',
-      null,
-      size
-    ),
-    _react2.default.createElement(
-      'div',
-      null,
-      magnet
-    )
-  );
-};
-
-var EditResourceCard = function EditResourceCard(_ref2) {
-  var onSubmit = _ref2.onSubmit,
-      cancel = _ref2.cancel,
-      onChange = _ref2.onChange;
+var EditResourceCard = function EditResourceCard(_ref) {
+  var onSubmit = _ref.onSubmit,
+      cancel = _ref.cancel;
   return _react2.default.createElement(
     'div',
     { id: 'edit-resource-card' },
     _react2.default.createElement(
       'form',
       null,
-      _react2.default.createElement(ResourceCardInput, { name: 'title', type: 'text', placeholder: 'title', onChange: onChange }),
-      _react2.default.createElement(ResourceCardInput, { name: 'size', type: 'text', placeholder: 'size', onChange: onChange }),
-      _react2.default.createElement(ResourceCardInput, { name: 'magnet', type: 'text', placeholder: 'magnet', onChange: onChange })
+      _react2.default.createElement(ResourceCardInput, { name: 'title', type: 'text', placeholder: 'title' }),
+      _react2.default.createElement(ResourceCardInput, { name: 'size', type: 'text', placeholder: 'size' }),
+      _react2.default.createElement(ResourceCardInput, { name: 'magnet', type: 'text', placeholder: 'magnet' })
     ),
     _react2.default.createElement(
       'button',
@@ -27242,11 +27292,10 @@ var EditResourceCard = function EditResourceCard(_ref2) {
   );
 };
 
-var ResourceCardInput = function ResourceCardInput(_ref3) {
-  var name = _ref3.name,
-      type = _ref3.type,
-      placeholder = _ref3.placeholder,
-      onChange = _ref3.onChange;
+var ResourceCardInput = function ResourceCardInput(_ref2) {
+  var name = _ref2.name,
+      type = _ref2.type,
+      placeholder = _ref2.placeholder;
   return _react2.default.createElement(
     'div',
     { className: 'resource-text-input' },
@@ -27255,9 +27304,27 @@ var ResourceCardInput = function ResourceCardInput(_ref3) {
       autoComplete: 'false',
       required: true,
       type: type,
-      placeholder: placeholder,
-      onChange: onChange
+      placeholder: placeholder
     }),
+    name === 'size' && _react2.default.createElement(
+      'select',
+      null,
+      _react2.default.createElement(
+        'option',
+        { value: 'MB' },
+        'MB'
+      ),
+      _react2.default.createElement(
+        'option',
+        { value: 'GB' },
+        'GB'
+      ),
+      _react2.default.createElement(
+        'option',
+        { value: 'KB' },
+        'KB'
+      )
+    ),
     _react2.default.createElement('label', { htmlFor: name })
   );
 };
@@ -29880,7 +29947,12 @@ var SearchPage = function (_React$Component) {
       return _react2.default.createElement(
         'div',
         { className: 'search-results-wrapper' },
-        _react2.default.createElement(_TitleList2.default, { title: 'Search Results', url: this.state.searchUrl })
+        _react2.default.createElement(
+          'div',
+          { className: 'Title' },
+          'Search Results'
+        ),
+        _react2.default.createElement(_TitleList2.default, { url: this.state.searchUrl })
       );
     }
   }]);

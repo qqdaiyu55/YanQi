@@ -44,7 +44,7 @@ class TitleList extends React.Component {
     let titles ='';
     if(this.state.data.hits) {
       titles = this.state.data.hits.map(function(v, i) {
-        if (i < 5) {
+        if (i < 30) {
           let name = v._source.title;
           let backDrop = '/backdrop/' + v._source.backDrop;
           let id = v._id;
@@ -62,11 +62,8 @@ class TitleList extends React.Component {
 
     return (
       <div ref="titlecategory" className="TitleList" data-loaded={this.state.mounted}>
-        <div className="Title">
-          <h1>{this.props.title}</h1>
-          <div className="titles-wrapper">
-            {titles}
-          </div>
+        <div className="titles-wrapper">
+          {titles}
         </div>
       </div>
     );

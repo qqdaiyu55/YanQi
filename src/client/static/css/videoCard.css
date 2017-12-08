@@ -169,7 +169,7 @@
   height: 100%;
 }
 .cards-wrapper ul li {
-  cursor: default;
+  cursor: pointer;
   width: 100px;
   height: 70px;
   margin-left: 7px;
@@ -183,7 +183,7 @@
   width: 110px;
   height: 80px;
 }
-.cards-wrapper li > div {
+.cards-wrapper li .item {
   width: 100%;
   height: 33%;
   font-size: 12px;
@@ -206,6 +206,12 @@
 .cards-wrapper .magnet-content {
   display: none;
 }
+.cards-wrapper .edit {
+  position: absolute;
+  top: 0px;
+  right: 0px;
+}
+
 
 #edit-resource-card {
   visibility: hidden;
@@ -233,6 +239,7 @@
   margin-bottom: 5px;
 }
 #edit-resource-card .resource-text-input input {
+  position: relative;
   outline: none;
   border: 0;
   color: black;
@@ -262,6 +269,10 @@
 #edit-resource-card .resource-text-input label {
   font-family: FontAwesome;
   font-size: 13px;
+}
+#edit-resource-card .resource-text-input select {
+  position: absolute;
+  right: 5px;
 }
 #edit-resource-card button {
   background: transparent;

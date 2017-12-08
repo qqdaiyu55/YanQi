@@ -6,6 +6,15 @@
   /*background: rgba(0, 0, 0, 0.8);*/
 }
 
+.search-results-wrapper .Title {
+  position: relative;
+  font-size: 24px;
+  font-weight: 600;
+  line-height: 1.4;
+  left: 40px;
+  bottom: -10px;
+}
+
 .TitleList {
   padding: 20px 40px;
   box-sizing: border-box;

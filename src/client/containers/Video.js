@@ -21,9 +21,12 @@ function displayVideo(props) {
     file.appendTo("#video-popup .video-wrapper");
 
     // A trick to get loaded video intrinsic height
-    setTimeout(()=>{
+    setInterval(()=>{
       let video_height = $("#video-popup video").height();
-      $('#video-popup .video-wrapper').css('height', video_height);
+      let video_wrapper_height = $("#video-popup .video-wrapper").height();
+      if (video_height !== video_wrapper_height) {
+        $('#video-popup .video-wrapper').css('height', video_height);
+      }
     }, 1000);
   })
 

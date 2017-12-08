@@ -25,7 +25,8 @@ class SearchPage extends React.Component {
   render() {
     return (
       <div className="search-results-wrapper">
-        <TitleList title="Search Results" url={this.state.searchUrl} />
+        <div className="Title">Search Results</div>
+        <TitleList url={this.state.searchUrl} />
       </div>
     );
   }

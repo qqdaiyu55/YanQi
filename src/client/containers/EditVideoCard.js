@@ -6,6 +6,11 @@ class EditVideoCard extends React.Component {
   constructor() {
     super();
 
+    this.rscCardStatus = {
+      addNew: true,
+      rscId: '',
+      count: 1
+    };
     this.state = {
       cover: null,
       isCoverUploaded: false,
@@ -23,7 +28,6 @@ class EditVideoCard extends React.Component {
     this.handleTagsChange = this.handleTagsChange.bind(this);
 
     this.addResource = this.addResource.bind(this);
-    this.resourceInfoChange = this.resourceInfoChange.bind(this);
     this.submitResourceInfo = this.submitResourceInfo.bind(this);
     this.cancelEditResource = this.cancelEditResource.bind(this);
 
@@ -66,6 +70,8 @@ class EditVideoCard extends React.Component {
 
   // create new resource card and add info
   addResource() {
+    this.rscCardStatus.addNew = true;
+    $("#edit-resource-card input").val("");
     $('#edit-resource-card').css({"visibility":"visible", "opacity":"1", "top":"50%"});
   }
 
@@ -82,29 +88,72 @@ class EditVideoCard extends React.Component {
     $('#edit-resource-card').css({"visibility":"hidden", "opacity":"0", "top":"60%"});
   }
 
-  // Handle text changes in resource edit card
-  resourceInfoChange(event) {
-    let field = event.target.name;
-    let tempResourceInfo = this.state.tempResourceInfo;
-    tempResourceInfo[field] = event.target.value;
-
-    this.setState({
-      tempResourceInfo
-    });
-  }
-
   // Create new resource card
   submitResourceInfo() {
     const tempResourceInfo = $("#edit-resource-card input").map(function() {
       return this.value;
     }).get();
+    let title = tempResourceInfo[0],
+        size = tempResourceInfo[1],
+        size_type = $("#edit-resource-card select").val(),
+        magnet = tempResourceInfo[2];
 
-    $(".horizon-scroll ul").append(
-      '<li class="ui-sortable-handle">'+
-      '<div>'+tempResourceInfo[0]+'</div>'+
-      '<div>'+tempResourceInfo[1]+'</div>'+
-      '<div>'+'<i class="fa fa-magnet rsc-magnet"></i>'+'<div class="magnet-content">'+tempResourceInfo[2]+'</div>'+'</div>'+
-      '</div></li>');
+    // Check if there's an empty field
+    if (!title || !size || !magnet) {
+      alert('Please check if all the values are filled.');
+      return;
+    }
+
+    // Check if size has non-numeric character
+    if (size.match(/[^$.\d]/)) {
+      alert('Size cannot contain non numeric characters.');
+      return;
+    }
+
+    // Verify the magnet link
+    if (!magnet.match(/magnet:\?xt=urn:btih:[a-z0-9]{20,50}/i)) {
+      alert('Please check the magnet link format.');
+      return;
+    }
+
+    size = size + ' ' + size_type;
+
+    if (this.rscCardStatus.addNew) {
+      let rsc_id = this.rscCardStatus.count.toString();
+
+      $(".horizon-scroll ul").append(
+        '<li class="ui-sortable-handle" id="rsc-card-'+rsc_id+'">'+
+        '<div class="item">'+title+'</div>'+
+        '<div class="item">'+size+'</div>'+
+        '<div class="item">'+'<i class="fa fa-magnet rsc-magnet"></i>'+'<div  class="magnet-content">'+magnet+'</div></div>'+
+        '</li>'
+      );
+
+      // Edit the resource when clicking
+      $("#rsc-card-"+rsc_id).click((e) => {
+        let rsc = $(e.target).parent('.ui-sortable-handle');
+        let rsc_id = rsc.attr('id');
+        let rsc_info = rsc.html();
+        let tmp = rsc_info.match('<div class="item">(.*?)</div><div class="item">(.*?)</div><div class="item">.*?content">(.*?)</div></div>');
+
+        $('#edit-resource-card input[name="title"]').val(tmp[1]);
+        $('#edit-resource-card input[name="size"]').val(tmp[2].split(' ')[0]);
+        $('#edit-resource-card select').val(tmp[2].split(' ')[1]);
+        $('#edit-resource-card input[name="magnet"]').val(tmp[3]);
+        this.rscCardStatus.addNew = false;
+        this.rscCardStatus.rscId = rsc_id;
+        $('#edit-resource-card').css({"visibility":"visible", "opacity":"1", "top":"50%"});
+      });
+
+      this.rscCardStatus.count += 1;
+    } else {
+      let rsc = $('#'+this.rscCardStatus.rscId);
+
+      // Assign new value
+      rsc.children().eq(0).html(title);
+      rsc.children().eq(1).html(size);
+      rsc.children().eq(2).children('div').html(magnet);
+    }
 
     // Clear text and hide edit card
     $("#edit-resource-card input").val("");
@@ -136,17 +185,52 @@ class EditVideoCard extends React.Component {
       return this.innerHTML;
     }).get();
     var rscInfo = []
-    htmlRscInfo.forEach(function(e){
-      var tmp = e.match('<div>(.*?)</div><div>(.*?)</div><div>.*?content">(.*?)</div></div>');
+    htmlRscInfo.forEach((e) => {
+      var tmp = e.match('<div class="item">(.*?)</div><div class="item">(.*?)</div><div class="item">.*?content">(.*?)</div></div>');
       tmp = [tmp[1], tmp[2], tmp[3].split('&')[0]];
       rscInfo.push(tmp);
     });
     const tags = this.state.tags;
     const introduction = $("#edit-video-card .intro").val();
 
+    // Check if title or rscInfo is empty
+    if (!title) {
+      alert('Title is empty!');
+      return;
+    }
+    if (!rscInfo.length) {
+      alert('Resource Information is empty!');
+      return;
+    }
+    // Check if fields of resource information are available
+    // e.g. if size has non numeric characters or magnet link format is right
+    let isRight = true;
+    rscInfo.forEach((t) => {
+      let title = t[0];
+      let size = t[1].split(' ')[0];
+      let magnet = t[2];
+
+      // Check if size has non-numeric character
+      if (size.match(/[^$.\d]/)) {
+        alert(title+':\nSize cannot contain non numeric characters.');
+        isRight = false;
+      }
+
+      // Verify the magnet link
+      if (!magnet.match(/magnet:\?xt=urn:btih:[a-z0-9]{20,50}/i)) {
+        alert(title+':\nPlease check the magnet link format.');
+        isRight = false;
+      }
+    });
+    if (!isRight) return;
+
     // Cover file
     var cover = $("#upload-cover")[0];
-    var file = cover.files[0];;
+    var file = cover.files[0];
+    if (!file) {
+      alert('Cover is empty.');
+      return;
+    }
 
     // Genrate a random unique filename
     var splitFileName = file.name.split('.');
@@ -213,7 +297,7 @@ class EditVideoCard extends React.Component {
         <input type="text" className="title" required placeholder="Title"></input>
         <div className="horizon-scroll">
           <a className="add-button" onClick={this.addResource}>+</a>
-          <EditResourceCard onSubmit={this.submitResourceInfo} cancel={this.cancelEditResource} onChange={this.resourceInfoChange} />
+          <EditResourceCard onSubmit={this.submitResourceInfo} cancel={this.cancelEditResource} />
           {/* <ResourceCardsList data={this.state.resourceLists} /> */}
           <div className="cards-wrapper"><ul></ul></div>
         </div>
@@ -228,28 +312,15 @@ class EditVideoCard extends React.Component {
   }
 }
 
-const ResourceCard = ({
-  title,
-  size,
-  magnet
-}) => (
-  <div className="card">
-    <div>{title}</div>
-    <div>{size}</div>
-    <div>{magnet}</div>
-  </div>
-);
-
 const EditResourceCard = ({
   onSubmit,
-  cancel,
-  onChange
+  cancel
 }) => (
   <div id="edit-resource-card">
     <form>
-      <ResourceCardInput name="title" type="text" placeholder="title" onChange={onChange} />
-      <ResourceCardInput name="size" type="text" placeholder="size" onChange={onChange} />
-      <ResourceCardInput name="magnet" type="text" placeholder="magnet" onChange={onChange} />
+      <ResourceCardInput name="title" type="text" placeholder="title" />
+      <ResourceCardInput name="size" type="text" placeholder="size" />
+      <ResourceCardInput name="magnet" type="text" placeholder="magnet" />
     </form>
     <button name="submit" onClick={onSubmit}>Submit</button>
     <button name="cancel" onClick={cancel}>Cancel</button>
@@ -259,8 +330,7 @@ const EditResourceCard = ({
 const ResourceCardInput = ({
   name,
   type,
-  placeholder,
-  onChange
+  placeholder
 }) => (
   <div className="resource-text-input">
 		<input
@@ -269,8 +339,14 @@ const ResourceCardInput = ({
 			required
 			type={type}
 			placeholder={placeholder}
-      onChange={onChange}
 		/>
+    { name === 'size' &&
+      <select>
+        <option value="MB">MB</option>
+        <option value="GB">GB</option>
+        <option value="KB">KB</option>
+      </select>
+    }
     <label htmlFor={name}></label>
 	</div>
 );
