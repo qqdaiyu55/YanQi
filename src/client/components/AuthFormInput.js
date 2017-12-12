@@ -21,7 +21,7 @@ const AuthFormInput = ({
 	</div>
 )
 
-SignUpForm.propTypes = {
+AuthFormInput.propTypes = {
   name: PropTypes.string.isRequired,
   type: PropTypes.string.isRequired,
   placeholder: PropTypes.string,

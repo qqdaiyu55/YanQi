@@ -3870,12 +3870,7 @@ var RscCard = function (_React$Component2) {
 exports.default = VideoPage;
 
 /***/ }),
-/* 48 */
-/***/ (function(module, exports) {
-
-throw new Error("Module build failed: Error: ENOENT: no such file or directory, open '/Users/daiyu/Downloads/WT/yanqi/src/client/components/Input.js'");
-
-/***/ }),
+/* 48 */,
 /* 49 */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -28852,9 +28847,9 @@ var _propTypes = __webpack_require__(1);
 
 var _propTypes2 = _interopRequireDefault(_propTypes);
 
-var _Input = __webpack_require__(48);
+var _AuthFormInput = __webpack_require__(108);
 
-var _Input2 = _interopRequireDefault(_Input);
+var _AuthFormInput2 = _interopRequireDefault(_AuthFormInput);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -28881,13 +28876,13 @@ var LoginForm = function LoginForm(_ref) {
           {
             onSubmit: onSubmit,
             className: 'ModalForm' },
-          _react2.default.createElement(_Input2.default, {
+          _react2.default.createElement(_AuthFormInput2.default, {
             name: 'username',
             type: 'text',
             placeholder: 'username',
             onChange: onChange
           }),
-          _react2.default.createElement(_Input2.default, {
+          _react2.default.createElement(_AuthFormInput2.default, {
             name: 'password',
             type: 'password',
             placeholder: 'password',
@@ -29114,19 +29109,19 @@ var SignUpForm = function SignUpForm(_ref) {
           {
             onSubmit: onSubmit,
             className: 'ModalForm' },
-          _react2.default.createElement(AuthFormInput, {
+          _react2.default.createElement(_AuthFormInput2.default, {
             name: 'username',
             type: 'text',
             placeholder: 'username',
             onChange: onChange
           }),
-          _react2.default.createElement(AuthFormInput, {
+          _react2.default.createElement(_AuthFormInput2.default, {
             name: 'password',
             type: 'password',
             placeholder: 'password',
             onChange: onChange
           }),
-          _react2.default.createElement(AuthFormInput, {
+          _react2.default.createElement(_AuthFormInput2.default, {
             name: 'reinput_password',
             type: 'password',
             placeholder: 'repeat password',
@@ -29202,7 +29197,7 @@ var AuthFormInput = function AuthFormInput(_ref) {
 	);
 };
 
-SignUpForm.propTypes = {
+AuthFormInput.propTypes = {
 	name: _propTypes2.default.string.isRequired,
 	type: _propTypes2.default.string.isRequired,
 	placeholder: _propTypes2.default.string,
