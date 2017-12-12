@@ -11,14 +11,10 @@ class EditVideoCard extends React.Component {
       rscId: '',
       count: 1
     };
+    this.mode = 'add';
     this.state = {
       cover: null,
       isCoverUploaded: false,
-      tempResourceInfo: {
-        title: '',
-        size: null,
-        magnet: ''
-      },
       tags: []
     };
 
@@ -30,11 +26,19 @@ class EditVideoCard extends React.Component {
     this.addResource = this.addResource.bind(this);
     this.submitResourceInfo = this.submitResourceInfo.bind(this);
     this.cancelEditResource = this.cancelEditResource.bind(this);
+    this.handleRsc = this.handleRsc.bind(this);
 
     this.closeCard = this.closeCard.bind(this);
     this.submitCard = this.submitCard.bind(this);
-  }
 
+    this.loadConten = this.loadContent.bind(this);
+  }
+  componentWillUnmount() {
+    console.log('Unmounted.');
+  }
+  componentWillMount() {
+    console.log('Mounting.');
+  }
   componentDidMount() {
     $(".horizon-scroll ul").sortable({
       axis: 'x',
@@ -43,6 +47,71 @@ class EditVideoCard extends React.Component {
     });
 
     $(".Video-card").droppable({greedy: true});
+
+    setInterval(() => {
+      const passData_str = $("#videopage-data").val();
+      if (passData_str) {
+        // const passData = JSON.parse(passData_str);
+        $("#videopage-data").val("");
+        //
+        // this.mode = 'edit';
+        // console.log(passData);
+        // passData.rscInfo.forEach((e) => {
+        //   this.handleRsc(true, {
+        //     title: e[0],
+        //     size: e[1],
+        //     magnet: e[2]
+        //   });
+        // });
+        //
+        // this.setState({
+        //   isCoverUploaded: true,
+        //   tags: passData.tags
+        // });
+        //
+        // $("#cover-img").attr('src', '/backdrop/'+passData.backDrop);
+        this.loadContent(passData_str);
+      }
+    }, 200);
+  }
+  loadContent(id) {
+    console.log(this.refs.myRef);
+    const requestUrl = '/api/video';
+    const token = encodeURIComponent(Auth.getToken());
+
+    const data = `id=${id}`;
+    $.ajax({
+      url: requestUrl,
+      data: data,
+      headers: {"Authorization": `bearer ${token}`},
+      cache: false,
+      contentType: 'application/x-www-form-urlencoded',
+      method: 'GET'
+    }).done((data)=>{
+      this.mode = 'edit';
+      data.rscInfo.forEach((e) => {
+        this.handleRsc(true, {
+          title: e[0],
+          size: e[1],
+          magnet: e[2]
+        });
+      });
+
+      // if (this.refs.myRef) {
+      //   this.setState({
+      //     isCoverUploaded: true,
+      //     tags: data.tags
+      //   });
+      // }
+      this.setState({
+        isCoverUploaded: true,
+        tags: data.tags
+      });
+
+      $("#cover-img").attr('src', '/backdrop/'+data.backDrop);
+    }).fail(()=>{
+      console.log("There has an error.");
+    });
   }
 
   // Preview uploaded cover
@@ -63,6 +132,7 @@ class EditVideoCard extends React.Component {
   // Remove cover
   removeCover() {
     $("#cover-img").attr('src', '#');
+    $("#upload-cover").val("");
     this.setState({
       isCoverUploaded: false
     });
@@ -88,37 +158,12 @@ class EditVideoCard extends React.Component {
     $('#edit-resource-card').css({"visibility":"hidden", "opacity":"0", "top":"60%"});
   }
 
-  // Create new resource card
-  submitResourceInfo() {
-    const tempResourceInfo = $("#edit-resource-card input").map(function() {
-      return this.value;
-    }).get();
-    let title = tempResourceInfo[0],
-        size = tempResourceInfo[1],
-        size_type = $("#edit-resource-card select").val(),
-        magnet = tempResourceInfo[2];
+  handleRsc(addNew, data) {
+    let title = data.title,
+        size = data.size,
+        magnet = data.magnet;
 
-    // Check if there's an empty field
-    if (!title || !size || !magnet) {
-      alert('Please check if all the values are filled.');
-      return;
-    }
-
-    // Check if size has non-numeric character
-    if (size.match(/[^$.\d]/)) {
-      alert('Size cannot contain non numeric characters.');
-      return;
-    }
-
-    // Verify the magnet link
-    if (!magnet.match(/magnet:\?xt=urn:btih:[a-z0-9]{20,50}/i)) {
-      alert('Please check the magnet link format.');
-      return;
-    }
-
-    size = size + ' ' + size_type;
-
-    if (this.rscCardStatus.addNew) {
+    if (addNew) {
       let rsc_id = this.rscCardStatus.count.toString();
 
       $(".horizon-scroll ul").append(
@@ -154,6 +199,43 @@ class EditVideoCard extends React.Component {
       rsc.children().eq(1).html(size);
       rsc.children().eq(2).children('div').html(magnet);
     }
+  }
+
+  // Create new resource card
+  submitResourceInfo() {
+    const tempResourceInfo = $("#edit-resource-card input").map(function() {
+      return this.value;
+    }).get();
+    let title = tempResourceInfo[0],
+        size = tempResourceInfo[1],
+        size_type = $("#edit-resource-card select").val(),
+        magnet = tempResourceInfo[2];
+
+    // Check if there's an empty field
+    if (!title || !size || !magnet) {
+      alert('Please check if all the values are filled.');
+      return;
+    }
+
+    // Check if size has non-numeric character
+    if (size.match(/[^$.\d]/)) {
+      alert('Size cannot contain non numeric characters.');
+      return;
+    }
+
+    // Verify the magnet link
+    if (!magnet.match(/magnet:\?xt=urn:btih:[a-z0-9]{20,50}/i)) {
+      alert('Please check the magnet link format.');
+      return;
+    }
+
+    size = size + ' ' + size_type;
+
+    this.handleRsc(this.rscCardStatus.addNew, {
+      title: title,
+      size: size,
+      magnet: magnet
+    });
 
     // Clear text and hide edit card
     $("#edit-resource-card input").val("");
@@ -281,10 +363,14 @@ class EditVideoCard extends React.Component {
     this.closeCard();
   }
 
+  editCard() {
+    console.log('YES');
+  }
+
   render() {
     return (
       <div className="Video-card">
-        <div className="cover-wrapper">
+        <div className="cover-wrapper" ref="myRef">
           { this.state.isCoverUploaded &&
             <div className="cover-img-wrapper">
               <div onClick={this.removeCover}><i className="fa fa-fw fa-times"></i></div>
@@ -307,6 +393,7 @@ class EditVideoCard extends React.Component {
           <i onClick={this.closeCard} className="fa fa-fw fa-times"></i>
           <i onClick={this.submitCard} className="fa fa-fw fa-check"></i>
         </div>
+        <input type="hidden" id="videopage-data" value="" />
       </div>
     );
   }

@@ -1,37 +1,37 @@
-const express = require('express');
-const bodyParser = require('body-parser');
-const passport = require('passport');
-const config = require('./src/server/config');
+const express = require('express')
+const bodyParser = require('body-parser')
+const passport = require('passport')
+const config = require('./src/server/config')
 
 // connect to the database and load models
-require('./src/server/models').connect(config.dbUri);
+require('./src/server/models').connect(config.dbUri)
 
-const app = express();
+const app = express()
 // tell the app to look for static files in these directories
-app.use(express.static('./src/client/static/'));
-app.use(express.static('./build/'));
-app.use(express.static('./public/'));
+app.use(express.static('./src/client/static/'))
+app.use(express.static('./build/'))
+app.use(express.static('./public/'))
 // tell the app to parse HTTP body messages
-app.use(bodyParser.urlencoded({ extended: false }));
-app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: false }))
+app.use(bodyParser.json())
 // pass the passport middleware
-app.use(passport.initialize());
+app.use(passport.initialize())
 
 // load passport strategies
-const localSignupStrategy = require('./src/server/passport/local-signup');
-const localLoginStrategy = require('./src/server/passport/local-login');
-passport.use('local-signup', localSignupStrategy);
-passport.use('local-login', localLoginStrategy);
+const localSignupStrategy = require('./src/server/passport/local-signup')
+const localLoginStrategy = require('./src/server/passport/local-login')
+passport.use('local-signup', localSignupStrategy)
+passport.use('local-login', localLoginStrategy)
 
 // pass the authorization checker middleware
-const authCheckMiddleware = require('./src/server/middleware/auth-check');
-app.use('/api', authCheckMiddleware);
+const authCheckMiddleware = require('./src/server/middleware/auth-check')
+app.use('/api', authCheckMiddleware)
 
 // routes
-const authRoutes = require('./src/server/routes/auth');
-const apiRoutes = require('./src/server/routes/api');
-app.use('/auth', authRoutes);
-app.use('/api', apiRoutes);
+const authRoutes = require('./src/server/routes/auth')
+const apiRoutes = require('./src/server/routes/api')
+app.use('/auth', authRoutes)
+app.use('/api', apiRoutes)
 
 // start the server
 app.listen(3000, () => {

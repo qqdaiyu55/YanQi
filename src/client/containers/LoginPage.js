@@ -1,23 +1,19 @@
-import React from 'react';
-import Auth from '../modules/Auth';
-import LoginForm from '../components/LoginForm.js';
-import { withRouter } from 'react-router-dom';
+import React from 'react'
+import Auth from '../modules/Auth'
+import LoginForm from '../components/LoginForm.js'
+import { withRouter } from 'react-router-dom'
 
 
 class LoginPage extends React.Component {
-
-  /**
-   * Class constructor.
-   */
   constructor(props) {
-    super(props);
+    super(props)
 
-    const storedMessage = localStorage.getItem('successMessage');
-    let successMessage = '';
+    const storedMessage = localStorage.getItem('successMessage')
+    var successMessage = ''
 
     if (storedMessage) {
-      successMessage = storedMessage;
-      localStorage.removeItem('successMessage');
+      successMessage = storedMessage
+      localStorage.removeItem('successMessage')
     }
 
     // set the initial component state
@@ -30,77 +26,66 @@ class LoginPage extends React.Component {
       }
     };
 
-    this.processForm = this.processForm.bind(this);
-    this.changeUser = this.changeUser.bind(this);
+    this.processForm = this.processForm.bind(this)
+    this.changeUser = this.changeUser.bind(this)
   }
 
-  /**
-   * Process the form.
-   *
-   * @param {object} event - the JavaScript event object
-   */
+  // Process the form
   processForm(event) {
-    // prevent default action. in this case, action is the form submission event
-    event.preventDefault();
+    // Prevent default action. in this case, action is the form submission event
+    event.preventDefault()
 
-    // create a string for an HTTP body message
-    const username = encodeURIComponent(this.state.user.username);
-    const password = encodeURIComponent(this.state.user.password);
-    const formData = `username=${username}&password=${password}`;
+    // Create a string for an HTTP body message
+    const username = encodeURIComponent(this.state.user.username)
+    const password = encodeURIComponent(this.state.user.password)
+    const formData = `username=${username}&password=${password}`
 
-    // create an AJAX request
-    const xhr = new XMLHttpRequest();
-    xhr.open('post', '/auth/login');
-    xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
-    xhr.responseType = 'json';
+    // Create an AJAX request
+    const xhr = new XMLHttpRequest()
+    xhr.open('post', '/auth/login')
+    xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded')
+    xhr.responseType = 'json'
     xhr.addEventListener('load', () => {
       if (xhr.status === 200) {
-        // success
+        // Success
 
-        // change the component-container state
+        // Change the component-container state
         this.setState({
           errors: {}
-        });
+        })
 
-        // save the token
-        Auth.authenticateUser(xhr.response.token);
+        // Save the token
+        Auth.authenticateUser(xhr.response.token)
 
-        // change the current URL to /
-        this.props.history.push('/');
+        // Redirect to /
+        this.props.history.push('/')
 
       } else {
         // failure
 
         // change the component state
-        const errors = xhr.response.errors ? xhr.response.errors : {};
-        errors.summary = xhr.response.message;
+        const errors = xhr.response.errors ? xhr.response.errors : {}
+        errors.summary = xhr.response.message
 
         this.setState({
           errors
-        });
+        })
       }
-    });
-    xhr.send(formData);
+    })
+    xhr.send(formData)
   }
 
-  /**
-   * Change the user object.
-   *
-   * @param {object} event - the JavaScript event object
-   */
+  // Change the user object
   changeUser(event) {
-    const field = event.target.name;
-    const user = this.state.user;
-    user[field] = event.target.value;
+    const field = event.target.name
+    const user = this.state.user
+    user[field] = event.target.value
 
     this.setState({
       user
-    });
+    })
   }
 
-  /**
-   * Render the component.
-   */
   render() {
     return (
       <LoginForm

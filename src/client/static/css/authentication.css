@@ -23,10 +23,10 @@
   background: #3E363F;
   border-radius: 2px;
   padding: 20px;
-  width: 200px;
+  width: 225px;
 }
 
-.AuthForm .Input {
+.AuthForm .AuthFormInput {
   display: flex;
   flex-direction: row-reverse;
   border-bottom: 1px solid rgba(255, 252, 232, 0.1);
@@ -34,7 +34,7 @@
   margin-bottom: 5px;
 }
 
-.AuthForm .Input input {
+.AuthForm .AuthFormInput input {
   outline: none;
   border: 0;
   color: #FFFCE8;
@@ -44,22 +44,22 @@
   font-size: 14px;
   font-weight: 300;
 }
-.AuthForm .Input input:focus ~ label {
+.AuthForm .AuthFormInput input:focus ~ label {
   opacity: 1;
 }
-.AuthForm .Input input[type='text'] ~ label::before {
+.AuthForm .AuthFormInput input[type='text'] ~ label::before {
   content: "\f007";
 }
-.AuthForm .Input input[type='password'] ~ label::before {
+.AuthForm .AuthFormInput input[type='password'] ~ label::before {
   content: "\f023";
 }
-.AuthForm .Input label {
+.AuthForm .AuthFormInput label {
   font-family: FontAwesome;
   font-size: 13px;
   opacity: .1;
   transition: opacity .5s ease;
 }
-.AuthForm .Input label::before {
+.AuthForm .AuthFormInput label::before {
   align-items: center;
   color: #FFFCE8;
   display: flex;

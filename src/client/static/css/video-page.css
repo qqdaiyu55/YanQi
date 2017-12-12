@@ -25,6 +25,16 @@
   left: 60px;
   z-index: 4;
 }
+.cover-title-wrapper .buttons-wrapper {
+  cursor: pointer;
+  position: absolute;
+  font-size: 30px;
+  right: 20px;
+  bottom: 35px;
+  z-index: 4;
+}
+
+
 .videopage-content .tags {
   display: block;
   position: relative;

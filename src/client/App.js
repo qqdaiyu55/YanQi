@@ -1,40 +1,31 @@
-import React from 'react';
-import ReactDOM from 'react-dom';
+import React from 'react'
+import ReactDOM from 'react-dom'
 import {
   BrowserRouter as Router,
   browserHistory,
   Redirect,
   Switch,
   Route
-} from 'react-router-dom';
+} from 'react-router-dom'
 
-import HomePage from './containers/HomePage';
-import LoginPage from './containers/LoginPage';
-import SignUpPage from './containers/SignUpPage';
-import Auth from './modules/Auth';
-
-import Hero from './components/Hero.js';
-import SearchPage from './containers/SearchPage.js';
-import VideoPage from './containers/VideoPage.js';
+import HomePage from './containers/HomePage'
+import LoginPage from './containers/LoginPage'
+import SignUpPage from './containers/SignUpPage'
+import Auth from './modules/Auth'
 
 ReactDOM.render(
   <Router history={browserHistory}>
     <Switch>
-      <Route exact path='/' render={() => (
+      <Route exact path='/login' component={LoginPage} />
+      <Route exact path='/signup' component={SignUpPage} />
+      <Route path='/' render={() => (
         Auth.isUserAuthenticated() ? (
-          <HomePage/>
+          <HomePage />
         ) : (
           <Redirect to='/login' />
         )
       )} />
-      <Route path='/login' component={LoginPage} />
-      <Route path='/signup' component={SignUpPage} />
-      <HomePage>
-        <Route exact path="/" component={Hero} />
-        <Route path="/search/:term" component={SearchPage} />
-        <Route path="/video/:id" component={VideoPage} />
-      </HomePage>
     </Switch>
   </Router>,
   document.getElementById('root')
-);
+)

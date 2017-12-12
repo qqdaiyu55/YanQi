@@ -1,6 +1,8 @@
 import React from 'react';
 import Auth from '../modules/Auth';
 import { displayVideo, switchVideo } from '../containers/Video.js';
+import Modal from './Modal.js';
+import EditVideoCard from './EditVideoCard.js';
 
 class VideoPage extends React.Component {
   constructor(props) {
@@ -11,6 +13,7 @@ class VideoPage extends React.Component {
     };
 
     this.loadContent = this.loadContent.bind(this);
+    this.openEditVideoModal = this.openEditVideoModal.bind(this);
   }
   componentWillMount() {
     this.loadContent();
@@ -34,6 +37,22 @@ class VideoPage extends React.Component {
       console.log("There has an error.");
     });
   }
+  openEditVideoModal() {
+    const data = this.state.data;
+    $("#edit-video-card .title").val(data.title)
+    $("#edit-video-card .intro").val(data.introduction);
+
+    const passData = {
+      backDrop: data.backDrop,
+      tags: data.tags,
+      rscInfo: data.rscInfo
+    };
+
+    $("#edit-video-card").css({"visibility":"visible", "opacity":"1"});
+    // Set the EditVideoCard to edit mode and pass data
+    // $("#videopage-data").val(JSON.stringify(passData));
+    $("#videopage-data").val(this.props.match.params.id);
+  }
   render() {
     const title = this.state.data.title;
     const backDrop = this.state.data.backDrop;
@@ -55,23 +74,27 @@ class VideoPage extends React.Component {
     return (
       typeof title !== "undefined" &&
       <div className="videopage-content">
-          <div className="cover-title-wrapper" style={{backgroundImage: 'url(/backdrop/' + backDrop + ')'}}>
-            <div className="title">
-              <h1>{title}</h1>
-            </div>
-            <div className="overlay"></div>
+        <div className="cover-title-wrapper" style={{backgroundImage: 'url(/backdrop/' + backDrop + ')'}}>
+          <div className="title">
+            <h1>{title}</h1>
           </div>
-          <div className="tags">
-            <ul>{tags}</ul>
+          <div className="overlay"></div>
+            <div className="buttons-wrapper" onClick={this.openEditVideoModal}><i className="fa fa-pencil-square-o"></i></div>
+        </div>
+        <div className="tags">
+          <ul>{tags}</ul>
+        </div>
+        <div className="videopage-rsc">
+          <div className="videopage-cards-wrapper">
+            <ul>{rsc}</ul>
           </div>
-          <div className="videopage-rsc">
-            <div className="videopage-cards-wrapper">
-              <ul>{rsc}</ul>
-            </div>
-          </div>
-          <div className="intro">
-            <p>{introduction}</p>
-          </div>
+        </div>
+        <div className="intro">
+          <p>{introduction}</p>
+        </div>
+        {/* <Modal id="edit-video-card" show={true}>
+          <EditVideoCard />
+        </Modal> */}
       </div>
     )
   }
