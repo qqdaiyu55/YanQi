@@ -28702,7 +28702,7 @@ var _Auth = __webpack_require__(7);
 
 var _Auth2 = _interopRequireDefault(_Auth);
 
-var _LoginForm = __webpack_require__(105);
+var _LoginForm = __webpack_require__(111);
 
 var _LoginForm2 = _interopRequireDefault(_LoginForm);
 
@@ -28719,10 +28719,10 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
 var LoginPage = function (_React$Component) {
   _inherits(LoginPage, _React$Component);
 
-  function LoginPage(props) {
+  function LoginPage() {
     _classCallCheck(this, LoginPage);
 
-    var _this = _possibleConstructorReturn(this, (LoginPage.__proto__ || Object.getPrototypeOf(LoginPage)).call(this, props));
+    var _this = _possibleConstructorReturn(this, (LoginPage.__proto__ || Object.getPrototypeOf(LoginPage)).call(this));
 
     var storedMessage = localStorage.getItem('successMessage');
     var successMessage = '';
@@ -28827,97 +28827,7 @@ var LoginPage = function (_React$Component) {
 exports.default = (0, _reactRouterDom.withRouter)(LoginPage);
 
 /***/ }),
-/* 105 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-
-var _react = __webpack_require__(0);
-
-var _react2 = _interopRequireDefault(_react);
-
-var _reactRouterDom = __webpack_require__(5);
-
-var _propTypes = __webpack_require__(1);
-
-var _propTypes2 = _interopRequireDefault(_propTypes);
-
-var _AuthFormInput = __webpack_require__(108);
-
-var _AuthFormInput2 = _interopRequireDefault(_AuthFormInput);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-var LoginForm = function LoginForm(_ref) {
-  var onSubmit = _ref.onSubmit,
-      onChange = _ref.onChange,
-      errors = _ref.errors;
-  return _react2.default.createElement(
-    'div',
-    { className: 'Authentication' },
-    _react2.default.createElement(
-      'div',
-      { className: 'AuthForm' },
-      _react2.default.createElement(
-        'div',
-        { className: 'Modal' },
-        errors.summary && _react2.default.createElement(
-          'p',
-          { className: 'error-message' },
-          errors.summary
-        ),
-        _react2.default.createElement(
-          'form',
-          {
-            onSubmit: onSubmit,
-            className: 'ModalForm' },
-          _react2.default.createElement(_AuthFormInput2.default, {
-            name: 'username',
-            type: 'text',
-            placeholder: 'username',
-            onChange: onChange
-          }),
-          _react2.default.createElement(_AuthFormInput2.default, {
-            name: 'password',
-            type: 'password',
-            placeholder: 'password',
-            onChange: onChange
-          }),
-          _react2.default.createElement(
-            'button',
-            { className: 'Button' },
-            'Log in'
-          ),
-          _react2.default.createElement(
-            'p',
-            null,
-            'Don\'t have an account? ',
-            _react2.default.createElement(
-              _reactRouterDom.Link,
-              { to: '/signup', className: 'Link' },
-              'Create one'
-            )
-          )
-        )
-      )
-    )
-  );
-};
-
-LoginForm.propTypes = {
-  onSubmit: _propTypes2.default.func.isRequired,
-  onChange: _propTypes2.default.func.isRequired,
-  errors: _propTypes2.default.object.isRequired
-};
-
-exports.default = LoginForm;
-
-/***/ }),
+/* 105 */,
 /* 106 */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -28934,7 +28844,7 @@ var _react = __webpack_require__(0);
 
 var _react2 = _interopRequireDefault(_react);
 
-var _SignUpForm = __webpack_require__(107);
+var _SignUpForm = __webpack_require__(109);
 
 var _SignUpForm2 = _interopRequireDefault(_SignUpForm);
 
@@ -28951,17 +28861,18 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
 var SignUpPage = function (_React$Component) {
   _inherits(SignUpPage, _React$Component);
 
-  function SignUpPage(props) {
+  function SignUpPage() {
     _classCallCheck(this, SignUpPage);
 
-    var _this = _possibleConstructorReturn(this, (SignUpPage.__proto__ || Object.getPrototypeOf(SignUpPage)).call(this, props));
+    var _this = _possibleConstructorReturn(this, (SignUpPage.__proto__ || Object.getPrototypeOf(SignUpPage)).call(this));
 
     _this.state = {
       errors: {},
       user: {
         username: '',
         password: '',
-        reinput_password: ''
+        repeatPassword: '',
+        inviteCode: ''
       }
     };
 
@@ -28984,11 +28895,12 @@ var SignUpPage = function (_React$Component) {
       // Create a string for an HTTP body message
       var username = encodeURIComponent(this.state.user.username);
       var password = encodeURIComponent(this.state.user.password);
-      var reinput_password = encodeURIComponent(this.state.user.reinput_password);
-      var formData = 'username=' + username + '&password=' + password;
+      var inviteCode = encodeURIComponent(this.state.user.inviteCode);
+      var repeatPassword = encodeURIComponent(this.state.user.repeatPassword);
+      var formData = 'username=' + username + '&password=' + password + '&inviteCode=' + inviteCode;
 
       // Check if the user input the same password twice
-      if (password != reinput_password) {
+      if (password != repeatPassword) {
         var errors = {};
         errors.summary = 'Please confirm your password!';
         this.setState({
@@ -29060,7 +28972,9 @@ var SignUpPage = function (_React$Component) {
 exports.default = (0, _reactRouterDom.withRouter)(SignUpPage);
 
 /***/ }),
-/* 107 */
+/* 107 */,
+/* 108 */,
+/* 109 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -29080,7 +28994,7 @@ var _propTypes = __webpack_require__(1);
 
 var _propTypes2 = _interopRequireDefault(_propTypes);
 
-var _AuthFormInput = __webpack_require__(108);
+var _AuthFormInput = __webpack_require__(110);
 
 var _AuthFormInput2 = _interopRequireDefault(_AuthFormInput);
 
@@ -29092,13 +29006,13 @@ var SignUpForm = function SignUpForm(_ref) {
       errors = _ref.errors;
   return _react2.default.createElement(
     'div',
-    { className: 'Authentication' },
+    { className: 'auth-page' },
     _react2.default.createElement(
       'div',
-      { className: 'AuthForm' },
+      { className: 'auth-form' },
       _react2.default.createElement(
         'div',
-        { className: 'Modal' },
+        { className: 'modal' },
         errors.summary && _react2.default.createElement(
           'p',
           { className: 'error-message' },
@@ -29106,9 +29020,7 @@ var SignUpForm = function SignUpForm(_ref) {
         ),
         _react2.default.createElement(
           'form',
-          {
-            onSubmit: onSubmit,
-            className: 'ModalForm' },
+          { onSubmit: onSubmit },
           _react2.default.createElement(_AuthFormInput2.default, {
             name: 'username',
             type: 'text',
@@ -29122,14 +29034,20 @@ var SignUpForm = function SignUpForm(_ref) {
             onChange: onChange
           }),
           _react2.default.createElement(_AuthFormInput2.default, {
-            name: 'reinput_password',
+            name: 'repeatPassword',
             type: 'password',
             placeholder: 'repeat password',
             onChange: onChange
           }),
+          _react2.default.createElement(_AuthFormInput2.default, {
+            name: 'inviteCode',
+            type: 'text',
+            placeholder: 'invite code',
+            onChange: onChange
+          }),
           _react2.default.createElement(
             'button',
-            { className: 'Button' },
+            { className: 'auth-form-btn' },
             'Sign up'
           ),
           _react2.default.createElement(
@@ -29138,7 +29056,7 @@ var SignUpForm = function SignUpForm(_ref) {
             'Already have an account? ',
             _react2.default.createElement(
               _reactRouterDom.Link,
-              { to: '/login', className: 'Link' },
+              { to: '/login', className: 'link' },
               'Log in'
             )
           )
@@ -29157,7 +29075,7 @@ SignUpForm.propTypes = {
 exports.default = SignUpForm;
 
 /***/ }),
-/* 108 */
+/* 110 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -29184,7 +29102,7 @@ var AuthFormInput = function AuthFormInput(_ref) {
 	    onChange = _ref.onChange;
 	return _react2.default.createElement(
 		'div',
-		{ className: 'AuthFormInput' },
+		{ className: 'auth-form-input' },
 		_react2.default.createElement('input', {
 			name: name,
 			autoComplete: 'false',
@@ -29205,6 +29123,95 @@ AuthFormInput.propTypes = {
 };
 
 exports.default = AuthFormInput;
+
+/***/ }),
+/* 111 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _react = __webpack_require__(0);
+
+var _react2 = _interopRequireDefault(_react);
+
+var _reactRouterDom = __webpack_require__(5);
+
+var _propTypes = __webpack_require__(1);
+
+var _propTypes2 = _interopRequireDefault(_propTypes);
+
+var _AuthFormInput = __webpack_require__(110);
+
+var _AuthFormInput2 = _interopRequireDefault(_AuthFormInput);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var LoginForm = function LoginForm(_ref) {
+  var onSubmit = _ref.onSubmit,
+      onChange = _ref.onChange,
+      errors = _ref.errors;
+  return _react2.default.createElement(
+    'div',
+    { className: 'auth-page' },
+    _react2.default.createElement(
+      'div',
+      { className: 'auth-form' },
+      _react2.default.createElement(
+        'div',
+        { className: 'modal' },
+        errors.summary && _react2.default.createElement(
+          'p',
+          { className: 'error-message' },
+          errors.summary
+        ),
+        _react2.default.createElement(
+          'form',
+          { onSubmit: onSubmit },
+          _react2.default.createElement(_AuthFormInput2.default, {
+            name: 'username',
+            type: 'text',
+            placeholder: 'username',
+            onChange: onChange
+          }),
+          _react2.default.createElement(_AuthFormInput2.default, {
+            name: 'password',
+            type: 'password',
+            placeholder: 'password',
+            onChange: onChange
+          }),
+          _react2.default.createElement(
+            'button',
+            { className: 'auth-form-btn' },
+            'Log in'
+          ),
+          _react2.default.createElement(
+            'p',
+            null,
+            'Don\'t have an account? ',
+            _react2.default.createElement(
+              _reactRouterDom.Link,
+              { to: '/signup', className: 'link' },
+              'Create one'
+            )
+          )
+        )
+      )
+    )
+  );
+};
+
+LoginForm.propTypes = {
+  onSubmit: _propTypes2.default.func.isRequired,
+  onChange: _propTypes2.default.func.isRequired,
+  errors: _propTypes2.default.object.isRequired
+};
+
+exports.default = LoginForm;
 
 /***/ })
 /******/ ]);

@@ -8,10 +8,10 @@ const AuthFormInput = ({
   placeholder,
   onChange
 }) => (
-	<div className="AuthFormInput">
+	<div className='auth-form-input'>
 		<input
 			name={name}
-			autoComplete="false"
+			autoComplete='false'
 			required
 			type={type}
 			placeholder={placeholder}

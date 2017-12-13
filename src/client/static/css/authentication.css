@@ -1,4 +1,4 @@
-.Authentication  {
+.auth-page  {
   background-image: url(https://unsplash.it/1400/795);
   background-position: center;
   background-repeat: no-repeat;
@@ -8,7 +8,7 @@
   overflow: hidden;
 }
 
-.AuthForm {
+.auth-form {
   align-items: center;
   display: flex;
   height: 100vh;
@@ -19,14 +19,14 @@
   left: 0;
 }
 
-.AuthForm .Modal {
+.auth-form .modal {
   background: #3E363F;
   border-radius: 2px;
   padding: 20px;
   width: 225px;
 }
 
-.AuthForm .AuthFormInput {
+.auth-form-input {
   display: flex;
   flex-direction: row-reverse;
   border-bottom: 1px solid rgba(255, 252, 232, 0.1);
@@ -34,7 +34,7 @@
   margin-bottom: 5px;
 }
 
-.AuthForm .AuthFormInput input {
+.auth-form-input input {
   outline: none;
   border: 0;
   color: #FFFCE8;
@@ -44,22 +44,25 @@
   font-size: 14px;
   font-weight: 300;
 }
-.AuthForm .AuthFormInput input:focus ~ label {
+.auth-form-input input:focus ~ label {
   opacity: 1;
 }
-.AuthForm .AuthFormInput input[type='text'] ~ label::before {
+.auth-form-input input[name='username'] ~ label::before {
   content: "\f007";
 }
-.AuthForm .AuthFormInput input[type='password'] ~ label::before {
+.auth-form-input input[type='password'] ~ label::before {
   content: "\f023";
 }
-.AuthForm .AuthFormInput label {
+.auth-form-input input[name='inviteCode'] ~ label::before {
+  content: "\f023";
+}
+.auth-form-input label {
   font-family: FontAwesome;
   font-size: 13px;
   opacity: .1;
   transition: opacity .5s ease;
 }
-.AuthForm .AuthFormInput label::before {
+.auth-form-input label::before {
   align-items: center;
   color: #FFFCE8;
   display: flex;
@@ -68,7 +71,7 @@
   width: 30px;
 }
 
-.AuthForm .Button {
+.auth-form-btn {
   align-items: center;
   background: #DD403A;
   border: 0;
@@ -86,38 +89,18 @@
   text-transform: uppercase;
   width: 100%;
 }
-.AuthForm .Button:hover {
+.auth-form-btn:hover {
   transform: scale(1.02);
 }
-.AuthForm .Button:active {
+.auth-form-btn:active {
   transform: scale(0.99);
 }
 
-.AuthForm .Link {
+.auth-form .link {
   color: #DD403A;
   text-decoration: none;
 }
 
-.AuthForm .error-message {
+.auth-form .error-message {
   color: #DD403A;
-}
-
-.example-enter {
-  margin-top: 30px;
-  opacity: .01;
-}
-.example-enter.example-enter-active {
-  margin-top: 0px;
-  opacity: 1;
-  transition: opacity .5s ease, margin .5s ease;
-}
-
-.example-leave {
-  margin-top: 0px;
-  opacity: 1;
-}
-.example-leave.example-leave-active {
-  margin-top: -30px;
-  opacity: .01;
-  transition: opacity .3s ease, margin .5s ease;
 }

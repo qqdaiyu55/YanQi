@@ -1,19 +1,19 @@
 import React from 'react'
-import SignUpForm from '../components/SignUpForm.js'
+import SignUpForm from '../components/auth/SignUpForm'
 import { withRouter } from 'react-router-dom'
 
 
 class SignUpPage extends React.Component {
-
-  constructor(props) {
-    super(props)
+  constructor() {
+    super()
 
     this.state = {
       errors: {},
       user: {
         username: '',
         password: '',
-        reinput_password: ''
+        repeatPassword: '',
+        inviteCode: ''
       }
     };
 
@@ -30,11 +30,12 @@ class SignUpPage extends React.Component {
     // Create a string for an HTTP body message
     const username = encodeURIComponent(this.state.user.username)
     const password = encodeURIComponent(this.state.user.password)
-    const reinput_password = encodeURIComponent(this.state.user.reinput_password)
-    const formData = `username=${username}&password=${password}`
+    const inviteCode = encodeURIComponent(this.state.user.inviteCode)
+    const repeatPassword = encodeURIComponent(this.state.user.repeatPassword)
+    const formData = `username=${username}&password=${password}&inviteCode=${inviteCode}`
 
     // Check if the user input the same password twice
-    if (password != reinput_password) {
+    if (password != repeatPassword) {
       const errors = {}
       errors.summary = 'Please confirm your password!'
       this.setState({

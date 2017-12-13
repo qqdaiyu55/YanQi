@@ -1,12 +1,12 @@
 import React from 'react'
 import Auth from '../modules/Auth'
-import LoginForm from '../components/LoginForm.js'
+import LoginForm from '../components/auth/LoginForm'
 import { withRouter } from 'react-router-dom'
 
 
 class LoginPage extends React.Component {
-  constructor(props) {
-    super(props)
+  constructor() {
+    super()
 
     const storedMessage = localStorage.getItem('successMessage')
     var successMessage = ''
