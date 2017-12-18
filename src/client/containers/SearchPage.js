@@ -1,5 +1,5 @@
-import React from 'react';
-import TitleList from '../components/TitleList';
+import React from 'react'
+import TitleList from '../components/TitleList'
 
 class SearchPage extends React.Component {
   constructor(props) {
@@ -10,22 +10,22 @@ class SearchPage extends React.Component {
     }
   }
   componentDidMount() {
-    let term = this.props.match.params.term;
+    var term = this.props.match.params.term
     this.setState({
-      searchUrl: '?q='+term
-    });
+      searchUrl: '?q=title:'+term
+    })
   }
   componentWillReceiveProps(nextProps) {
     if (nextProps.match.params.term !== this.props.match.params.term) {
       this.setState({
-        searchUrl: '?q='+nextProps.match.params.term
-      });
+        searchUrl: '?q=title:'+nextProps.match.params.term
+      })
     }
   }
   render() {
     return (
       <div className="search-results-wrapper">
-        <div className="Title">Search Results</div>
+        <div className="title">Search Results for <p style={{'color': 'red'}}>{this.props.match.params.term}</p></div>
         <TitleList url={this.state.searchUrl} />
       </div>
     );

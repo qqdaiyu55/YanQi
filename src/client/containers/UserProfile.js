@@ -1,47 +1,16 @@
 import React from 'react';
+import PropTypes from 'prop-types'
 // import AvatarEditor from 'react-avatar-editor';
 // import Avatar from 'react-avatar-edit';
 import Auth from '../modules/Auth';
 
 class UserProfile extends React.Component {
-  constructor() {
-    super();
+  constructor(props) {
+    super(props)
     this.state = {
-      error: '',
-      username: '',
-      avatar: null
+      error: ''
     };
   }
-
-  componentWillMount() {
-    // Get jwt token
-    const token = encodeURIComponent(Auth.getToken());
-    const formData = `token=${token}`;
-
-    // Get user information from server and create an AJAX request
-    const xhr = new XMLHttpRequest();
-    xhr.open('post', '/api/userinfo');
-    xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
-
-    // set the authorization HTTP header
-    xhr.setRequestHeader('Authorization', `bearer ${Auth.getToken()}`);
-
-    xhr.responseType = 'json';
-    xhr.addEventListener('load', () => {
-      if (xhr.status === 200) {
-        this.setState({
-          username: xhr.response.username,
-          avatar: xhr.response.avatar
-        });
-      } else {
-        this.setState({
-          error: xhr.response.error
-        });
-      }
-    });
-    xhr.send(formData);
-  }
-
   // Show profile card when mouse moves over
   showProfileCard() {
     $("#ProfileCard").show();
@@ -52,8 +21,8 @@ class UserProfile extends React.Component {
       <div className="UserProfile">
         <ProfileCard />
         <div className="User">
-          <div className="name">{this.state.username}</div>
-          <div className="image" onMouseOver={this.showProfileCard}><img src="http://www.avatarsdb.com/avatars/waifu.jpg" alt="profile" /></div>
+          <div className="name">{this.props.username}</div>
+          <div className="image" onMouseOver={this.showProfileCard}><img src={'/avatar/'+this.props.avatarUrl} alt='profile' /></div>
         </div>
       </div>
     );
@@ -176,6 +145,11 @@ class ProfileCard extends React.Component {
       </div>
     );
   }
+}
+
+UserProfile.propTypes = {
+  username: PropTypes.string.isRequired,
+  avatarUrl: PropTypes.string.isRequired
 }
 
 export default UserProfile;

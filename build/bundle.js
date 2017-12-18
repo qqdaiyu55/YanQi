@@ -3103,7 +3103,7 @@ var EditVideoCard = function (_React$Component) {
 
       // Genrate a random unique filename
       var splitFileName = file.name.split('.');
-      var backDrop = Math.random().toString(36).substr(2, 9) + '.' + splitFileName[splitFileName.length - 1];
+      var backDrop = uuidv8() + uuidv8() + '.' + splitFileName[splitFileName.length - 1];
 
       // Get jwt token
       var token = encodeURIComponent(_Auth2.default.getToken());
@@ -3125,7 +3125,7 @@ var EditVideoCard = function (_React$Component) {
 
       xhr.send(JSON.stringify({
         title: title,
-        backDrop: backDrop,
+        backdrop: backDrop,
         rscInfo: rscInfo,
         tags: tags,
         introduction: introduction
@@ -3281,6 +3281,11 @@ var ResourceCardInput = function ResourceCardInput(_ref2) {
   );
 };
 
+// Generate 8 bits unique id
+var uuidv8 = function uuidv8() {
+  return Math.random().toString(36).substr(2, 8);
+};
+
 exports.default = EditVideoCard;
 
 /***/ }),
@@ -3340,14 +3345,14 @@ var TitleList = function (_React$Component) {
       var token = encodeURIComponent(_Auth2.default.getToken());
       $.ajax({
         url: requestUrl,
-        headers: { "Authorization": 'bearer ' + token },
+        headers: { 'Authorization': 'bearer ' + token },
         cache: false,
         contentType: 'application/x-www-form-urlencoded',
         method: 'GET'
       }).done(function (data) {
         _this2.setState({ data: data });
       }).fail(function () {
-        console.log("There has an error on searching.");
+        console.log('There has an error on loading search results.');
       });
     }
   }, {
@@ -3356,7 +3361,10 @@ var TitleList = function (_React$Component) {
       var _this3 = this;
 
       if (nextProps.url !== this.props.url && nextProps.url !== '') {
-        this.setState({ mounted: true, url: nextProps.url }, function () {
+        this.setState({
+          mounted: true,
+          url: nextProps.url
+        }, function () {
           _this3.loadContent();
         });
       }
@@ -3377,10 +3385,10 @@ var TitleList = function (_React$Component) {
         titles = this.state.data.hits.map(function (v, i) {
           if (i < 30) {
             var name = v._source.title;
-            var backDrop = '/backdrop/' + v._source.backDrop;
+            var backdrop = '/backdrop/' + v._source.backdrop;
             var id = v._id;
 
-            return _react2.default.createElement(Item, { key: id, id: id, title: name, backdrop: backDrop });
+            return _react2.default.createElement(Item, { key: id, id: id, title: name, backdrop: backdrop });
           } else {
             return _react2.default.createElement('div', { key: v._id });
           }
@@ -3389,7 +3397,7 @@ var TitleList = function (_React$Component) {
 
       return _react2.default.createElement(
         'div',
-        { ref: 'titlecategory', className: 'TitleList', 'data-loaded': this.state.mounted },
+        { ref: 'titlecategory', className: 'search-items-list', 'data-loaded': this.state.mounted },
         _react2.default.createElement(
           'div',
           { className: 'titles-wrapper' },
@@ -3408,10 +3416,10 @@ var TitleList = function (_React$Component) {
 var Item = function (_React$Component2) {
   _inherits(Item, _React$Component2);
 
-  function Item() {
+  function Item(props) {
     _classCallCheck(this, Item);
 
-    return _possibleConstructorReturn(this, (Item.__proto__ || Object.getPrototypeOf(Item)).apply(this, arguments));
+    return _possibleConstructorReturn(this, (Item.__proto__ || Object.getPrototypeOf(Item)).call(this, props));
   }
 
   _createClass(Item, [{
@@ -3419,21 +3427,21 @@ var Item = function (_React$Component2) {
     value: function render() {
       return _react2.default.createElement(
         'div',
-        { className: 'Item', style: { backgroundImage: 'url(' + this.props.backdrop + ')' } },
+        { className: 'search-item', style: { backgroundImage: 'url(' + this.props.backdrop + ')' } },
         _react2.default.createElement(
           _reactRouterDom.Link,
-          { to: "/video/" + this.props.id, style: { textDecoration: 'none' } },
+          { to: '/video/' + this.props.id, style: { textDecoration: 'none' } },
           _react2.default.createElement(
             'div',
             { className: 'overlay' },
             _react2.default.createElement(
               'div',
-              { className: 'title' },
+              { className: 'item-title' },
               this.props.title
             )
           )
         ),
-        _react2.default.createElement(ListToggle, null)
+        _react2.default.createElement(ListToggle, { id: this.props.id })
       );
     }
   }]);
@@ -3452,7 +3460,7 @@ var ListToggle = function (_React$Component3) {
 
     var _this5 = _possibleConstructorReturn(this, (ListToggle.__proto__ || Object.getPrototypeOf(ListToggle)).call(this, props));
 
-    _this5.state = { toggled: false };
+    _this5.state = { liked: false };
 
     _this5.handleClick = _this5.handleClick.bind(_this5);
     return _this5;
@@ -3460,25 +3468,57 @@ var ListToggle = function (_React$Component3) {
 
   _createClass(ListToggle, [{
     key: 'handleClick',
-    value: function handleClick() {
-      if (this.state.toggled === true) {
-        this.setState({ toggled: false });
+    value: function handleClick(e) {
+      if (this.state.liked === true) {
+        this.setState({ liked: false });
       } else {
-        this.setState({ toggled: true });
+        this.setState({ liked: true });
       }
+
+      var requestUrl = '/update/videolist';
+      var token = encodeURIComponent(_Auth2.default.getToken());
+      var data = {
+        token: token,
+        videoId: this.props.id,
+        add: this.state.liked
+      };
+
+      $.ajax({
+        url: requestUrl,
+        headers: { 'Authorization': 'bearer ' + token },
+        data: JSON.stringify(data),
+        cache: false,
+        contentType: 'application/json',
+        method: 'POST'
+      }).fail(function () {
+        console.log('There is an error when updating video list.');
+      });
+
+      // e.handler.toggleClass('is_animating');
+      // e.handler.on('animationend', function(){
+      //   $(this).toggleClass('is_animating');
+      // });
+      // $('.heart').toggleClass('is_animating');
+      // $('.heart').on('animationend', function(){
+      //   $(this).toggleClass('is_animating');
+      // });
+
+      /*when the animation is over, remove the class*/
+      // $(".heart").on('animationend', function(){
+      //   $(this).toggleClass('is_animating');
+      // });
     }
   }, {
     key: 'render',
     value: function render() {
-      return _react2.default.createElement(
-        'div',
-        { onClick: this.handleClick, 'data-toggled': this.state.toggled, className: 'ListToggle' },
-        _react2.default.createElement(
-          'div',
-          null,
-          _react2.default.createElement('i', { className: 'fa fa-fw fa-plus' }),
-          _react2.default.createElement('i', { className: 'fa fa-fw fa-check' })
-        )
+      return (
+        // <div onClick={this.handleClick} data-toggled={this.state.toggled} className='item-list-toggle'>
+        //   <div>
+        //     <i className='fa fa-fw fa-plus'></i>
+        //     <i className='fa fa-fw fa-check'></i>
+        //   </div>
+        // </div>
+        _react2.default.createElement('div', { className: 'heart', onClick: this.handleClick })
       );
     }
   }]);
@@ -3530,7 +3570,7 @@ var Hero = function Hero() {
         { className: 'button-wrapper' },
         _react2.default.createElement(
           _reactRouterDom.Link,
-          { to: '/video/5a2913a374e691930feb1601', className: 'Button', 'data-primary': true, style: { textDecoration: 'none' } },
+          { to: '/video/5a361ddc1ee0d9fd34f570fd', className: 'Button', 'data-primary': true, style: { textDecoration: 'none' } },
           'Watch now'
         ),
         _react2.default.createElement(
@@ -3594,7 +3634,7 @@ var SearchPage = function (_React$Component) {
     value: function componentDidMount() {
       var term = this.props.match.params.term;
       this.setState({
-        searchUrl: '?q=' + term
+        searchUrl: '?q=title:' + term
       });
     }
   }, {
@@ -3602,7 +3642,7 @@ var SearchPage = function (_React$Component) {
     value: function componentWillReceiveProps(nextProps) {
       if (nextProps.match.params.term !== this.props.match.params.term) {
         this.setState({
-          searchUrl: '?q=' + nextProps.match.params.term
+          searchUrl: '?q=title:' + nextProps.match.params.term
         });
       }
     }
@@ -3614,8 +3654,13 @@ var SearchPage = function (_React$Component) {
         { className: 'search-results-wrapper' },
         _react2.default.createElement(
           'div',
-          { className: 'Title' },
-          'Search Results'
+          { className: 'title' },
+          'Search Results for ',
+          _react2.default.createElement(
+            'p',
+            { style: { 'color': 'red' } },
+            this.props.match.params.term
+          )
         ),
         _react2.default.createElement(_TitleList2.default, { url: this.state.searchUrl })
       );
@@ -27403,6 +27448,10 @@ var _react = __webpack_require__(0);
 
 var _react2 = _interopRequireDefault(_react);
 
+var _propTypes = __webpack_require__(1);
+
+var _propTypes2 = _interopRequireDefault(_propTypes);
+
 var _reactRouterDom = __webpack_require__(5);
 
 var _Logo = __webpack_require__(101);
@@ -27425,10 +27474,6 @@ var _Auth = __webpack_require__(7);
 
 var _Auth2 = _interopRequireDefault(_Auth);
 
-var _TitleList = __webpack_require__(44);
-
-var _TitleList2 = _interopRequireDefault(_TitleList);
-
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -27437,12 +27482,8 @@ function _possibleConstructorReturn(self, call) { if (!self) { throw new Referen
 
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
-// User tags
-var tags = ['电影', '动漫', 'MV', 'HBO', 'AMV', '行尸走肉', '小埋'];
-
 // Navigation
 // Note: There has to update modal state manually instead of pass show property of modal, or there'll be a conflict with droppable ul when rerendering: **Failed to execute 'removeChild' on 'Node': The node to be removed is not a child of this node**.
-
 var Header = function (_React$Component) {
   _inherits(Header, _React$Component);
 
@@ -27452,22 +27493,52 @@ var Header = function (_React$Component) {
     var _this = _possibleConstructorReturn(this, (Header.__proto__ || Object.getPrototypeOf(Header)).call(this, props));
 
     _this.state = {
-      searchTerm: ''
+      searchTerm: '',
+      profile: {
+        username: '',
+        avatarUrl: '',
+        tags: []
+      }
     };
 
     _this.handleKeyUp = _this.handleKeyUp.bind(_this);
     _this.handleChange = _this.handleChange.bind(_this);
     return _this;
   }
-  // Process the search
-
 
   _createClass(Header, [{
+    key: 'componentWillMount',
+    value: function componentWillMount() {
+      var _this2 = this;
+
+      var token = _Auth2.default.getToken();
+      var data = { token: token };
+      $.ajax({
+        url: '/api/profile',
+        data: JSON.stringify(data),
+        headers: { 'Authorization': 'bearer ' + token },
+        contentType: 'application/json',
+        method: 'POST'
+      }).done(function (data) {
+        _this2.setState({
+          profile: {
+            username: data.username,
+            avatarUrl: data.avatarUrl,
+            tags: data.tags
+          }
+        });
+      }).fail(function () {
+        console.log('There is an error when getting user profile.');
+      });
+    }
+    // Process the search
+
+  }, {
     key: 'handleKeyUp',
     value: function handleKeyUp(e) {
       if (e.key === 'Enter' && this.state.searchTerm !== '') {
 
-        // Redirect to /search
+        // Redirect to '/search'
         this.props.history.push('/search/' + this.state.searchTerm);
       }
     }
@@ -27484,14 +27555,18 @@ var Header = function (_React$Component) {
       return _react2.default.createElement(
         'header',
         { className: 'Header' },
-        _react2.default.createElement(_Logo2.default, null),
-        _react2.default.createElement(Navigation, { plusOnClick: this.createNew }),
+        _react2.default.createElement(
+          _reactRouterDom.Link,
+          { to: '/' },
+          _react2.default.createElement(_Logo2.default, null)
+        ),
+        _react2.default.createElement(Navigation, { tags: this.state.profile.tags }),
         _react2.default.createElement(
           'div',
           { id: 'search', className: 'Search' },
           _react2.default.createElement('input', { onKeyUp: this.handleKeyUp, onChange: this.handleChange, type: 'search', placeholder: 'Search for a title...', value: this.state.searchTerm })
         ),
-        _react2.default.createElement(_UserProfile2.default, null)
+        _react2.default.createElement(_UserProfile2.default, { username: this.state.profile.username, avatarUrl: this.state.profile.avatarUrl })
       );
     }
   }]);
@@ -27502,65 +27577,78 @@ var Header = function (_React$Component) {
 var Navigation = function (_React$Component2) {
   _inherits(Navigation, _React$Component2);
 
-  function Navigation() {
+  function Navigation(props) {
     _classCallCheck(this, Navigation);
 
-    var _this2 = _possibleConstructorReturn(this, (Navigation.__proto__ || Object.getPrototypeOf(Navigation)).call(this));
+    var _this3 = _possibleConstructorReturn(this, (Navigation.__proto__ || Object.getPrototypeOf(Navigation)).call(this, props));
 
-    _this2.openTagModal = _this2.openTagModal.bind(_this2);
-    _this2.handleTagInputChange = _this2.handleTagInputChange.bind(_this2);
-    _this2.addTag = _this2.addTag.bind(_this2);
-    _this2.openEditVideoModal = _this2.openEditVideoModal.bind(_this2);
-    return _this2;
+    _this3.tags = [];
+
+    _this3.openTagModal = _this3.openTagModal.bind(_this3);
+    _this3.handleTagInputChange = _this3.handleTagInputChange.bind(_this3);
+    _this3.addTag = _this3.addTag.bind(_this3);
+    _this3.updateTags = _this3.updateTags.bind(_this3);
+
+    _this3.openEditVideoModal = _this3.openEditVideoModal.bind(_this3);
+    return _this3;
   }
 
   _createClass(Navigation, [{
+    key: 'componentWillReceiveProps',
+    value: function componentWillReceiveProps(nextProps) {
+      if (!arraysEqual(this.tags, nextProps.tags)) {
+        this.tags = nextProps.tags;
+        this.forceUpdate();
+      }
+    }
+  }, {
     key: 'componentDidMount',
     value: function componentDidMount() {
-      $(".tags-box ul").sortable();
-      $(".tags-box").droppable({
+      $('.tags-box ul').sortable();
+      $('.tags-box').droppable({
         greedy: true,
-        accepet: ".ui-sortable-handle"
+        accepet: '.ui-sortable-handle'
       });
-      $("body").droppable({
+      $('body').droppable({
         drop: function drop(e, ui) {
           ui.draggable.remove();
         },
-        accept: ".ui-sortable-handle"
+        accept: '.ui-sortable-handle'
       });
 
-      // Send updated tags to server if they were changed
-      setInterval(function () {
-        var newTags = $(".tags-box ul").children().map(function () {
-          return this.innerHTML;
-        }).get();
+      setInterval(this.updateTags, 10000);
+    }
 
-        // Get token from local storage
-        var token = _Auth2.default.getToken();
+    // Update tags
 
-        // Judge if new tags and previous tags (5 seconds before) is equal
-        if (!arraysEqual(newTags, tags)) {
-          var xhr = new XMLHttpRequest();
-          xhr.open('post', '/api/updateTags');
-          xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
-          // set the authorization HTTP header
-          xhr.setRequestHeader('Authorization', 'bearer ' + token);
-          xhr.responseType = 'json';
-          xhr.addEventListener('load', function () {
-            if (xhr.status === 400) {
-              var error = xhr.response.error;
-              console.log(error);
-            }
-          });
+  }, {
+    key: 'updateTags',
+    value: function updateTags() {
+      var newTags = $('.tags-box ul').children().map(function () {
+        return this.innerHTML;
+      }).get();
 
-          xhr.send('json=' + JSON.stringify({
-            token: token,
-            tags: newTags
-          }));
+      // Get token from local storage
+      var token = _Auth2.default.getToken();
 
-          tags = newTags;
-        }
-      }, 10000);
+      // Judge if new tags and previous tags (5 seconds before) is equal
+      if (!arraysEqual(newTags, this.tags)) {
+        var data = {
+          token: token,
+          tags: newTags
+        };
+        $.ajax({
+          url: 'api/updateTags',
+          data: JSON.stringify(data),
+          headers: { 'Authorization': 'bearer ' + token },
+          contentType: 'application/json',
+          method: 'POST'
+        }).fail(function () {
+          console.log('There has an error when updating tags.');
+        });
+
+        this.tags = newTags;
+      }
     }
 
     // Open create-tag modal when click button
@@ -27568,40 +27656,43 @@ var Navigation = function (_React$Component2) {
   }, {
     key: 'openTagModal',
     value: function openTagModal() {
-      $("#add-tag-modal").css({ "visibility": "visible", "opacity": "1" });
+      $('#add-tag-modal').css({ 'visibility': 'visible', 'opacity': '1' });
     }
+
     // Implement create-tag modal animation when inputing
 
   }, {
     key: 'handleTagInputChange',
     value: function handleTagInputChange(e) {
       if (e.target.value == '') {
-        $(".tag-modal-buttons div").css("top", "0");
+        $('.tag-modal-buttons div').css('top', '0');
       } else {
-        $(".tag-modal-buttons div").css("top", "-50px");
+        $('.tag-modal-buttons div').css('top', '-50px');
       }
     }
+
     // If the text is non-empty then add the new tag, else cancel and close the modal.
 
   }, {
     key: 'addTag',
     value: function addTag() {
-      var newTag = $(".add-navigation-tag").find("input").val();
+      var newTag = $('.add-navigation-tag').find('input').val();
       if (newTag !== '') {
-        $("#tagsbox ul").append('<li class="ui-sortable-handle">' + newTag + '</li>');
+        $('#tagsbox ul').append('<li class="ui-sortable-handle">' + newTag + '</li>');
       }
 
-      $("#add-tag-modal").css({ "visibility": "hidden", "opacity": "0" });
+      $('#add-tag-modal').css({ 'visibility': 'hidden', 'opacity': '0' });
       // Reset modal content
-      $(".add-navigation-tag").find("input").val('');
-      $(".tag-modal-buttons").find("div").css("top", "0");
+      $('.add-navigation-tag').find('input').val('');
+      $('.tag-modal-buttons').find('div').css('top', '0');
     }
+
     // open edit-video-card
 
   }, {
     key: 'openEditVideoModal',
     value: function openEditVideoModal() {
-      $("#edit-video-card").css({ "visibility": "visible", "opacity": "1" });
+      $('#edit-video-card').css({ 'visibility': 'visible', 'opacity': '1' });
     }
   }, {
     key: 'render',
@@ -27630,10 +27721,10 @@ var Navigation = function (_React$Component2) {
                 _react2.default.createElement(
                   'ul',
                   null,
-                  tags.map(function (tag) {
+                  this.tags.map(function (tag) {
                     return _react2.default.createElement(
                       'li',
-                      { key: tag },
+                      { key: tag, className: 'ui-sortable-handle' },
                       tag
                     );
                   })
@@ -27698,10 +27789,11 @@ var Navigation = function (_React$Component2) {
   return Navigation;
 }(_react2.default.Component);
 
-// Judge if two arrays are equal
+Navigation.propTypes = {
+  tags: _propTypes2.default.array.isRequired
 
-
-var arraysEqual = function arraysEqual(arr1, arr2) {
+  // Judge if two arrays are equal
+};var arraysEqual = function arraysEqual(arr1, arr2) {
   if (arr1.length !== arr2.length) return false;
   for (var i = arr1.length; i--;) {
     if (arr1[i] !== arr2[i]) return false;
@@ -27798,6 +27890,10 @@ var _react = __webpack_require__(0);
 
 var _react2 = _interopRequireDefault(_react);
 
+var _propTypes = __webpack_require__(1);
+
+var _propTypes2 = _interopRequireDefault(_propTypes);
+
 var _Auth = __webpack_require__(7);
 
 var _Auth2 = _interopRequireDefault(_Auth);
@@ -27816,55 +27912,20 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
 var UserProfile = function (_React$Component) {
   _inherits(UserProfile, _React$Component);
 
-  function UserProfile() {
+  function UserProfile(props) {
     _classCallCheck(this, UserProfile);
 
-    var _this = _possibleConstructorReturn(this, (UserProfile.__proto__ || Object.getPrototypeOf(UserProfile)).call(this));
+    var _this = _possibleConstructorReturn(this, (UserProfile.__proto__ || Object.getPrototypeOf(UserProfile)).call(this, props));
 
     _this.state = {
-      error: '',
-      username: '',
-      avatar: null
+      error: ''
     };
     return _this;
   }
+  // Show profile card when mouse moves over
+
 
   _createClass(UserProfile, [{
-    key: 'componentWillMount',
-    value: function componentWillMount() {
-      var _this2 = this;
-
-      // Get jwt token
-      var token = encodeURIComponent(_Auth2.default.getToken());
-      var formData = 'token=' + token;
-
-      // Get user information from server and create an AJAX request
-      var xhr = new XMLHttpRequest();
-      xhr.open('post', '/api/userinfo');
-      xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
-
-      // set the authorization HTTP header
-      xhr.setRequestHeader('Authorization', 'bearer ' + _Auth2.default.getToken());
-
-      xhr.responseType = 'json';
-      xhr.addEventListener('load', function () {
-        if (xhr.status === 200) {
-          _this2.setState({
-            username: xhr.response.username,
-            avatar: xhr.response.avatar
-          });
-        } else {
-          _this2.setState({
-            error: xhr.response.error
-          });
-        }
-      });
-      xhr.send(formData);
-    }
-
-    // Show profile card when mouse moves over
-
-  }, {
     key: 'showProfileCard',
     value: function showProfileCard() {
       $("#ProfileCard").show();
@@ -27882,12 +27943,12 @@ var UserProfile = function (_React$Component) {
           _react2.default.createElement(
             'div',
             { className: 'name' },
-            this.state.username
+            this.props.username
           ),
           _react2.default.createElement(
             'div',
             { className: 'image', onMouseOver: this.showProfileCard },
-            _react2.default.createElement('img', { src: 'http://www.avatarsdb.com/avatars/waifu.jpg', alt: 'profile' })
+            _react2.default.createElement('img', { src: '/avatar/' + this.props.avatarUrl, alt: 'profile' })
           )
         )
       );
@@ -27903,22 +27964,22 @@ var ProfileCard = function (_React$Component2) {
   function ProfileCard() {
     _classCallCheck(this, ProfileCard);
 
-    var _this3 = _possibleConstructorReturn(this, (ProfileCard.__proto__ || Object.getPrototypeOf(ProfileCard)).call(this));
+    var _this2 = _possibleConstructorReturn(this, (ProfileCard.__proto__ || Object.getPrototypeOf(ProfileCard)).call(this));
 
-    _this3.state = {
+    _this2.state = {
       scale: 2
       // preview: null,
       // src
     };
-    _this3.avatarEditor = null;
+    _this2.avatarEditor = null;
 
-    _this3.setAvatarScale = _this3.setAvatarScale.bind(_this3);
-    _this3.setEditorRef = _this3.setEditorRef.bind(_this3);
-    _this3.submitAvatar = _this3.submitAvatar.bind(_this3);
+    _this2.setAvatarScale = _this2.setAvatarScale.bind(_this2);
+    _this2.setEditorRef = _this2.setEditorRef.bind(_this2);
+    _this2.submitAvatar = _this2.submitAvatar.bind(_this2);
 
     // this.onCrop = this.onCrop.bind(this);
     // this.onClose = this.onClose.bind(this);
-    return _this3;
+    return _this2;
   }
 
   // onClose() {
@@ -28020,6 +28081,11 @@ var ProfileCard = function (_React$Component2) {
 
   return ProfileCard;
 }(_react2.default.Component);
+
+UserProfile.propTypes = {
+  username: _propTypes2.default.string.isRequired,
+  avatarUrl: _propTypes2.default.string.isRequired
+};
 
 exports.default = UserProfile;
 

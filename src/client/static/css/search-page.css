@@ -6,7 +6,7 @@
   /*background: rgba(0, 0, 0, 0.8);*/
 }
 
-.search-results-wrapper .Title {
+.search-results-wrapper .title {
   position: relative;
   font-size: 24px;
   font-weight: 600;
@@ -15,7 +15,7 @@
   bottom: -10px;
 }
 
-.TitleList {
+.search-items-list {
   padding: 20px 40px;
   box-sizing: border-box;
   -webkit-transition: opacity 1.5s ease;
@@ -24,7 +24,7 @@
   position: relative;
   z-index: 4;
 }
-.TitleList .titles-wrapper {
+.search-items-list .items-wrapper {
   display: -webkit-box;
   display: -webkit-flex;
   display: -ms-flexbox;
@@ -40,11 +40,11 @@
       -ms-flex-pack: justify;
           justify-content: space-between;
 }
-.TitleList[data-loaded='true'] {
+.search-items-list[data-loaded='true'] {
   opacity: 1;
 }
 
-.Item {
+.search-item {
   position: relative;
   cursor: pointer;
   display: inline-block;
@@ -64,13 +64,13 @@
   -webkit-transition: background 1s ease;
   transition: background 1s ease;
 }
-.Item:nth-child(n+6) {
+.search-item:nth-child(n+6) {
   margin-top: 30px;
 }
-.Item:last-child {
+.search-item:last-child {
   margin-right: 0;
 }
-.Item .overlay {
+.search-item .overlay {
   /* FF3.6-15 */
   background: -webkit-linear-gradient(top, rgba(0, 0, 0, 0.4) 0%, transparent 100%);
   /* Chrome10-25,Safari5.1-6 */
@@ -86,7 +86,7 @@
   -webkit-transition: opacity .125s ease;
   transition: opacity .125s ease;
 }
-.Item .overlay .title {
+.search-item .overlay .item-title {
   position: relative;
   text-align: center;
   top: 50%;
@@ -97,18 +97,18 @@
   -webkit-transition: opacity .25s ease;
   transition: opacity .25s ease;
 }
-.Item:hover {
+.search-item:hover {
   background-size: 150%;
 }
-.Item:hover .overlay {
+.search-item:hover .overlay {
   opacity: 0;
   pointer-events: all;
 }
-.Item:hover .overlay .title {
+.search-item:hover .overlay .title {
   opacity: 0;
 }
 
-.ListToggle {
+.item-list-toggle {
   border: 2px solid rgba(255, 255, 255, 0.2);
   width: 32px;
   height: 32px;
@@ -120,20 +120,20 @@
   top: 20px;
   opacity: 1;
 }
-.ListToggle:hover {
+.item-list-toggle:hover {
   border: 2px solid #ffffff;
 }
-.ListToggle:hover div {
+.item-list-toggle:hover div {
   top: -32px;
 }
-.ListToggle[data-toggled="true"] {
+.item-list-toggle[data-toggled="true"] {
   background: #e50914;
   border: 2px solid #e50914;
 }
-.ListToggle[data-toggled="true"] div {
+.item-list-toggle[data-toggled="true"] div {
   top: -32px;
 }
-.ListToggle div {
+.item-list-toggle div {
   position: absolute;
   top: 0;
   left: 0;
@@ -142,7 +142,7 @@
   -webkit-transition: .125s ease;
   transition: .125s ease;
 }
-.ListToggle div i {
+.item-list-toggle div i {
   display: -webkit-box;
   display: -webkit-flex;
   display: -ms-flexbox;
@@ -157,4 +157,36 @@
           justify-content: center;
   height: 32px;
   width: 32px;
+}
+
+.heart {
+  /*border: 2px solid rgba(255, 255, 255, 0.2);*/
+  width: 60px;
+  height: 60px;
+  /*font-size: 16px;*/
+  border-radius: 32px;
+  /*overflow: hidden;*/
+  position: absolute;
+  right: 20px;
+  top: 20px;
+
+  background-image:url( '/img/web_heart_animation.png');
+  background-position: left;
+  background-repeat:no-repeat;
+  background-size:2900%;
+}
+.heart:hover {
+  background-position:right;
+}
+.heart[data-toggled="true"] {
+  animation: heart-burst .8s steps(28) 1;
+}
+
+.is_animating {
+  animation: heart-burst .8s steps(28) 1;
+}
+
+@keyframes heart-burst {
+  from {background-position:left;}
+  to { background-position:right;}
 }

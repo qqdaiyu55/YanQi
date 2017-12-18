@@ -1,16 +1,17 @@
 const mongoose = require('mongoose')
+const Schema = mongoose.Schema
 const bcrypt = require('bcrypt')
 
 // Define the User model schema
-const UserSchema = new mongoose.Schema({
+const UserSchema = new Schema({
   username: {
     type: String,
     index: { unique: true }
   },
   password: String,
-  avatar: {
-    type: Buffer,
-    contentype: String
+  avatar_url: {
+    type: String,
+    default: 'default.jpg'
   },
   tags: {
     type: Array,
@@ -24,7 +25,9 @@ const UserSchema = new mongoose.Schema({
     type: Number,
     default: 0.0
   },
-  inviteCode: String
+  video_list: {
+    type: [Schema.Types.ObjectId]
+  }
 });
 
 

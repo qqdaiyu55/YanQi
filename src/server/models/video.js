@@ -1,17 +1,46 @@
-const mongoose = require('mongoose');
-const Schema = mongoose.Schema;
-const mongoosastic = require('mongoosastic');
+const mongoose = require('mongoose')
+const Schema = mongoose.Schema
+const mongoosastic = require('mongoosastic')
 
 // define the Video model schema
 const VideoSchema = new Schema({
   title: { type: String, es_indexed: true },
-  backDrop: { type: String, es_indexed: true},
-  rscInfo: Array,
-  tags: { type: Array, es_type: 'string', es_indexed: true, index: 'not_analyzed' },
-  introduction: { type: String, es_indexed: true }
-});
+  backdrop: { type: String, es_indexed: true},
+  rsc_info: Array,
+  tags: { type: [String], es_type: 'text', es_indexed: true },
+  introduction: String,
+  creat_time: { type: Date, default: Date.now() },
+  update_time: { type: Date, default: Date.now(), es_indexed: true }
+})
 
 VideoSchema.plugin(mongoosastic)
 
+var Video = mongoose.model('Video', VideoSchema)
 
-module.exports = mongoose.model('Video', VideoSchema);
+Video.createMapping({
+  "mappings": {
+    "video": {
+      "properties": {
+        "title": {
+          "type": "text",
+          "analyzer": "ik_max_word",
+          "search_analyzer": "ik_max_word"
+        },
+        "tags": {
+          "analyzer": "keyword"
+        }
+      }
+    }
+  }
+}, (err, mapping) => {
+  if (err) {
+    console.log('error creating mapping (you can safely ignore this)')
+    console.log(err)
+  } else {
+    console.log('mapping created!')
+    console.log(mapping)
+  }
+})
+
+// module.exports = mongoose.model('Video', VideoSchema)
+module.exports = Video

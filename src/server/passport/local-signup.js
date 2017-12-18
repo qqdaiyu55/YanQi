@@ -14,12 +14,12 @@ module.exports = new PassportLocalStrategy({
   const userData = {
     username: username.trim(),
     password: password.trim()
-  };
+  }
 
-  const newUser = new User(userData);
+  const newUser = new User(userData)
   newUser.save((err) => {
-    if (err) { return done(err); }
+    if (err) { return done(err) }
 
-    return done(null);
-  });
-});
+    return done(null)
+  })
+})

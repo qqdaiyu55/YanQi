@@ -8,24 +8,21 @@ const multer = require('multer');
 
 const router = new express.Router();
 
-router.post('/userinfo', (req, res, next) => {
-  const token = req.body.token;
-  const decode = jwt.verify(token, config.jwtSecret);
-  const subId = decode.sub;
+// Get user profile
+router.post('/profile', (req, res, next) => {
+  const token = req.body.token
+  const decode = jwt.verify(token, config.jwtSecret)
+  const subId = decode.sub
 
   User.findById(subId, (err, user) => {
-    if (err) {
-      res.status(400).json({
-        error: 'Cannot find user!'
-      });
-    }
+    if (err) throw err
 
     res.status(200).json({
       username: user.username,
-      avatar: user.avatar
+      avatarUrl: user.avatar_url,
+      tags: user.tags
     });
   });
-
 });
 
 router.post('/updateAvatar', (req, res, next) => {
@@ -44,7 +41,7 @@ router.post('/updateAvatar', (req, res, next) => {
 });
 
 router.post('/updateTags', (req, res, next) => {
-  const info = JSON.parse(req.body.json);
+  const info = req.body;
   const token = info.token;
   const decode = jwt.verify(token, config.jwtSecret);
   const subId = decode.sub;
@@ -64,8 +61,8 @@ router.post('/uploadVideos', (req, res, next) => {
 
   Video.create([{
     title: info.title,
-    backDrop: info.backDrop,
-    rscInfo: info.rscInfo,
+    backdrop: info.backdrop,
+    rsc_info: info.rscInfo,
     tags: info.tags,
     introduction: info.introduction
     }], (err, res) => {
@@ -98,16 +95,33 @@ router.post('/uploadCover', (req, res) => {
 });
 
 router.get('/videos', (req, res) => {
-  Video.search({
-    "match": { "title" : req.query.q }
-  }, (err, results) => {
+  var parsedQuery = req.query.q.split(':')
+  var searchPattern = {}
+  if (parsedQuery[0] === 'title') {
+    searchPattern = {
+      'match': {
+        'title': parsedQuery[1]
+      }
+    }
+  } else if (parsedQuery[1] === 'tags') {
+    searchPattern = {
+      'terms': {
+        'tags': [parsedQuery[1]]
+      }
+    }
+  } else {
+    console.log('Error: Illegal search pattern!')
+    return
+  }
+
+  Video.search(searchPattern, (err, results) => {
     if (err) throw err;
     res.json({
       num: results.hits.total,
       hits: results.hits.hits
-    });
-  });
-});
+    })
+  })
+})
 
 router.get('/video', (req, res) => {
   const id = req.query.id;
@@ -116,7 +130,8 @@ router.get('/video', (req, res) => {
     if (err) throw err;
 
     res.status(200).json(video);
-  });
-});
+  })
+})
+
 
 module.exports = router;
