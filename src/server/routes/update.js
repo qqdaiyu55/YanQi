@@ -9,7 +9,6 @@ const multer = require('multer');
 const router = new express.Router();
 
 router.post('/videolist', (req, res) => {
-  console.log(req)
   const token = req.body.token
   const decode = jwt.verify(token, config.jwtSecret)
   const subId = decode.sub
@@ -29,3 +28,5 @@ router.post('/videolist', (req, res) => {
     })
   }
 })
+
+module.exports = router

@@ -3289,246 +3289,7 @@ var uuidv8 = function uuidv8() {
 exports.default = EditVideoCard;
 
 /***/ }),
-/* 44 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
-var _react = __webpack_require__(0);
-
-var _react2 = _interopRequireDefault(_react);
-
-var _Auth = __webpack_require__(7);
-
-var _Auth2 = _interopRequireDefault(_Auth);
-
-var _reactRouterDom = __webpack_require__(5);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
-
-function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
-
-var TitleList = function (_React$Component) {
-  _inherits(TitleList, _React$Component);
-
-  function TitleList(props) {
-    _classCallCheck(this, TitleList);
-
-    var _this = _possibleConstructorReturn(this, (TitleList.__proto__ || Object.getPrototypeOf(TitleList)).call(this, props));
-
-    _this.state = {
-      data: [],
-      mounted: false
-    };
-
-    _this.loadContent = _this.loadContent.bind(_this);
-    return _this;
-  }
-
-  _createClass(TitleList, [{
-    key: 'loadContent',
-    value: function loadContent() {
-      var _this2 = this;
-
-      var requestUrl = '/api/videos' + this.props.url;
-      var token = encodeURIComponent(_Auth2.default.getToken());
-      $.ajax({
-        url: requestUrl,
-        headers: { 'Authorization': 'bearer ' + token },
-        cache: false,
-        contentType: 'application/x-www-form-urlencoded',
-        method: 'GET'
-      }).done(function (data) {
-        _this2.setState({ data: data });
-      }).fail(function () {
-        console.log('There has an error on loading search results.');
-      });
-    }
-  }, {
-    key: 'componentWillReceiveProps',
-    value: function componentWillReceiveProps(nextProps) {
-      var _this3 = this;
-
-      if (nextProps.url !== this.props.url && nextProps.url !== '') {
-        this.setState({
-          mounted: true,
-          url: nextProps.url
-        }, function () {
-          _this3.loadContent();
-        });
-      }
-    }
-  }, {
-    key: 'componentDidMount',
-    value: function componentDidMount() {
-      if (this.props.url !== '') {
-        this.loadContent();
-        this.setState({ mounted: true });
-      }
-    }
-  }, {
-    key: 'render',
-    value: function render() {
-      var titles = '';
-      if (this.state.data.hits) {
-        titles = this.state.data.hits.map(function (v, i) {
-          if (i < 30) {
-            var name = v._source.title;
-            var backdrop = '/backdrop/' + v._source.backdrop;
-            var id = v._id;
-
-            return _react2.default.createElement(Item, { key: id, id: id, title: name, backdrop: backdrop });
-          } else {
-            return _react2.default.createElement('div', { key: v._id });
-          }
-        });
-      }
-
-      return _react2.default.createElement(
-        'div',
-        { ref: 'titlecategory', className: 'search-items-list', 'data-loaded': this.state.mounted },
-        _react2.default.createElement(
-          'div',
-          { className: 'titles-wrapper' },
-          titles
-        )
-      );
-    }
-  }]);
-
-  return TitleList;
-}(_react2.default.Component);
-
-// Title List Item
-
-
-var Item = function (_React$Component2) {
-  _inherits(Item, _React$Component2);
-
-  function Item(props) {
-    _classCallCheck(this, Item);
-
-    return _possibleConstructorReturn(this, (Item.__proto__ || Object.getPrototypeOf(Item)).call(this, props));
-  }
-
-  _createClass(Item, [{
-    key: 'render',
-    value: function render() {
-      return _react2.default.createElement(
-        'div',
-        { className: 'search-item', style: { backgroundImage: 'url(' + this.props.backdrop + ')' } },
-        _react2.default.createElement(
-          _reactRouterDom.Link,
-          { to: '/video/' + this.props.id, style: { textDecoration: 'none' } },
-          _react2.default.createElement(
-            'div',
-            { className: 'overlay' },
-            _react2.default.createElement(
-              'div',
-              { className: 'item-title' },
-              this.props.title
-            )
-          )
-        ),
-        _react2.default.createElement(ListToggle, { id: this.props.id })
-      );
-    }
-  }]);
-
-  return Item;
-}(_react2.default.Component);
-
-// ListToggle
-
-
-var ListToggle = function (_React$Component3) {
-  _inherits(ListToggle, _React$Component3);
-
-  function ListToggle(props) {
-    _classCallCheck(this, ListToggle);
-
-    var _this5 = _possibleConstructorReturn(this, (ListToggle.__proto__ || Object.getPrototypeOf(ListToggle)).call(this, props));
-
-    _this5.state = { liked: false };
-
-    _this5.handleClick = _this5.handleClick.bind(_this5);
-    return _this5;
-  }
-
-  _createClass(ListToggle, [{
-    key: 'handleClick',
-    value: function handleClick(e) {
-      if (this.state.liked === true) {
-        this.setState({ liked: false });
-      } else {
-        this.setState({ liked: true });
-      }
-
-      var requestUrl = '/update/videolist';
-      var token = encodeURIComponent(_Auth2.default.getToken());
-      var data = {
-        token: token,
-        videoId: this.props.id,
-        add: this.state.liked
-      };
-
-      $.ajax({
-        url: requestUrl,
-        headers: { 'Authorization': 'bearer ' + token },
-        data: JSON.stringify(data),
-        cache: false,
-        contentType: 'application/json',
-        method: 'POST'
-      }).fail(function () {
-        console.log('There is an error when updating video list.');
-      });
-
-      // e.handler.toggleClass('is_animating');
-      // e.handler.on('animationend', function(){
-      //   $(this).toggleClass('is_animating');
-      // });
-      // $('.heart').toggleClass('is_animating');
-      // $('.heart').on('animationend', function(){
-      //   $(this).toggleClass('is_animating');
-      // });
-
-      /*when the animation is over, remove the class*/
-      // $(".heart").on('animationend', function(){
-      //   $(this).toggleClass('is_animating');
-      // });
-    }
-  }, {
-    key: 'render',
-    value: function render() {
-      return (
-        // <div onClick={this.handleClick} data-toggled={this.state.toggled} className='item-list-toggle'>
-        //   <div>
-        //     <i className='fa fa-fw fa-plus'></i>
-        //     <i className='fa fa-fw fa-check'></i>
-        //   </div>
-        // </div>
-        _react2.default.createElement('div', { className: 'heart', onClick: this.handleClick })
-      );
-    }
-  }]);
-
-  return ListToggle;
-}(_react2.default.Component);
-
-exports.default = TitleList;
-
-/***/ }),
+/* 44 */,
 /* 45 */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -3603,9 +3364,13 @@ var _react = __webpack_require__(0);
 
 var _react2 = _interopRequireDefault(_react);
 
-var _TitleList = __webpack_require__(44);
+var _Auth = __webpack_require__(7);
 
-var _TitleList2 = _interopRequireDefault(_TitleList);
+var _Auth2 = _interopRequireDefault(_Auth);
+
+var _VideoList = __webpack_require__(112);
+
+var _VideoList2 = _interopRequireDefault(_VideoList);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -3624,27 +3389,78 @@ var SearchPage = function (_React$Component) {
     var _this = _possibleConstructorReturn(this, (SearchPage.__proto__ || Object.getPrototypeOf(SearchPage)).call(this, props));
 
     _this.state = {
-      searchUrl: ''
+      data: [],
+      videolist: []
     };
+
+    _this.loadContent = _this.loadContent.bind(_this);
+    _this.getVideoList = _this.getVideoList.bind(_this);
     return _this;
   }
 
   _createClass(SearchPage, [{
     key: 'componentDidMount',
     value: function componentDidMount() {
-      var term = this.props.match.params.term;
-      this.setState({
-        searchUrl: '?q=title:' + term
-      });
+      if (this.props.match.params.term !== '') {
+        this.loadContent(this.props.match.params.term);
+        this.getVideoList();
+      }
     }
   }, {
     key: 'componentWillReceiveProps',
     value: function componentWillReceiveProps(nextProps) {
-      if (nextProps.match.params.term !== this.props.match.params.term) {
-        this.setState({
-          searchUrl: '?q=title:' + nextProps.match.params.term
-        });
+      if (nextProps.match.params.term !== this.props.match.params.term && nextProps.match.params.term !== '') {
+        this.loadContent(nextProps.match.params.term);
+        this.getVideoList();
       }
+    }
+    // Search for title
+
+  }, {
+    key: 'loadContent',
+    value: function loadContent(searchTerm) {
+      var _this2 = this;
+
+      var requestUrl = '/api/videos?q=title:' + searchTerm;
+      var token = _Auth2.default.getToken();
+      $.ajax({
+        url: requestUrl,
+        headers: { 'Authorization': 'bearer ' + token },
+        contentType: 'application/x-www-form-urlencoded',
+        method: 'GET'
+      }).done(function (data) {
+        var cleanData = data.hits.map(function (v) {
+          return {
+            id: v._id,
+            title: v._source.title,
+            backdrop: v._source.backdrop
+          };
+        });
+        _this2.setState({ data: cleanData });
+        console.log(cleanData);
+      }).fail(function () {
+        console.log('There has an error on loading search results.');
+      });
+    }
+    // Get list of videos the user liked
+
+  }, {
+    key: 'getVideoList',
+    value: function getVideoList() {
+      var _this3 = this;
+
+      var token = _Auth2.default.getToken();
+      $.ajax({
+        url: '/api/videolist/id',
+        headers: { 'Authorization': 'bearer ' + token },
+        data: JSON.stringify({ token: token }),
+        contentType: 'application/json',
+        method: 'POST'
+      }).done(function (data) {
+        _this3.setState({ videolist: data.video_list });
+      }).fail(function () {
+        console.log('There is an error when getting video list.');
+      });
     }
   }, {
     key: 'render',
@@ -3662,7 +3478,7 @@ var SearchPage = function (_React$Component) {
             this.props.match.params.term
           )
         ),
-        _react2.default.createElement(_TitleList2.default, { url: this.state.searchUrl })
+        _react2.default.createElement(_VideoList2.default, { data: this.state.data, videolist: this.state.videolist })
       );
     }
   }]);
@@ -27154,6 +26970,10 @@ var _VideoPage = __webpack_require__(47);
 
 var _VideoPage2 = _interopRequireDefault(_VideoPage);
 
+var _MyList = __webpack_require__(114);
+
+var _MyList2 = _interopRequireDefault(_MyList);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 var Homepage = function Homepage() {
@@ -27164,7 +26984,8 @@ var Homepage = function Homepage() {
     _react2.default.createElement(_Video.Video, null),
     _react2.default.createElement(_reactRouterDom.Route, { exact: true, path: '/', component: _Hero2.default }),
     _react2.default.createElement(_reactRouterDom.Route, { path: '/search/:term', component: _SearchPage2.default }),
-    _react2.default.createElement(_reactRouterDom.Route, { path: '/video/:id', component: _VideoPage2.default })
+    _react2.default.createElement(_reactRouterDom.Route, { path: '/video/:id', component: _VideoPage2.default }),
+    _react2.default.createElement(_reactRouterDom.Route, { path: '/list', component: _MyList2.default })
   );
 };
 
@@ -27732,9 +27553,13 @@ var Navigation = function (_React$Component2) {
               )
             ),
             _react2.default.createElement(
-              'li',
-              null,
-              'My list'
+              _reactRouterDom.Link,
+              { to: '/list', className: 'link' },
+              _react2.default.createElement(
+                'li',
+                null,
+                'My list'
+              )
             ),
             _react2.default.createElement(
               'li',
@@ -29278,6 +29103,293 @@ LoginForm.propTypes = {
 };
 
 exports.default = LoginForm;
+
+/***/ }),
+/* 112 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _react = __webpack_require__(0);
+
+var _react2 = _interopRequireDefault(_react);
+
+var _Auth = __webpack_require__(7);
+
+var _Auth2 = _interopRequireDefault(_Auth);
+
+var _reactRouterDom = __webpack_require__(5);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+var VideoList = function (_React$Component) {
+  _inherits(VideoList, _React$Component);
+
+  function VideoList(props) {
+    _classCallCheck(this, VideoList);
+
+    var _this = _possibleConstructorReturn(this, (VideoList.__proto__ || Object.getPrototypeOf(VideoList)).call(this, props));
+
+    _this.getItems = _this.getItems.bind(_this);
+    return _this;
+  }
+
+  _createClass(VideoList, [{
+    key: 'getItems',
+    value: function getItems(data) {
+      var _this2 = this;
+
+      return data.map(function (v, i) {
+        if (i < 30) {
+          var title = v.title;
+          var backdrop = '/backdrop/' + v.backdrop;
+          var id = v.id;
+          var liked = _this2.props.videolist.includes(id) ? true : false;
+
+          return _react2.default.createElement(Item, { key: id, id: id, title: title, backdrop: backdrop, liked: liked });
+        } else {
+          return _react2.default.createElement('div', { key: v._id });
+        }
+      }, this);
+    }
+  }, {
+    key: 'render',
+    value: function render() {
+      var titles = '';
+      if (this.props.data) {
+        titles = this.getItems(this.props.data);
+      }
+
+      return _react2.default.createElement(
+        'div',
+        { ref: 'titlecategory', className: 'search-items-list' },
+        _react2.default.createElement(
+          'div',
+          { className: 'titles-wrapper' },
+          titles
+        )
+      );
+    }
+  }]);
+
+  return VideoList;
+}(_react2.default.Component);
+
+// Title List Item
+
+
+var Item = function (_React$Component2) {
+  _inherits(Item, _React$Component2);
+
+  function Item(props) {
+    _classCallCheck(this, Item);
+
+    return _possibleConstructorReturn(this, (Item.__proto__ || Object.getPrototypeOf(Item)).call(this, props));
+  }
+
+  _createClass(Item, [{
+    key: 'render',
+    value: function render() {
+      return _react2.default.createElement(
+        'div',
+        { className: 'search-item', style: { backgroundImage: 'url(' + this.props.backdrop + ')' } },
+        _react2.default.createElement(
+          _reactRouterDom.Link,
+          { to: '/video/' + this.props.id, style: { textDecoration: 'none' } },
+          _react2.default.createElement(
+            'div',
+            { className: 'overlay' },
+            _react2.default.createElement(
+              'div',
+              { className: 'item-title' },
+              this.props.title
+            )
+          )
+        ),
+        _react2.default.createElement(ListToggle, { id: this.props.id, liked: this.props.liked })
+      );
+    }
+  }]);
+
+  return Item;
+}(_react2.default.Component);
+
+// ListToggle
+
+
+var ListToggle = function (_React$Component3) {
+  _inherits(ListToggle, _React$Component3);
+
+  function ListToggle(props) {
+    _classCallCheck(this, ListToggle);
+
+    var _this4 = _possibleConstructorReturn(this, (ListToggle.__proto__ || Object.getPrototypeOf(ListToggle)).call(this, props));
+
+    _this4.state = { liked: false };
+
+    _this4.handleClick = _this4.handleClick.bind(_this4);
+    return _this4;
+  }
+
+  _createClass(ListToggle, [{
+    key: 'componentDidMount',
+    value: function componentDidMount() {
+      this.setState({ liked: this.props.liked });
+    }
+  }, {
+    key: 'handleClick',
+    value: function handleClick(e) {
+      if (this.state.liked === true) {
+        this.setState({ liked: false });
+      } else {
+        this.setState({ liked: true });
+      }
+
+      var requestUrl = '/update/videolist';
+      var token = encodeURIComponent(_Auth2.default.getToken());
+      var data = {
+        token: token,
+        videoId: this.props.id,
+        add: this.state.liked
+      };
+
+      $.ajax({
+        url: requestUrl,
+        headers: { 'Authorization': 'bearer ' + token },
+        data: JSON.stringify(data),
+        contentType: 'application/json',
+        method: 'POST'
+      }).fail(function () {
+        console.log('There is an error when updating video list.');
+      });
+    }
+  }, {
+    key: 'render',
+    value: function render() {
+      return _react2.default.createElement('div', { className: 'item-list-toggle', 'data-toggled': this.state.liked, onClick: this.handleClick });
+    }
+  }]);
+
+  return ListToggle;
+}(_react2.default.Component);
+
+exports.default = VideoList;
+
+/***/ }),
+/* 113 */,
+/* 114 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _react = __webpack_require__(0);
+
+var _react2 = _interopRequireDefault(_react);
+
+var _Auth = __webpack_require__(7);
+
+var _Auth2 = _interopRequireDefault(_Auth);
+
+var _VideoList = __webpack_require__(112);
+
+var _VideoList2 = _interopRequireDefault(_VideoList);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+var MyList = function (_React$Component) {
+  _inherits(MyList, _React$Component);
+
+  function MyList() {
+    _classCallCheck(this, MyList);
+
+    var _this = _possibleConstructorReturn(this, (MyList.__proto__ || Object.getPrototypeOf(MyList)).call(this));
+
+    _this.state = {
+      data: [],
+      videolist: []
+    };
+
+    _this.loadContent = _this.loadContent.bind(_this);
+    return _this;
+  }
+
+  _createClass(MyList, [{
+    key: 'componentDidMount',
+    value: function componentDidMount() {
+      this.loadContent();
+    }
+    // Get list of videos the user liked
+
+  }, {
+    key: 'loadContent',
+    value: function loadContent() {
+      var _this2 = this;
+
+      var token = _Auth2.default.getToken();
+      $.ajax({
+        url: '/api/videolist/all',
+        headers: { 'Authorization': 'bearer ' + token },
+        data: JSON.stringify({ token: token }),
+        contentType: 'application/json',
+        method: 'POST'
+      }).done(function (results) {
+        var videolist = results.data.map(function (v) {
+          return v.id;
+        });
+        _this2.setState({
+          data: results.data,
+          videolist: videolist
+        });
+      }).fail(function () {
+        console.log('There is an error when getting video list.');
+      });
+    }
+  }, {
+    key: 'render',
+    value: function render() {
+      return _react2.default.createElement(
+        'div',
+        { className: 'search-results-wrapper' },
+        _react2.default.createElement(
+          'div',
+          { className: 'title' },
+          'My List'
+        ),
+        _react2.default.createElement(_VideoList2.default, { data: this.state.data, videolist: this.state.videolist })
+      );
+    }
+  }]);
+
+  return MyList;
+}(_react2.default.Component);
+
+exports.default = MyList;
 
 /***/ })
 /******/ ]);

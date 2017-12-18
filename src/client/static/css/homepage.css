@@ -124,6 +124,10 @@ p {
   fill: #ffffff !important;
 }
 
+.Navigation .link {
+  color: #ffffff;
+  text-decoration: none;
+}
 .Navigation ul {
   display: -webkit-box;
   display: -webkit-flex;
@@ -148,6 +152,7 @@ p {
   background: #e50914;
   cursor: pointer;
 }
+
 .Navigation .tags-box-wrapper {
   position: relative;
 }

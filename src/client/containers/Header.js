@@ -187,7 +187,7 @@ class Navigation extends React.Component {
                 </ul>
               </div>
             </li>
-            <li>My list</li>
+            <Link to='/list' className='link'><li>My list</li></Link>
             <li>New</li>
             <li>Download</li>
             <li>FAQ</li>

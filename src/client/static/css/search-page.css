@@ -20,7 +20,7 @@
   box-sizing: border-box;
   -webkit-transition: opacity 1.5s ease;
   transition: opacity 1.5s ease;
-  opacity: 0;
+  opacity: 1;
   position: relative;
   z-index: 4;
 }
@@ -39,9 +39,6 @@
   -webkit-justify-content: space-between;
       -ms-flex-pack: justify;
           justify-content: space-between;
-}
-.search-items-list[data-loaded='true'] {
-  opacity: 1;
 }
 
 .search-item {
@@ -108,84 +105,30 @@
   opacity: 0;
 }
 
+
 .item-list-toggle {
-  border: 2px solid rgba(255, 255, 255, 0.2);
-  width: 32px;
-  height: 32px;
-  font-size: 16px;
+  /*border: 2px solid rgba(255, 255, 255, 0.2);*/
+  width: 70px;
+  height: 70px;
+  /*font-size: 16px;*/
   border-radius: 32px;
   overflow: hidden;
   position: absolute;
-  right: 20px;
-  top: 20px;
-  opacity: 1;
-}
-.item-list-toggle:hover {
-  border: 2px solid #ffffff;
-}
-.item-list-toggle:hover div {
-  top: -32px;
-}
-.item-list-toggle[data-toggled="true"] {
-  background: #e50914;
-  border: 2px solid #e50914;
-}
-.item-list-toggle[data-toggled="true"] div {
-  top: -32px;
-}
-.item-list-toggle div {
-  position: absolute;
-  top: 0;
-  left: 0;
-  height: 64px;
-  width: 32px;
-  -webkit-transition: .125s ease;
-  transition: .125s ease;
-}
-.item-list-toggle div i {
-  display: -webkit-box;
-  display: -webkit-flex;
-  display: -ms-flexbox;
-  display: flex;
-  -webkit-box-align: center;
-  -webkit-align-items: center;
-      -ms-flex-align: center;
-          align-items: center;
-  -webkit-box-pack: center;
-  -webkit-justify-content: center;
-      -ms-flex-pack: center;
-          justify-content: center;
-  height: 32px;
-  width: 32px;
-}
-
-.heart {
-  /*border: 2px solid rgba(255, 255, 255, 0.2);*/
-  width: 60px;
-  height: 60px;
-  /*font-size: 16px;*/
-  border-radius: 32px;
-  /*overflow: hidden;*/
-  position: absolute;
-  right: 20px;
-  top: 20px;
+  right: 0px;
+  top: 0px;
 
   background-image:url( '/img/web_heart_animation.png');
   background-position: left;
   background-repeat:no-repeat;
   background-size:2900%;
 }
-.heart:hover {
+.item-list-toggle:hover {
   background-position:right;
 }
-.heart[data-toggled="true"] {
+.item-list-toggle[data-toggled="true"] {
   animation: heart-burst .8s steps(28) 1;
+  background-position:right;
 }
-
-.is_animating {
-  animation: heart-burst .8s steps(28) 1;
-}
-
 @keyframes heart-burst {
   from {background-position:left;}
   to { background-position:right;}

@@ -1,0 +1,16 @@
+.search-results-wrapper {
+  width: 100vw;
+  height: calc(100vh - 110px);
+  top: 110px;
+  position: fixed;
+  /*background: rgba(0, 0, 0, 0.8);*/
+}
+
+.search-results-wrapper .title {
+  position: relative;
+  font-size: 24px;
+  font-weight: 600;
+  line-height: 1.4;
+  left: 40px;
+  bottom: -10px;
+}
