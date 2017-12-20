@@ -1,8 +1,8 @@
-import React from 'react';
-import Auth from '../modules/Auth';
-import { displayVideo, switchVideo } from '../containers/Video.js';
-import Modal from './Modal.js';
-import EditVideoCard from './EditVideoCard.js';
+import React from 'react'
+import Auth from '../modules/Auth'
+import { displayVideo, switchVideo } from '../containers/Video.js'
+import Modal from '../components/Modal.js'
+import EditVideoCard from '../components/EditVideoCard.js'
 
 class VideoPage extends React.Component {
   constructor(props) {

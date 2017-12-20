@@ -2613,8 +2613,8 @@ kind-of@^4.0.0:
     is-buffer "^1.1.5"
 
 konva@^1.6.7:
-  version "1.7.5"
-  resolved "https://registry.yarnpkg.com/konva/-/konva-1.7.5.tgz#f64ca1b61db3819872ee2f917c670974336ce3d4"
+  version "1.7.6"
+  resolved "https://registry.yarnpkg.com/konva/-/konva-1.7.6.tgz#7aceef1058b04127077c8f44653556b35b1133e6"
 
 latest-version@^3.0.0:
   version "3.1.0"
@@ -3664,9 +3664,9 @@ rc@^1.0.1, rc@^1.1.6, rc@^1.1.7:
     minimist "^1.2.0"
     strip-json-comments "~2.0.1"
 
-react-avatar-edit@^0.5.5:
-  version "0.5.5"
-  resolved "https://registry.yarnpkg.com/react-avatar-edit/-/react-avatar-edit-0.5.5.tgz#ba138c62d16374a7a95bb90a82009ba448929851"
+react-avatar-edit@^0.5.8:
+  version "0.5.8"
+  resolved "https://registry.yarnpkg.com/react-avatar-edit/-/react-avatar-edit-0.5.8.tgz#2a548ec325d214ddcab495bbb3948f96e30a580c"
   dependencies:
     konva "^1.6.7"
 

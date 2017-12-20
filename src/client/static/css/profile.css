@@ -1,28 +1,28 @@
-.UserProfile {
+.profile {
   margin-left: auto;
+  position: absolute;
+  right: 25px;
 }
-.UserProfile .User {
+.profile .user {
   display: -webkit-box;
   display: -webkit-flex;
   display: -ms-flexbox;
   display: flex;
 }
-.UserProfile .User .image {
-  border-radius: 44px;
+.profile .user .image {
+  border-radius: 22px;
   margin-left: 10px;
   overflow: hidden;
   width: 44px;
   height: 44px;
   box-sizing: border-box;
   border: 3px solid transparent;
-  -webkit-transition: border .125s ease;
-  transition: border .125s ease;
 }
-.UserProfile .User .image img {
+.profile .user .image img {
   width: 100%;
   display: block;
 }
-.UserProfile .User .name {
+.profile .user .name {
   -webkit-box-align: center;
   -webkit-align-items: center;
       -ms-flex-align: center;
@@ -35,25 +35,177 @@
   font-weight: 300;
   height: 44px;
 }
-.UserProfile .User:hover {
+.profile .user:hover {
   cursor: pointer;
 }
-.UserProfile .User:hover .image {
-  border: 3px solid #e50914;
+
+
+#profile-card {
+  visibility: hidden;
+  opacity: 0;
+  position: absolute;
+  right: 4px;
+  top: 55px;
+  width: 270px;
+  height: 180px;
+  border-radius: 3px;
+  background-color: #272B34;
+  z-index: 4;
+  transition: opacity .3s;
 }
-.UserProfile .UserProfile-menu {
-  display: none;
+#profile-card::after {
+  content: "";
+  position: absolute;
+  bottom: 100%;
+  right: 11px;
+  border-width: 5px;
+  border-style: solid;
+  border-color: transparent transparent #272B34 transparent;
+}
+#profile-card .left-panel {
+  position: absolute;
+  width: 60%;
+  height: 100%;
+}
+#profile-card .avatar {
+  cursor: pointer;
+  position: absolute;
+  width: 80px;
+  height: 80px;
+  margin-top: 22px;
+  margin-bottom: 22px;
+  left: 50%;
+  transform: translate(-50%);
+  border-radius: 50%;
+  overflow: hidden;
+}
+#profile-card .avatar img {
+  position: absolute;
+  width: 100%;
+  display: block;
+}
+#profile-card .avatar .overlay {
+  position: absolute;
+  opacity: 0;
+  background: rgba(0,0,0,.6);
+  width: 0;
+  height: 0;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  border-radius: 50%;
+  font-weight: 100;
+  line-height: 80px;
+  text-align: center;
+  vertical-align: middle;
+  transition: .3s ease;
+}
+#profile-card .avatar:hover .overlay {
+  opacity: 1;
+  width: 100%;
+  height: 100%;
 }
 
-#ProfileCard {
-  display: none;
-  position: fixed;
-  right: 35px;
-  top: 35px;
-  width: 500px;
-  height: 250px;
-  border-radius: 30px;
-  /*border: solid 1px red;*/
-  background-color: rgba(0, 0, 0, 0.7);
-  z-index: -1;
+
+#profile-card .right-panel {
+  position: absolute;
+  right: 0px;
+  width: 40%;
+  height: 100%;
+}
+.profile-data-wrapper {
+  position: absolute;
+  top: 20px;
+}
+.profile-data-wrapper .profile-data {
+  margin: 5px 10px 12px 3px;
+  /*height: 10px;*/
+  font-size: 15px;
+  vertical-align: middle;
+}
+.profile-data-wrapper .profile-data::before {
+  display: inline-block;
+  vertical-align: middle;
+  margin-right: 8px;
+  content: "";
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+}
+.profile-data-wrapper .profile-data[data-type="download"]::before {
+  background: #e74c3c;
+}
+.profile-data-wrapper .profile-data[data-type="upload"]::before {
+  background: #2ecc71;
+}
+.profile-data-wrapper .profile-data[data-type="rate"]::before {
+  background: #f1c40f;
+}
+
+#avatar-editor .modal {
+  position: absolute;
+  width: 400px;
+  height: 200px;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  /*background: white;*/
+}
+#avatar-editor .avatar-file-loader {
+  position: absolute;
+  display: block;
+  /*overflow: hidden;*/
+  width: 200px;
+  height: 200px;
+  color: white;
+}
+#avatar-editor .avatar-editor-right {
+  position: absolute;
+  /*display: block;*/
+  /*width: 25%;*/
+  height: 100%;
+  right: 0;
+}
+#avatar-editor .avatar-editor-right img {
+  position: absolute;
+  width: 100px;
+  height: 100px;
+  top: 5px;
+  right: 50px;
+}
+#avatar-editor .button-wrapper {
+  position: absolute;
+  width: 100px;
+  height: 90px;
+  right: 40px;
+  bottom: 0;
+}
+#avatar-editor .button-wrapper div {
+  cursor: pointer;
+  width: 70px;
+  height: 25px;
+  margin-top: 10px;
+  padding: 3px;
+  border-radius: 5px;
+  font-size: 15px;
+  text-align: center;
+  vertical-align: middle;
+  line-height: 25px;
+  transition: .2s;
+}
+#avatar-editor .button-wrapper div[button-type="submit"] {
+  border: 2px solid #ea4c89;
+  color: #ea4c89;
+}
+#avatar-editor .button-wrapper div[button-type="submit"]:hover {
+  background: #ea4c89;
+  color: white;
+}
+#avatar-editor .button-wrapper div[button-type="cancel"] {
+  border: 2px solid rgb(43, 199, 110);
+  color: rgb(43, 199, 110);
+}
+#avatar-editor .button-wrapper div[button-type="cancel"]:hover {
+  background: rgb(43, 199, 110);
+  color: white;
 }

@@ -8,27 +8,43 @@ class SearchPage extends React.Component {
 
     this.state = {
       data: [],
-      videolist: []
+      videolist: [],
+      searchTerm: ''
     }
 
     this.loadContent = this.loadContent.bind(this)
     this.getVideoList = this.getVideoList.bind(this)
   }
   componentDidMount() {
-    if(this.props.match.params.term !== ''){
-      this.loadContent(this.props.match.params.term)
+    const parsedQuery = this.props.match.params.term.split('=')
+    var flag = 0
+    if (parsedQuery[0] === 'title') flag = 0
+    if (parsedQuery[0] === 'tag') flag = 1
+
+    if (parsedQuery[1] !== '') {
+      this.loadContent(parsedQuery[1], flag)
       this.getVideoList()
+      this.setState({ searchTerm: parsedQuery[1] })
     }
   }
   componentWillReceiveProps(nextProps) {
-    if (nextProps.match.params.term !== this.props.match.params.term && nextProps.match.params.term !== '') {
-      this.loadContent(nextProps.match.params.term)
+    const parsedQuery = nextProps.match.params.term.split('=')
+    if (nextProps.match.params.term !== this.props.match.params.term && parsedQuery[1] !== '') {
+      var flag = 0
+      if (parsedQuery[0] === 'title') flag = 0
+      if (parsedQuery[0] === 'tag') flag = 1
+
+      this.loadContent(parsedQuery[1], flag)
       this.getVideoList()
+      this.setState({ searchTerm: parsedQuery[1] })
     }
   }
   // Search for title
-  loadContent(searchTerm) {
-    var requestUrl = '/api/videos?q=title:' + searchTerm
+  loadContent(searchTerm, flag) {
+    var baseUrl = ''
+    if (flag === 0) baseUrl = '/api/videos?q=title:'
+    if (flag === 1) baseUrl = '/api/videos?q=tag:'
+    var requestUrl = baseUrl + searchTerm
     const token = Auth.getToken()
     $.ajax({
       url: requestUrl,
@@ -44,7 +60,6 @@ class SearchPage extends React.Component {
         })
       })
       this.setState({ data: cleanData })
-      console.log(cleanData)
     }).fail(() => {
       console.log('There has an error on loading search results.')
     })
@@ -67,7 +82,7 @@ class SearchPage extends React.Component {
   render() {
     return (
       <div className="search-results-wrapper">
-        <div className="title">Search Results for <p style={{'color': 'red'}}>{this.props.match.params.term}</p></div>
+        <div className="title">Search Results for <p>{this.state.searchTerm}</p></div>
         <VideoList data={this.state.data} videolist={this.state.videolist} />
       </div>
     )

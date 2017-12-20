@@ -20,41 +20,13 @@ router.post('/profile', (req, res, next) => {
     res.status(200).json({
       username: user.username,
       avatarUrl: user.avatar_url,
-      tags: user.tags
+      tags: user.tags,
+      download: user.download,
+      upload: user.upload
     });
   });
 });
 
-router.post('/updateAvatar', (req, res, next) => {
-  const token = req.body.token;
-  const decode = jwt.verify(token, config.jwtSecret);
-  const subId = decode.sub;
-  const avatar = req.body.avatar;
-
-  User.findOneAndUpdate({_id: subId}, {avatar: avatar}, {upsert: True}, (err, res) => {
-    if (err) {
-      res.status(400).json({
-        error: 'Failure in updating avatar!'
-      });
-    }
-  });
-});
-
-router.post('/updateTags', (req, res, next) => {
-  const info = req.body;
-  const token = info.token;
-  const decode = jwt.verify(token, config.jwtSecret);
-  const subId = decode.sub;
-  const tags = info.tags;
-
-  User.findOneAndUpdate({_id: subId}, {tags: tags}, {upsert: true}, (err, res) => {
-    if (err) {
-      res.status(400).json({
-        error: 'Failure in updating tags!'
-      });
-    }
-  });
-});
 
 router.post('/uploadVideos', (req, res, next) => {
   const info = req.body;
@@ -75,25 +47,6 @@ router.post('/uploadVideos', (req, res, next) => {
 });
 
 
-var storage = multer.diskStorage({
-  destination: function (req, file, cb) {
-    cb(null, 'public/backdrop/')
-  },
-  filename: function (req, file, cb) {
-    cb(null, file.originalname)
-  }
-});
-var upload = multer({ storage: storage }).single('cover');
-router.post('/uploadCover', (req, res) => {
-  upload(req, res, (err) => {
-    if (err) {
-      res.status(400).json({
-        error: 'Something wrong when uploading cover.'
-      });
-    }
-  });
-});
-
 router.get('/videos', (req, res) => {
   var parsedQuery = req.query.q.split(':')
   var searchPattern = {}
@@ -103,7 +56,7 @@ router.get('/videos', (req, res) => {
         'title': parsedQuery[1]
       }
     }
-  } else if (parsedQuery[1] === 'tags') {
+  } else if (parsedQuery[0] === 'tag') {
     searchPattern = {
       'terms': {
         'tags': [parsedQuery[1]]

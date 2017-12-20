@@ -46,8 +46,6 @@ class EditVideoCard extends React.Component {
       animation: 200
     });
 
-    $(".Video-card").droppable({greedy: true});
-
     setInterval(() => {
       const passData_str = $("#videopage-data").val();
       if (passData_str) {
@@ -347,11 +345,11 @@ class EditVideoCard extends React.Component {
     // Send cover to server
     var fd = new FormData()
     // Append cover file and change the name
-    fd.append("cover", file, backDrop)
+    fd.append("backdrop", file, backDrop)
     // fd.append("filename", backDrop, );
     // A trick: set contentType to false, so the boundary will be added automatically
     $.ajax({
-      url: '/api/uploadCover',
+      url: '/upload/backdrop',
       headers: {"Authorization": `bearer ${token}`},
       data: fd,
       cache: false,
@@ -361,10 +359,6 @@ class EditVideoCard extends React.Component {
     });
 
     this.closeCard();
-  }
-
-  editCard() {
-    console.log('YES');
   }
 
   render() {

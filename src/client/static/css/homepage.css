@@ -153,11 +153,13 @@ p {
   cursor: pointer;
 }
 
+
 .Navigation .tags-box-wrapper {
   position: relative;
 }
 .Navigation .tags-box {
   visibility: hidden;
+  opacity: 0;
   cursor: default;
   position: absolute;
   width: 300px;
@@ -167,7 +169,6 @@ p {
   left: -40px;
   padding: 5px;
   background: radial-gradient(transparent, black);
-  opacity: 0;
   transition: opacity .3s;
 }
 .Navigation .tags-box::after {

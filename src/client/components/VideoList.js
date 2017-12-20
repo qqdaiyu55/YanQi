@@ -79,7 +79,7 @@ class ListToggle extends React.Component {
     }
 
     var requestUrl = '/update/videolist'
-    const token = encodeURIComponent(Auth.getToken())
+    const token = Auth.getToken()
     const data = {
       token: token,
       videoId: this.props.id,
