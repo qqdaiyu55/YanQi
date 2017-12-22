@@ -2,6 +2,13 @@
 # yarn lockfile v1
 
 
+"@xkeshi/image-compressor@^0.5.2":
+  version "0.5.2"
+  resolved "https://registry.yarnpkg.com/@xkeshi/image-compressor/-/image-compressor-0.5.2.tgz#518b85f3480587a319952179c0941cd18bff7126"
+  dependencies:
+    blueimp-canvas-to-blob "^3.14.0"
+    is-blob "^1.0.0"
+
 abbrev@1:
   version "1.1.1"
   resolved "https://registry.yarnpkg.com/abbrev/-/abbrev-1.1.1.tgz#f8f2c887ad10bf67f634f005b6987fed3179aac8"
@@ -803,6 +810,10 @@ block-stream@*:
 bluebird@^3.5.0:
   version "3.5.1"
   resolved "https://registry.yarnpkg.com/bluebird/-/bluebird-3.5.1.tgz#d9551f9de98f1fcda1e683d17ee91a0602ee2eb9"
+
+blueimp-canvas-to-blob@^3.14.0:
+  version "3.14.0"
+  resolved "https://registry.yarnpkg.com/blueimp-canvas-to-blob/-/blueimp-canvas-to-blob-3.14.0.tgz#ea075ffbfb1436607b0c75e951fb1ceb3ca0288e"
 
 bn.js@^4.0.0, bn.js@^4.1.0, bn.js@^4.1.1, bn.js@^4.4.0:
   version "4.11.8"
@@ -2311,6 +2322,10 @@ is-binary-path@^1.0.0:
   dependencies:
     binary-extensions "^1.0.0"
 
+is-blob@^1.0.0:
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/is-blob/-/is-blob-1.0.0.tgz#a3d7d96fe1c3ff065ec7ce27c2c21e6ba92c1832"
+
 is-buffer@^1.1.5:
   version "1.1.5"
   resolved "https://registry.yarnpkg.com/is-buffer/-/is-buffer-1.1.5.tgz#1f3b26ef613b214b88cbca23cc6c01d87961eecc"
@@ -3538,7 +3553,7 @@ promise@^7.1.1:
   dependencies:
     asap "~2.0.3"
 
-prop-types@^15.5.10, prop-types@^15.5.4, prop-types@^15.5.8, prop-types@^15.6.0:
+prop-types@^15.5.10, prop-types@^15.5.4, prop-types@^15.6.0:
   version "15.6.0"
   resolved "https://registry.yarnpkg.com/prop-types/-/prop-types-15.6.0.tgz#ceaf083022fc46b4a35f69e13ef75aed0d639856"
   dependencies:
@@ -3664,17 +3679,11 @@ rc@^1.0.1, rc@^1.1.6, rc@^1.1.7:
     minimist "^1.2.0"
     strip-json-comments "~2.0.1"
 
-react-avatar-edit@^0.5.8:
-  version "0.5.8"
-  resolved "https://registry.yarnpkg.com/react-avatar-edit/-/react-avatar-edit-0.5.8.tgz#2a548ec325d214ddcab495bbb3948f96e30a580c"
+react-avatar-edit@^0.5.9:
+  version "0.5.9"
+  resolved "https://registry.yarnpkg.com/react-avatar-edit/-/react-avatar-edit-0.5.9.tgz#de1fa680d79a1d22963d07f7a6056f5e58346e78"
   dependencies:
     konva "^1.6.7"
-
-react-avatar-editor@^10.3.0:
-  version "10.3.0"
-  resolved "https://registry.yarnpkg.com/react-avatar-editor/-/react-avatar-editor-10.3.0.tgz#7ee54774a274b3aa733d8651e6138d4904114c7d"
-  dependencies:
-    prop-types "^15.5.8"
 
 react-dom@^16.0.0:
   version "16.0.0"

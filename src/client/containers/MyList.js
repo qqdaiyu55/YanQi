@@ -22,9 +22,8 @@ class MyList extends React.Component {
     $.ajax({
       url: '/api/videolist/all',
       headers: { 'Authorization': `bearer ${token}` },
-      data: JSON.stringify({ token: token }),
       contentType: 'application/json',
-      method: 'POST'
+      method: 'GET'
     }).done((results) => {
       const videolist = results.data.map((v) => {
         return v.id

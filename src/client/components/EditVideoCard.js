@@ -1,56 +1,57 @@
-import React from 'react';
-import TagsInput from 'react-tagsinput';
-import Auth from '../modules/Auth';
+import React from 'react'
+import TagsInput from 'react-tagsinput'
+import Auth from '../modules/Auth'
+import ImageCompressor from '@xkeshi/image-compressor'
 
 class EditVideoCard extends React.Component {
   constructor() {
-    super();
+    super()
 
     this.rscCardStatus = {
       addNew: true,
       rscId: '',
       count: 1
-    };
-    this.mode = 'add';
+    }
+    this.mode = 'add'
     this.state = {
       cover: null,
       isCoverUploaded: false,
       tags: []
-    };
+    }
 
-    this.previewCover = this.previewCover.bind(this);
-    this.removeCover = this.removeCover.bind(this);
+    this.previewCover = this.previewCover.bind(this)
+    this.removeCover = this.removeCover.bind(this)
 
-    this.handleTagsChange = this.handleTagsChange.bind(this);
+    this.handleTagsChange = this.handleTagsChange.bind(this)
 
-    this.addResource = this.addResource.bind(this);
-    this.submitResourceInfo = this.submitResourceInfo.bind(this);
-    this.cancelEditResource = this.cancelEditResource.bind(this);
-    this.handleRsc = this.handleRsc.bind(this);
+    this.addResource = this.addResource.bind(this)
+    this.submitResourceInfo = this.submitResourceInfo.bind(this)
+    this.cancelEditResource = this.cancelEditResource.bind(this)
+    this.handleRsc = this.handleRsc.bind(this)
 
-    this.closeCard = this.closeCard.bind(this);
-    this.submitCard = this.submitCard.bind(this);
+    this.closeCard = this.closeCard.bind(this)
+    this.submitCard = this.submitCard.bind(this)
 
-    this.loadConten = this.loadContent.bind(this);
+    this.loadConten = this.loadContent.bind(this)
   }
   componentWillUnmount() {
-    console.log('Unmounted.');
+    console.log('Unmounted.')
   }
   componentWillMount() {
-    console.log('Mounting.');
+    console.log('Mounting.')
   }
   componentDidMount() {
     $(".horizon-scroll ul").sortable({
       axis: 'x',
       animation_direction: 'x',
       animation: 200
-    });
+    })
 
     setInterval(() => {
-      const passData_str = $("#videopage-data").val();
+      const passData_str = $("#videopage-data").val()
       if (passData_str) {
         // const passData = JSON.parse(passData_str);
-        $("#videopage-data").val("");
+        $("#videopage-data").val("")
         //
         // this.mode = 'edit';
         // console.log(passData);
@@ -67,8 +68,8 @@ class EditVideoCard extends React.Component {
         //   tags: passData.tags
         // });
         //
-        // $("#cover-img").attr('src', '/backdrop/'+passData.backDrop);
-        this.loadContent(passData_str);
+        // $("#cover-img").attr('src', '/backdrop/'+passData.backdrop);
+        this.loadContent(passData_str)
       }
     }, 200);
   }
@@ -106,7 +107,7 @@ class EditVideoCard extends React.Component {
         tags: data.tags
       });
 
-      $("#cover-img").attr('src', '/backdrop/'+data.backDrop);
+      $("#cover-img").attr('src', '/backdrop/'+data.backdrop);
     }).fail(()=>{
       console.log("There has an error.");
     });
@@ -115,15 +116,15 @@ class EditVideoCard extends React.Component {
   // Preview uploaded cover
   previewCover(e) {
     if (e.target.files && e.target.files[0]) {
-      var reader = new FileReader();
+      var reader = new FileReader()
 
       reader.onload = (event) => {
-        $('#cover-img').attr('src', event.target.result);
-      };
-      reader.readAsDataURL(e.target.files[0]);
+        $('#cover-img').attr('src', event.target.result)
+      }
+      reader.readAsDataURL(e.target.files[0])
       this.setState({
         isCoverUploaded: true
-      });
+      })
     }
   }
 
@@ -247,118 +248,131 @@ class EditVideoCard extends React.Component {
 
   // Close card and clear content
   closeCard() {
-    $("#edit-video-card").css({"visibility":"hidden", "opacity":"0"});
-    this.removeCover();
-    $("#edit-video-card .title").val("");
-    this.cancelEditResource();
-    this.setState({
-      tags: []
-    });
-    $("#edit-video-card .horizon-scroll ul").html("");
-    $("#edit-video-card .intro").val("");
+    var r = confirm('Do you really want to leave?')
+    if (r === true) {
+      $("#edit-video-card").css({"visibility":"hidden", "opacity":"0"})
+      this.removeCover()
+      $("#edit-video-card .title").val("")
+      this.cancelEditResource()
+      this.setState({
+        tags: []
+      })
+      $("#edit-video-card .horizon-scroll ul").html("")
+      $("#edit-video-card .intro").val("")
+    }
   }
 
   // Submit all information to server
   submitCard() {
-    const title = $("#edit-video-card .title").val();
-    const htmlRscInfo = $("#edit-video-card .horizon-scroll ul").children().map(function() {
-      return this.innerHTML;
-    }).get();
-    var rscInfo = []
-    htmlRscInfo.forEach((e) => {
+    var r = confirm('Do you want to submit the information now?')
+    if (r === true) {
+      // Get information
+      const title = $("#edit-video-card .title").val()
+      const htmlRscInfo = $("#edit-video-card .horizon-scroll ul").children().map(function() {
+        return this.innerHTML
+      }).get()
+      var rscInfo = []
+      htmlRscInfo.forEach((e) => {
       var tmp = e.match('<div class="item">(.*?)</div><div class="item">(.*?)</div><div class="item">.*?content">(.*?)</div></div>');
-      tmp = [tmp[1], tmp[2], tmp[3].split('&')[0]];
-      rscInfo.push(tmp);
-    });
-    const tags = this.state.tags;
-    const introduction = $("#edit-video-card .intro").val();
+        tmp = [tmp[1], tmp[2], tmp[3].split('&')[0]];
+        rscInfo.push(tmp);
+      });
+      const tags = this.state.tags;
+      const introduction = $("#edit-video-card .intro").val();
 
-    // Check if title or rscInfo is empty
-    if (!title) {
-      alert('Title is empty!');
-      return;
-    }
-    if (!rscInfo.length) {
-      alert('Resource Information is empty!');
-      return;
-    }
-    // Check if fields of resource information are available
-    // e.g. if size has non numeric characters or magnet link format is right
-    let isRight = true;
-    rscInfo.forEach((t) => {
-      let title = t[0];
-      let size = t[1].split(' ')[0];
-      let magnet = t[2];
-
-      // Check if size has non-numeric character
-      if (size.match(/[^$.\d]/)) {
-        alert(title+':\nSize cannot contain non numeric characters.');
-        isRight = false;
+      // Check if title or rscInfo is empty
+      if (!title) {
+        alert('Title is empty!');
+        return;
+      }
+      if (!rscInfo.length) {
+        alert('Resource Information is empty!');
+        return;
       }
 
-      // Verify the magnet link
-      if (!magnet.match(/magnet:\?xt=urn:btih:[a-z0-9]{20,50}/i)) {
-        alert(title+':\nPlease check the magnet link format.');
-        isRight = false;
-      }
-    });
-    if (!isRight) return;
+      // Check if fields of resource information are available
+      // e.g. if size has non numeric characters or magnet link format is right
+      let isRight = true;
+      rscInfo.forEach((t) => {
+        let title = t[0];
+        let size = t[1].split(' ')[0];
+        let magnet = t[2];
 
-    // Cover file
-    var cover = $("#upload-cover")[0];
-    var file = cover.files[0];
-    if (!file) {
-      alert('Cover is empty.');
-      return;
+        // Check if size has non-numeric character
+        if (size.match(/[^$.\d]/)) {
+          alert(title+':\nSize cannot contain non numeric characters.');
+          isRight = false;
+        }
+
+        // Verify the magnet link
+        if (!magnet.match(/magnet:\?xt=urn:btih:[a-z0-9]{20,50}/i)) {
+          alert(title+':\nPlease check the magnet link format.');
+          isRight = false;
+        }
+      });
+      if (!isRight) return;
+
+      // Cover file
+      var cover = $("#upload-cover")[0];
+      var file = cover.files[0];
+      if (!file) {
+        alert('Cover is empty.');
+        return;
+      }
+
+      // Genrate a random unique filename
+      var splitFileName = file.name.split('.')
+      const backdrop = uuidv8()+uuidv8()+'.'+splitFileName[splitFileName.length-1]
+
+      // Post the information
+      const token = Auth.getToken()
+      const data = {
+        title: title,
+        backdrop: backdrop,
+        rscInfo: rscInfo,
+        tags: tags,
+        introduction: introduction
+      }
+
+      $.ajax({
+        url: '/upload/video',
+        headers: { 'Authorization': `bearer ${token}` },
+        data: JSON.stringify(data),
+        contentType: 'application/json',
+        responseType: 'json',
+        method: 'POST'
+      }).done(() => {
+        console.log('Success on uploading video information.')
+      }).fail(() => {
+        console.log('There is an error when uploading video information.')
+      })
+
+      // Compress and upload avatar to server
+      const imageCompressor = new ImageCompressor()
+      imageCompressor.compress(file).then((result) => {
+        var fd = new FormData()
+        // Append backdrop file and set the filename
+        fd.append('backdrop', result, backdrop)
+        // A trick: set contentType to false, so the boundary will be added automatically
+        $.ajax({
+          url: '/upload/backdrop',
+          headers: { "Authorization": `bearer ${token}` },
+          data: fd,
+          cache: false,
+          contentType: false,
+          processData: false,
+          method: 'POST'
+        }).done(() => {
+          console.log('Successfully upload backdrop.')
+        }).fail(() => {
+          console.log('There is an error when uploading backdrop.')
+        })
+      }).catch((err) => {
+        console.log('Something wrong when compressing backdrop.')
+      })
+
+      this.closeCard()
     }
-
-    // Genrate a random unique filename
-    var splitFileName = file.name.split('.')
-    const backDrop = uuidv8()+uuidv8()+'.'+splitFileName[splitFileName.length-1]
-
-    // Get jwt token
-    const token = encodeURIComponent(Auth.getToken())
-    const formData = `token=${token}`
-
-    // create an AJAX request
-    var xhr = new XMLHttpRequest();
-    xhr.open('post', '/api/uploadVideos');
-    xhr.setRequestHeader('Content-type', 'application/json');
-    // set the authorization HTTP header
-    xhr.setRequestHeader('Authorization', `bearer ${token}`);
-    xhr.responseType = 'json';
-    xhr.addEventListener('load', () => {
-      if (xhr.status === 400) {
-        const error = xhr.response.error;
-        console.log(error);
-      }
-    });
-
-    xhr.send(JSON.stringify({
-      title: title,
-      backdrop: backDrop,
-      rscInfo: rscInfo,
-      tags: tags,
-      introduction: introduction
-    }))
-
-    // Send cover to server
-    var fd = new FormData()
-    // Append cover file and change the name
-    fd.append("backdrop", file, backDrop)
-    // fd.append("filename", backDrop, );
-    // A trick: set contentType to false, so the boundary will be added automatically
-    $.ajax({
-      url: '/upload/backdrop',
-      headers: {"Authorization": `bearer ${token}`},
-      data: fd,
-      cache: false,
-      contentType: false,
-      processData: false,
-      method: 'POST'
-    });
-
-    this.closeCard();
   }
 
   render() {

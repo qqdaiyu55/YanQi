@@ -1,4 +1,5 @@
 import React from 'react'
+import { withRouter } from 'react-router-dom'
 import Auth from '../modules/Auth'
 import { displayVideo, switchVideo } from '../containers/Video.js'
 import Modal from '../components/Modal.js'
@@ -9,11 +10,18 @@ class VideoPage extends React.Component {
     super(props);
 
     this.state = {
-      data: {}
+      data: {
+        title: '',
+        backdrop: '',
+        tags: [],
+        rscInfo: [],
+        introduction: ''
+      }
     };
 
-    this.loadContent = this.loadContent.bind(this);
-    this.openEditVideoModal = this.openEditVideoModal.bind(this);
+    this.loadContent = this.loadContent.bind(this)
+    this.openEditVideoModal = this.openEditVideoModal.bind(this)
+    this.searchTag = this.searchTag.bind(this)
   }
   componentWillMount() {
     this.loadContent();
@@ -25,14 +33,22 @@ class VideoPage extends React.Component {
 
     const data = `id=${id}`;
     $.ajax({
-      url: requestUrl,
+      url: '/api/video',
       data: data,
       headers: {"Authorization": `bearer ${token}`},
       cache: false,
       contentType: 'application/x-www-form-urlencoded',
       method: 'GET'
     }).done((data)=>{
-      this.setState({data: data});
+      this.setState({
+        data: {
+          title: data.title,
+          backdrop: data.backdrop,
+          tags: data.tags,
+          rscInfo: data.rsc_info,
+          introduction: data.introduction
+        }
+      })
     }).fail(()=>{
       console.log("There has an error.");
     });
@@ -43,7 +59,7 @@ class VideoPage extends React.Component {
     $("#edit-video-card .intro").val(data.introduction);
 
     const passData = {
-      backDrop: data.backDrop,
+      backdrop: data.backdrop,
       tags: data.tags,
       rscInfo: data.rscInfo
     };
@@ -53,16 +69,19 @@ class VideoPage extends React.Component {
     // $("#videopage-data").val(JSON.stringify(passData));
     $("#videopage-data").val(this.props.match.params.id);
   }
+  searchTag(e) {
+    this.props.history.push('/search/tag='+e.target.innerHTML)
+  }
   render() {
     const title = this.state.data.title;
-    const backDrop = this.state.data.backDrop;
+    const backdrop = this.state.data.backdrop;
     const tags_data = this.state.data.tags;
     const rscInfo = this.state.data.rscInfo;
     const introduction = this.state.data.introduction;
     if (tags_data) {
       var tags = tags_data.map(function(t, i) {
-        return (<li>{t}</li>);
-      });
+        return (<li onClick={this.searchTag}>{t}</li>);
+      }.bind(this));
     }
     if (rscInfo) {
       var rsc = rscInfo.map(function(t, i) {
@@ -74,7 +93,7 @@ class VideoPage extends React.Component {
     return (
       typeof title !== "undefined" &&
       <div className="videopage-content">
-        <div className="cover-title-wrapper" style={{backgroundImage: 'url(/backdrop/' + backDrop + ')'}}>
+        <div className="cover-title-wrapper" style={{backgroundImage: 'url(/backdrop/' + backdrop + ')'}}>
           <div className="title">
             <h1>{title}</h1>
           </div>
@@ -92,9 +111,6 @@ class VideoPage extends React.Component {
         <div className="intro">
           <p>{introduction}</p>
         </div>
-        {/* <Modal id="edit-video-card" show={true}>
-          <EditVideoCard />
-        </Modal> */}
       </div>
     )
   }
@@ -127,4 +143,4 @@ class RscCard extends React.Component {
   }
 }
 
-export default VideoPage;
+export default withRouter(VideoPage)

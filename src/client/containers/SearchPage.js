@@ -70,9 +70,8 @@ class SearchPage extends React.Component {
     $.ajax({
       url: '/api/videolist/id',
       headers: { 'Authorization': `bearer ${token}` },
-      data: JSON.stringify({ token: token }),
       contentType: 'application/json',
-      method: 'POST'
+      method: 'GET'
     }).done((data) => {
       this.setState({ videolist: data.video_list })
     }).fail(() => {

@@ -22,13 +22,11 @@ class Navigation extends React.Component {
   }
   componentWillMount() {
     const token = Auth.getToken()
-    const data = { token: token }
     $.ajax({
       url: '/api/profile',
-      data: JSON.stringify(data),
       headers: { 'Authorization': `bearer ${token}` },
       contentType: 'application/json',
-      method: 'POST'
+      method: 'GET'
     }).done((data) => {
       this.tags = data.tags
       this.forceUpdate()

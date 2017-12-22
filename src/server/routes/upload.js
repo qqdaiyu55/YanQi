@@ -18,7 +18,7 @@ var storageBackdrop = multer.diskStorage({
   }
 })
 var uploadBackdrop = multer({ storage: storageBackdrop }).single('backdrop')
-router.post('/upload/backdrop', (req, res) => {
+router.post('/backdrop', (req, res) => {
   uploadBackdrop(req, res, (err) => {
     if (err) {
       res.status(400).json({
@@ -37,28 +37,48 @@ var storageAvatar = multer.diskStorage({
     cb(null, file.originalname)
   }
 })
-var uploadAvatar = multer({ storage: storageBackdrop }).single('avatar')
-router.post('/upload/avatar', (req, res) => {
-  const token = req.body.token
+var uploadAvatar = multer({ storage: storageAvatar }).single('avatar')
+router.post('/avatar', (req, res) => {
+  const token = req.headers.authorization.split(' ')[1]
   const decode = jwt.verify(token, config.jwtSecret)
   const subId = decode.sub
-  const avatar = req.body.avatar
 
-  uploadBackdrop(req, res, (err) => {
+  uploadAvatar(req, res, (err) => {
     if (err) {
-      res.status(400).json({
-        error: 'Something wrong when uploading backdrop.'
-      })
+      throw err
+      res.status(400).json({ success: false })
+      return
     }
-  })
 
-  User.findOneAndUpdate({_id: subId}, {avatarUrl: avatar}, (err, res) => {
-    if (err) {
-      res.status(400).json({
-        error: 'Failure in updating avatar!'
-      })
-    }
+    const avatarUrl = req.file.filename
+    User.findOneAndUpdate({ _id: subId }, { avatar_url: avatarUrl }, (err) => {
+      if (err) {
+        throw err
+        res.status(400).json({ success: false })
+        return
+      }
+    })
   })
+  res.status(200).json({ success: true })
 })
+
+
+router.post('/video', (req, res, next) => {
+  const info = req.body;
+
+  Video.create([{
+    title: info.title,
+    backdrop: info.backdrop,
+    rsc_info: info.rscInfo,
+    tags: info.tags,
+    introduction: info.introduction
+    }], (err, res) => {
+      if (err) {
+        res.status(400).json({
+          error: 'Failure in uploading videos!'
+        });
+      }
+  })
+});
 
 module.exports = router;

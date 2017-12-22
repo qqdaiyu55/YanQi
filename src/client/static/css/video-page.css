@@ -49,6 +49,7 @@
   width: 100%;
 }
 .videopage-content .tags ul li {
+  cursor: pointer;
   display: flex;
   position: relative;
   border-radius: 5px;

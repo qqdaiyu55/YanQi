@@ -9,8 +9,8 @@ const multer = require('multer');
 const router = new express.Router();
 
 // Get user profile
-router.post('/profile', (req, res, next) => {
-  const token = req.body.token
+router.get('/profile', (req, res, next) => {
+  const token = req.headers.authorization.split(' ')[1]
   const decode = jwt.verify(token, config.jwtSecret)
   const subId = decode.sub
 
@@ -28,38 +28,19 @@ router.post('/profile', (req, res, next) => {
 });
 
 
-router.post('/uploadVideos', (req, res, next) => {
-  const info = req.body;
-
-  Video.create([{
-    title: info.title,
-    backdrop: info.backdrop,
-    rsc_info: info.rscInfo,
-    tags: info.tags,
-    introduction: info.introduction
-    }], (err, res) => {
-      if (err) {
-        res.status(400).json({
-          error: 'Failure in uploading videos!'
-        });
-      }
-  })
-});
-
-
 router.get('/videos', (req, res) => {
   var parsedQuery = req.query.q.split(':')
   var searchPattern = {}
   if (parsedQuery[0] === 'title') {
     searchPattern = {
       'match': {
-        'title': parsedQuery[1]
+        'title.cn': parsedQuery[1]
       }
     }
   } else if (parsedQuery[0] === 'tag') {
     searchPattern = {
       'terms': {
-        'tags': [parsedQuery[1]]
+        'tags.keyword': [parsedQuery[1]]
       }
     }
   } else {
@@ -68,7 +49,7 @@ router.get('/videos', (req, res) => {
   }
 
   Video.search(searchPattern, (err, results) => {
-    if (err) throw err;
+    if (err) throw err
     res.json({
       num: results.hits.total,
       hits: results.hits.hits
@@ -77,20 +58,20 @@ router.get('/videos', (req, res) => {
 })
 
 router.get('/video', (req, res) => {
-  const id = req.query.id;
+  const id = req.query.id
 
   Video.findById(id, (err, video) => {
-    if (err) throw err;
+    if (err) throw err
 
-    res.status(200).json(video);
+    res.status(200).json(video)
   })
 })
 
 
-router.post('/videolist/id', (req, res) => {
-  const token = req.body.token;
-  const decode = jwt.verify(token, config.jwtSecret);
-  const subId = decode.sub;
+router.get('/videolist/id', (req, res) => {
+  const token = req.headers.authorization.split(' ')[1]
+  const decode = jwt.verify(token, config.jwtSecret)
+  const subId = decode.sub
 
   User.findById(subId, (err, user) => {
     if (err) throw err;
@@ -102,13 +83,13 @@ router.post('/videolist/id', (req, res) => {
   })
 })
 
-router.post('/videolist/all', (req, res) => {
-  const token = req.body.token;
-  const decode = jwt.verify(token, config.jwtSecret);
-  const subId = decode.sub;
+router.get('/videolist/all', (req, res) => {
+  const token = req.headers.authorization.split(' ')[1]
+  const decode = jwt.verify(token, config.jwtSecret)
+  const subId = decode.sub
 
   User.findById(subId, (err, user) => {
-    if (err) throw err;
+    if (err) throw err
 
     const videoListIds = user.video_list
     Video.find({ '_id': { $in: videoListIds }}, (err, videos) => {

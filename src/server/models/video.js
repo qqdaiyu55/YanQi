@@ -7,7 +7,7 @@ const VideoSchema = new Schema({
   title: { type: String, es_indexed: true },
   backdrop: { type: String, es_indexed: true},
   rsc_info: Array,
-  tags: { type: [String], es_type: 'text', es_indexed: true },
+  tags: { type: [String], es_indexed: true },
   introduction: String,
   creat_time: { type: Date, default: Date.now() },
   update_time: { type: Date, default: Date.now(), es_indexed: true }
@@ -23,11 +23,22 @@ Video.createMapping({
       "properties": {
         "title": {
           "type": "text",
-          "analyzer": "ik_max_word",
-          "search_analyzer": "ik_max_word"
+          "fields": {
+            "cn": {
+              "type": "text",
+              "analyzer": "ik_max_word",
+              "search_analyzer": "ik_smart"
+            }
+          }
         },
         "tags": {
-          "analyzer": "keyword"
+          "type": "text",
+          "fields": {
+            "keyword": {
+              "type": "text",
+              "analyzer": "keyword"
+            }
+          }
         }
       }
     }

@@ -1,10 +1,11 @@
 import React from 'react'
+import { withRouter } from 'react-router-dom'
 import PropTypes from 'prop-types'
-// import AvatarEditor from 'react-avatar-editor';
 import Avatar from 'react-avatar-edit'
 import Modal from './Modal'
 import Auth from '../modules/Auth'
-import { MBtoSize } from '../modules/Library'
+import { uuidv8, MBtoSize, dataURItoBlob } from '../modules/Library'
+import ImageCompressor from '@xkeshi/image-compressor'
 
 class UserProfile extends React.Component {
   constructor(props) {
@@ -28,7 +29,7 @@ class UserProfile extends React.Component {
   render() {
     return (
       <div className='profile'>
-        <ProfileCard username={this.props.username} avatarUrl={this.props.avatarUrl} download={this.props.download} upload={this.props.upload} />
+        <ProfileCardWithRouter username={this.props.username} avatarUrl={this.props.avatarUrl} download={this.props.download} upload={this.props.upload} />
         <div className='user'>
           <div className='name'>{this.props.username}</div>
           <div className='image' onClick={this.showProfileCard}><img src={'/avatar/'+this.props.avatarUrl} alt='avatar' /></div>
@@ -43,8 +44,7 @@ class ProfileCard extends React.Component {
     super(props)
 
     this.state = {
-      preview: null,
-      src: '/avatar/default.jpg'
+      preview: null
     }
 
     this.openAvatarEditor = this.openAvatarEditor.bind(this)
@@ -59,8 +59,7 @@ class ProfileCard extends React.Component {
   }
   closeAvatarEditor() {
     this.setState({
-      preview: null,
-      src: '/avatar/default.jpg'
+      preview: null
     })
     $('#avatar-editor').css({ 'visibility':'hidden', 'opacity':'0'})
   }
@@ -71,15 +70,67 @@ class ProfileCard extends React.Component {
     this.setState({ preview })
   }
   updateAvatar() {
-    
+    if (!this.state.preview) alert('Please choose a file.')
+
+    // Get the token
+    const token = Auth.getToken()
+
+    const file = dataURItoBlob(this.state.preview)
+    const imageCompressor = new ImageCompressor()
+    // Compress and upload avatar to server
+    imageCompressor.compress(file, {
+      width: 100,
+      height: 100,
+      quality: 1
+    }).then((result) => {
+      const filename = uuidv8()+uuidv8()+'.'+result.type.split('/')[1]
+      var fd = new FormData()
+      // Append cover file and change the name
+      fd.append('avatar', result, filename)
+      // A trick: set contentType to false, so the boundary will be added automatically
+      $.ajax({
+        url: '/upload/avatar',
+        headers: { 'Authorization': `bearer ${token}` },
+        data: fd,
+        cache: false,
+        contentType: false,
+        processData: false,
+        method: 'POST'
+      }).done(() => {
+        this.props.history.push('/')
+        window.location.reload()
+        console.log('Successfully upload avatar.')
+      }).fail(() => {
+        console.log('There is an error when uploading avatar.')
+      })
+    }).catch((err) => {
+      console.log('Something wrong when compressing avatar.')
+    })
+
+    this.closeAvatarEditor()
   }
 
   render() {
+    const labelStyle = {
+      fontSize: '1.25em',
+      fontWeight: '700',
+      color: '#ecf0f1',
+      display: 'inline-block',
+      fontFamily: 'sans-serif',
+      cursor: 'pointer'
+    }
+    const borderStyle = {
+      border: '2px solid #ecf0f1',
+      borderStyle: 'dashed',
+      borderRadius: '8px',
+      textAlign: 'center'
+    }
+
     return (
       <div id="profile-card">
         <div className='left-panel'>
           <div className="avatar" onClick={this.openAvatarEditor}>
-            <img src={'/avatar/default.jpg'} alt='avatar' />
+            <img src={'/avatar/'+this.props.avatarUrl} alt='avatar' />
             <div className='overlay'>Change</div>
           </div>
         </div>
@@ -98,9 +149,10 @@ class ProfileCard extends React.Component {
               height={200}
               onCrop={this.onCrop}
               onClose={this.onClose}
-              src={this.state.src}
               shadingColor={'black'}
               shadingOpacity={0.6}
+              labelStyle={labelStyle}
+              borderStyle={borderStyle}
               />
             </div>
             <div className='avatar-editor-right'>
@@ -117,6 +169,8 @@ class ProfileCard extends React.Component {
   }
 }
 
+const ProfileCardWithRouter = withRouter(ProfileCard)
+
 UserProfile.propTypes = {
   username: PropTypes.string.isRequired,
   avatarUrl: PropTypes.string.isRequired,
@@ -124,4 +178,4 @@ UserProfile.propTypes = {
   upload: PropTypes.number.isRequired
 }
 
-export default UserProfile;
+export default withRouter(UserProfile);
