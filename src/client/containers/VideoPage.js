@@ -1,9 +1,12 @@
 import React from 'react'
 import { withRouter } from 'react-router-dom'
 import Auth from '../modules/Auth'
-import { displayVideo, switchVideo } from '../containers/Video.js'
-import Modal from '../components/Modal.js'
-import EditVideoCard from '../components/EditVideoCard.js'
+import { displayVideo, switchVideo } from '../containers/Video'
+import Modal from '../components/Modal'
+import EditVideoCard from '../components/EditVideoCard'
+import { uuidv8 } from '../modules/Library'
+// import Clipboard from 'clipboard'
+import clipboard from 'clipboard-polyfill'
 
 class VideoPage extends React.Component {
   constructor(props) {
@@ -80,13 +83,13 @@ class VideoPage extends React.Component {
     const introduction = this.state.data.introduction;
     if (tags_data) {
       var tags = tags_data.map(function(t, i) {
-        return (<li onClick={this.searchTag}>{t}</li>);
+        return (<li key={uuidv8()} onClick={this.searchTag}>{t}</li>);
       }.bind(this));
     }
     if (rscInfo) {
       var rsc = rscInfo.map(function(t, i) {
         return(
-          <RscCard data={t} />
+          <RscCard key={uuidv8()} data={t} />
         )
       })
     }
@@ -120,16 +123,26 @@ class RscCard extends React.Component {
   constructor(props) {
     super(props);
 
-    this.handleClick = this.handleClick.bind(this);
+    this.handleClick = this.handleClick.bind(this)
+    this.copyMagnet = this.copyMagnet.bind(this)
   }
-  handleClick() {
-    if ($("#video-popup").css("display") == "none") {
-      $("#video-popup").show();
-      displayVideo({torrentID: this.props.data[2]});
+  handleClick(e) {
+    if (e.target.tagName !== 'I') {
+      if ($("#video-container").css("display") == "none") {
+        $("#video-container").show();
+        displayVideo({torrentID: this.props.data[2]});
+      }
+      else {
+        switchVideo({torrentID: this.props.data[2]});
+      }
     }
-    else {
-      switchVideo({torrentID: this.props.data[2]});
-    }
+  }
+  copyMagnet(e) {
+    // console.log(e.target.nextSibling.innerHTML)
+    clipboard.writeText(e.target.nextSibling.innerHTML)
+    // e.target.nextSibling.select()
+    // document.execCommand("Copy")
+    // clipboard.copy(e.target.nextSibling.innerHTML)
   }
   render() {
     const data = this.props.data;
@@ -137,10 +150,18 @@ class RscCard extends React.Component {
       <li onClick={this.handleClick}>
         <div>{data[0]}</div>
         <div>{data[1]}</div>
-        <div><i className="fa fa-magnet rsc-magnet"></i><div className="magnet-content">{data[2]}</div></div>
+        <div><i className="fa fa-magnet rsc-magnet clip-magnet" onClick={this.copyMagnet}></i><div className="magnet-content">{data[2]}</div></div>
       </li>
     );
   }
 }
+
+// var clipboard = new Clipboard('.clip-magnet')
+// clipboard.on('success', (e) => {
+//   console.info('Trigger:', e.trigger);
+  // target: (trigger) => {
+  //   return trigger.nextSibling.innerHTML
+  // }
+// })
 
 export default withRouter(VideoPage)

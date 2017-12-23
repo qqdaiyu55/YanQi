@@ -29,16 +29,11 @@ class EditVideoCard extends React.Component {
     this.cancelEditResource = this.cancelEditResource.bind(this)
     this.handleRsc = this.handleRsc.bind(this)
 
+    this.resetComponent = this.resetComponent.bind(this)
     this.closeCard = this.closeCard.bind(this)
     this.submitCard = this.submitCard.bind(this)
 
     this.loadConten = this.loadContent.bind(this)
-  }
-  componentWillUnmount() {
-    console.log('Unmounted.')
-  }
-  componentWillMount() {
-    console.log('Mounting.')
   }
   componentDidMount() {
     $(".horizon-scroll ul").sortable({
@@ -246,19 +241,23 @@ class EditVideoCard extends React.Component {
     this.setState({tags});
   }
 
+  resetComponent() {
+    $("#edit-video-card").css({"visibility":"hidden", "opacity":"0"})
+    this.removeCover()
+    $("#edit-video-card .title").val("")
+    this.cancelEditResource()
+    this.setState({
+      tags: []
+    })
+    $("#edit-video-card .horizon-scroll ul").html("")
+    $("#edit-video-card .intro").val("")
+  }
+
   // Close card and clear content
   closeCard() {
     var r = confirm('Do you really want to leave?')
     if (r === true) {
-      $("#edit-video-card").css({"visibility":"hidden", "opacity":"0"})
-      this.removeCover()
-      $("#edit-video-card .title").val("")
-      this.cancelEditResource()
-      this.setState({
-        tags: []
-      })
-      $("#edit-video-card .horizon-scroll ul").html("")
-      $("#edit-video-card .intro").val("")
+      this.resetComponent()
     }
   }
 
@@ -371,7 +370,7 @@ class EditVideoCard extends React.Component {
         console.log('Something wrong when compressing backdrop.')
       })
 
-      this.closeCard()
+      this.resetComponent()
     }
   }
 

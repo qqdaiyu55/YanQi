@@ -8,7 +8,7 @@ const Hero = () => (
       <h2>Season 2 now available</h2>
       <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Doloremque id quam sapiente unde voluptatum alias vero debitis, magnam quis quod.</p>
       <div className="button-wrapper">
-        <Link to='/video/5a361ddc1ee0d9fd34f570fd' className="Button" data-primary={true} style={{ textDecoration: 'none' }}>Watch now</Link>
+        <Link to='/video/5a3bcc52b1d6692551c19ec3' className="Button" data-primary={true} style={{ textDecoration: 'none' }}>Watch now</Link>
         <a className="Button" data-primary={false}>+ My list</a>
       </div>
     </div>

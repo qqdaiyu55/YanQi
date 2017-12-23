@@ -1,7 +1,7 @@
-#video-popup {
+#video-container {
   width: 800px;
   position: fixed;
-  display: none;
+  display: block;
   left: 300px;
   top: 150px;
   /*transform: translate(-50%, -50%);*/
@@ -9,7 +9,7 @@
 }
 
 /* The video close button */
-#video-popup .close {
+#video-container .close {
   display: block;
   position: absolute;
   right: -30px;
@@ -18,17 +18,18 @@
   font-weight: bold;
   transition: 0.3s;
 }
-
-#video-popup .close:hover,
-#video-popup .close:focus {
+#video-container .close:hover,
+#video-container .close:focus {
     color: #bbb;
     text-decoration: none;
     cursor: pointer;
 }
 
 /* Webtorrent video */
-#video-popup .video-wrapper {
-  background: #221f1f;
+#video-container .video-wrapper {
+  /*background: #221f1f;*/
+  background-image: url('/img/GhostBlade_Aeolian.jpg');
+  background-size: cover;
   width: 100%;
   height: 420px;
   margin: 0 auto;
@@ -37,19 +38,238 @@
   box-shadow: 0px 0px 20px #000000;
   overflow: hidden;
 }
-
-
-/*#video-popup .video-wrapper .video {
-  float: right;
-  max-height: 295px;
-  border: 1px solid rgba(255,255,255,0.4);
-  max-width: 60%;
-  overflow: hidden;
-  position: relative;
-  top: 50%;
-  transform: translateY(-50%);
-}*/
-
-video {
+#video-container video {
   width: 100%;
+}
+#video-container video::-webkit-media-controls-enclosure {
+  display: none !important;
+}
+
+#video-container .loader-inner {
+  visibility: hidden;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 7;
+}
+#video-container .loader-inner > div {
+  background-color: #e50914;
+}
+
+
+#video-container.fullScreen {
+  width: 100vw !important;
+  height: 100vh !important;
+}
+#video-container.small .intensityBar {
+  width: 50px !important;
+}
+#video-container.small .playButton {
+  margin: 0 !important;
+  margin-right: 5px !important;
+}
+#video-container.small .timer {
+  display: none !important;
+}
+#video-container.small .playPause, #video-container.small .volume .icon, #video-container.small .scale .icon {
+  width: 15px !important;
+  height: 15px !important;
+}
+#video-container.small .progressBar {
+  height: 6px !important;
+}
+#video-container.small .overlay .button {
+  width: 50px !important;
+  height: 50px !important;
+}
+#video-container.small .time {
+  display: none !important;
+}
+
+
+#video-controls {
+  /*visibility: hidden;*/
+  visibility: visible;
+  width: 100%;
+  height: 50px;
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  z-index: 7;
+}
+#video-controls.is-visible {
+  transform: translateY(0);
+}
+#video-controls .overlay {
+  position: absolute;
+  width: 100%;
+  height: 70px;
+  bottom: 0px;
+  background: linear-gradient(to top, rgb(40, 40, 40), transparent);
+  z-index: -1;
+}
+#video-controls .playButton {
+  width: 50px;
+  height: 80%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  color: white;
+  font-weight: 100;
+  transition: all 0.4s;
+}
+#video-controls .playButton .playPause {
+  width: 18px;
+  height: 18px;
+  background: url('/img/pause-button.svg');
+  background-size: 100% 100%;
+}
+#video-controls .ProgressContainer {
+  color: #fff;
+  width: calc(100% - 100px);
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  position: relative;
+}
+#video-controls .ProgressContainer .progressBar {
+  width: 100%;
+  height: 6px;
+  background: rgba(255, 255, 255, .2);
+  cursor: pointer;
+  overflow: hidden;
+}
+#video-controls .ProgressContainer .progressBar:hover + .time {
+  opacity: 1;
+  transform: translateY(0);
+}
+#video-controls .ProgressContainer .progressBar .progress {
+  width: 0%;
+  height: 100%;
+  background: #fff;
+  border-radius: 20px;
+}
+#video-controls .ProgressContainer .timer {
+  margin: 0 10px;
+  font-family: Arial, sans-serif;
+  font-weight: 300;
+  font-size: 12px;
+  font-weight: 300;
+  color: #fff;
+  letter-spacing: 1px;
+}
+#video-controls .ProgressContainer .time {
+  width: 80px;
+  height: 25px;
+  background: #000;
+  position: absolute;
+  top: -20px;
+  left: 0;
+  border-radius: 5px;
+  color: #fff;
+  font-family: Arial, sans-serif;
+  text-align: center;
+  line-height: 25px;
+  font-size: 12px;
+  letter-spacing: 1px;
+  opacity: 0;
+  transform: translateY(10px);
+  transition: transform 0.3s, opacity 0.3s;
+}
+#video-controls .ProgressContainer .time::after {
+  content: "";
+  display: block;
+  width: 0;
+  height: 0;
+  position: absolute;
+  top: 25px;
+  left: 33px;
+  border-left: 6px solid transparent;
+  border-right: 6px solid transparent;
+  border-top: 6px solid #000;
+}
+#video-controls .volume {
+  width: 100px;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  position: relative;
+  margin-left: 10px;
+}
+#video-controls .volume .icon {
+  width: 18px;
+  height: 18px;
+  background: url(https://goo.gl/orkf0V);
+  background-size: 100% 100%;
+  cursor: pointer;
+  margin-right: 10px;
+}
+#video-controls .volume .intensityBar {
+  position: relative;
+  width: 70px;
+  height: 4px;
+  background: rgba(255, 255, 255, .2);
+  max-width: 70px;
+  /*overflow: hidden;*/
+  /*transform-origin: right center;*/
+  cursor: pointer;
+  transition: all 0.4s;
+}
+#video-controls .volume .intensityBar .intensity {
+  width: 100%;
+  height: 100%;
+  background: #e50914;
+}
+#video-controls .volume .volume-indicator {
+  position: absolute;
+  background-color: #fff;
+  border-radius: 50%;
+  width: 12px;
+  height: 12px;
+  top: -4px;
+  left: calc(100% - 6px);
+}
+
+#video-controls .subtitle {
+  width: 30px;
+  height: 100%;
+  margin-left: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-weight: 100;
+  transition: all 0.4s;
+}
+#video-controls .subtitle .icon {
+  width: 20px;
+  height: 20px;
+  background: url('/img/closed-caption-logo.svg');
+  background-size: 100% 100%;
+  cursor: pointer;
+}
+#video-controls .scale {
+  width: 70px;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-left: 5px;
+  cursor: pointer;
+  transition: all 0.4s;
+}
+#video-controls .scale .icon {
+  width: 18px;
+  height: 18px;
+  background: url(../img/expand.svg);
+  background-size: 100% 100%;
+  background: url(https://goo.gl/PZsHVo);
+  background-size: 100% 100%;
 }

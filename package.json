@@ -15,6 +15,7 @@
     "@xkeshi/image-compressor": "^0.5.2",
     "bcrypt": "^1.0.1",
     "body-parser": "^1.15.2",
+    "clipboard-polyfill": "^2.3.0",
     "draft-js": "^0.10.3",
     "express": "^4.14.0",
     "fs": "^0.0.1-security",
