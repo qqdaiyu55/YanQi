@@ -44,4 +44,13 @@ var dataURItoBlob = (dataURI) => {
     return blob
 }
 
-export { arraysEqual, uuidv8, MBtoSize, dataURItoBlob }
+// Format an integer to specific length
+var formatNumberLength = (num, length) => {
+  var r = num.toString()
+  while (r.length < length) {
+    r = '0' + r
+  }
+  return r
+}
+
+export { arraysEqual, uuidv8, MBtoSize, dataURItoBlob, formatNumberLength }

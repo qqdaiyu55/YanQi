@@ -2573,6 +2573,8 @@ var _webtorrent = __webpack_require__(86);
 
 var _webtorrent2 = _interopRequireDefault(_webtorrent);
 
+var _Library = __webpack_require__(40);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -2582,8 +2584,6 @@ function _possibleConstructorReturn(self, call) { if (!self) { throw new Referen
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 // var WebTorrent = require('webtorrent')
 
-
-// const Spinner = require('react-spinkit')
 
 var client = new _webtorrent2.default({ dht: false });
 var torrentID = '';
@@ -2636,65 +2636,201 @@ var Video = function (_React$Component) {
     var _this = _possibleConstructorReturn(this, (Video.__proto__ || Object.getPrototypeOf(Video)).call(this));
 
     _this.closeVideo = _this.closeVideo.bind(_this);
+
+    _this.updateplayer = _this.updateplayer.bind(_this);
+    _this.getFormatedTime = _this.getFormatedTime.bind(_this);
+    _this.getTimeState = _this.getTimeState.bind(_this);
+    _this.toggleMute = _this.toggleMute.bind(_this);
+    _this.changeVolume = _this.changeVolume.bind(_this);
+    _this.fullScreen = _this.fullScreen.bind(_this);
+    _this.exitFullScreen = _this.exitFullScreen.bind(_this);
     return _this;
   }
 
   _createClass(Video, [{
     key: 'componentDidMount',
     value: function componentDidMount() {
+      var _this2 = this;
+
       $("#video-container").draggable();
       $('.loader-inner').loaders();
 
-      var play_pause = $('#video-container .playButton'),
-          container = $('#video-container'),
-          playIcon = $('#video-container .playButton .playPause'),
-          video = $('#video-container video'),
-          play = $('#video-container .play'),
-          volume = $('#video-container .volume .icon'),
-          volumeIntesity = $('#video-container .volume .intensityBar'),
-          intensity = $('#video-container .intensity'),
-          progressBar = $('#video-container .progressBar'),
-          progress = $('#video-container .progressBar .progress'),
-          timer = $('#video-container .intialTime'),
-          vidDuration = $('#video-container .fullTime'),
-          expandButton = $('#video-container .scale'),
-          overlayScreen = $('#video-container .overlay'),
-          timeState = $('#video-container .time'),
-          overlayButton = $('#video-container .overlay .button'),
+      var playVid = $('#video-controls .play-vid'),
+          video = $('#video-container video').get(0),
+          volume = $('#video-controls .volume .icon'),
+          volumeIntesity = $('#video-controls .volume .intensityBar'),
+          progressBar = $('#video-controls .progress-bar'),
+          expandButton = $('#video-controls .scale'),
+          timeState = $('#video-controls .time'),
           update;
 
-      play_pause.click(function () {
-        var video = $('#video-container video').get(0);
+      update = setInterval(this.updateplayer, 1000);
+
+      playVid.click(function () {
         if (video.paused) {
           video.play();
+          playVid.find('.icon').css('background-image', 'url(/img/pause-button.svg)');
+          // update = setInterval(this.updateplayer, 500)
         } else {
           video.pause();
+          playVid.find('.icon').css('background-image', 'url(/img/play-button.svg)');
+          // clearInterval(update)
         }
       });
-      // progressBar.click(function () {skip() })
-      // progressBar.mousemove(function () { timeState.text(getTimeState()) })
-      //
-      // volume.click(function () { toggleMute(); });
-      //
-      // expandButton.click(function () {
-      //
-      //    $(this).toggleClass('active');
-      //
-      //    if ($(this).hasClass('active')) {
-      //      $('#controls').addClass('is-visible');
-      //      fullScreen();
-      //   } else {
-      //      $('#controls').removeClass('is-visible');
-      //      exitTheFullScreen();
-      //   }
-      // })
 
-      // volumeIntesity.click(function () { changeVolume(); });
+      progressBar.click(function (e) {
+        var mouseX = e.pageX - progressBar.offset().left,
+            width = progressBar.outerWidth();
+        video.currentTime = mouseX / width * video.duration;
+        _this2.updateplayer();
+      });
+
+      progressBar.mousemove(function (e) {
+        return timeState.text(_this2.getTimeState(e));
+      });
+
+      volume.click(function () {
+        _this2.toggleMute();
+      });
+
+      volumeIntesity.click(function (e) {
+        _this2.changeVolume(e);
+      });
+
+      expandButton.click(function () {
+        expandButton.toggleClass('active');
+        if (expandButton.hasClass('active')) {
+          //  $('#video-controls').addClass('is-visible')
+          _this2.fullScreen();
+        } else {
+          //  $('#video-controls').removeClass('is-visible')
+          _this2.exitTheFullScreen();
+        }
+      });
 
       // overlayButton.click(function () { playVid();});
+    }
+    // Update video player: time, progress bar
 
-      // vidDuration.text(getFormatedFullTime());
+  }, {
+    key: 'updateplayer',
+    value: function updateplayer() {
+      var video = $('#video-container video').get(0);
+      var progressBar = $('#video-controls .progress-bar');
+      var progress = $('#video-controls .progress-bar .progress');
+      var progressIndicator = $('#video-controls .progress-bar .progress-indicator');
+      var timer = $('#video-controls .progress-container .timer');
+      var percentage = video.currentTime / video.duration * 100;
 
+      progress.css('width', percentage + '%');
+      progressIndicator.css('left', progressBar.width() * percentage / 100 - 6 + 'px');
+      timer.text(this.getFormatedTime());
+      if (video.ended || video.paused) {
+        playIcon.css('background-image', 'url(/img/play-button.svg)');
+      }
+    }
+  }, {
+    key: 'getFormatedTime',
+    value: function getFormatedTime() {
+      var video = $('#video-container video').get(0);
+      var seconeds = Math.round(video.currentTime);
+      var minutes = Math.floor(seconeds / 60);
+
+      if (minutes > 0) {
+        seconeds -= minutes * 60;
+      }
+      return (0, _Library.formatNumberLength)(minutes, 2) + ':' + (0, _Library.formatNumberLength)(seconeds, 2);
+    }
+  }, {
+    key: 'getTimeState',
+    value: function getTimeState(e) {
+      var video = $('#video-container video').get(0);
+      var progressBar = $('#video-controls .progress-bar');
+      var timeState = $('#video-controls .time');
+
+      var mouseX = e.pageX - progressBar.offset().left,
+          width = progressBar.outerWidth();
+
+      var currentSeconeds = Math.round(mouseX / width * video.duration);
+      var currentMinutes = Math.floor(currentSeconeds / 60);
+
+      if (currentMinutes > 0) {
+        currentSeconeds -= currentMinutes * 60;
+      }
+
+      timeState.css('left', mouseX / width * progressBar.width() + 18 + 'px');
+
+      return (0, _Library.formatNumberLength)(currentMinutes, 2) + ':' + (0, _Library.formatNumberLength)(currentSeconeds, 2);
+    }
+  }, {
+    key: 'toggleMute',
+    value: function toggleMute() {
+      var video = $('#video-container video').get(0);
+      var volume = $('#video-controls .volume .icon');
+      var intensity = $('#video-controls .intensity');
+      var volumeIndicator = $('#video-controls .volume-indicator');
+
+      if (!video.muted) {
+        video.muted = true;
+        volume.css('background-image', 'url(/img/mute-volume.svg)');
+        intensity.hide();
+        volumeIndicator.hide();
+      } else {
+        video.muted = false;
+        volume.css('background-image', 'url(/img/volume.svg)');
+        intensity.show();
+        volumeIndicator.show();
+      }
+    }
+  }, {
+    key: 'changeVolume',
+    value: function changeVolume(e) {
+      var video = $('#video-container video').get(0);
+      var volume = $('#video-controls .volume .icon');
+      var volumeIntesity = $('#video-controls .volume .intensityBar');
+      var intensity = $('#video-controls .intensity');
+      var volumeIndicator = $('#video-controls .volume-indicator');
+
+      var mouseX = e.pageX - volumeIntesity.offset().left,
+          width = volumeIntesity.outerWidth();
+
+      video.volume = mouseX / width;
+      video.muted = false;
+      volume.css('background-image', 'url(/img/volume.svg)');
+      intensity.css('width', mouseX + 'px');
+      intensity.show();
+      volumeIndicator.css('left', mouseX / width * volumeIntesity.width() - 6 + 'px');
+      volumeIndicator.show();
+    }
+  }, {
+    key: 'fullScreen',
+    value: function fullScreen() {
+      var video = $('#video-container video').get(0);
+
+      if (video.requestFullscreen) {
+        video.requestFullscreen();
+      } else if (video.webkitRequestFullscreen) {
+        video.webkitRequestFullscreen();
+      } else if (video.mozRequestFullscreen) {
+        video.mozRequestFullscreen();
+      } else if (video.msRequestFullscreen) {
+        video.msRequestFullscreen();
+      } else {
+        console.log('Error: entering fullscreen.');
+      }
+    }
+  }, {
+    key: 'exitFullScreen',
+    value: function exitFullScreen() {
+      if (document.webkitExitFullscreen()) {
+        document.webkitExitFullscreen();
+      } else if (document.mozCancelFullScreen()) {
+        document.mozCancelFullScreen();
+      } else if (document.msExitFullscreen()) {
+        document.msExitFullscreen();
+      } else {
+        console.log('Error: exiting fullscreen.');
+      }
     }
     // close the popup (hide it) and remove video
 
@@ -2718,33 +2854,37 @@ var Video = function (_React$Component) {
           '\xD7'
         ),
         _react2.default.createElement('div', { className: 'loader-inner ball-pulse' }),
-        _react2.default.createElement('div', { className: 'video-wrapper' }),
+        _react2.default.createElement(
+          'div',
+          { className: 'video-wrapper' },
+          _react2.default.createElement('video', { src: '/img/test.mp4', constrols: true, autoPlay: true })
+        ),
         _react2.default.createElement(
           'div',
           { id: 'video-controls' },
-          _react2.default.createElement('div', { className: 'overlay' }),
           _react2.default.createElement(
             'div',
-            { className: 'playButton' },
-            _react2.default.createElement('div', { className: 'playPause' })
+            { className: 'play-vid' },
+            _react2.default.createElement('div', { className: 'icon' })
           ),
           _react2.default.createElement(
             'div',
-            { className: 'ProgressContainer' },
+            { className: 'progress-container' },
             _react2.default.createElement(
               'div',
-              { className: 'timer intialTime' },
+              { className: 'timer' },
               '00:00'
             ),
             _react2.default.createElement(
               'div',
-              { className: 'progressBar' },
-              _react2.default.createElement('div', { className: 'progress' })
+              { className: 'progress-bar' },
+              _react2.default.createElement('div', { className: 'progress' }),
+              _react2.default.createElement('div', { className: 'progress-indicator' })
             ),
             _react2.default.createElement(
               'div',
               { className: 'time' },
-              '00:00/16:00'
+              '16:00'
             )
           ),
           _react2.default.createElement(
@@ -2760,7 +2900,7 @@ var Video = function (_React$Component) {
           ),
           _react2.default.createElement(
             'div',
-            { className: 'subtitle' },
+            { className: 'caption' },
             _react2.default.createElement('div', { className: 'icon' })
           ),
           _react2.default.createElement(
@@ -3413,10 +3553,20 @@ var dataURItoBlob = function dataURItoBlob(dataURI) {
     return blob;
 };
 
+// Format an integer to specific length
+var formatNumberLength = function formatNumberLength(num, length) {
+    var r = num.toString();
+    while (r.length < length) {
+        r = '0' + r;
+    }
+    return r;
+};
+
 exports.arraysEqual = arraysEqual;
 exports.uuidv8 = uuidv8;
 exports.MBtoSize = MBtoSize;
 exports.dataURItoBlob = dataURItoBlob;
+exports.formatNumberLength = formatNumberLength;
 
 /***/ }),
 /* 41 */

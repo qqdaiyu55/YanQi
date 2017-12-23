@@ -27,11 +27,9 @@
 
 /* Webtorrent video */
 #video-container .video-wrapper {
-  /*background: #221f1f;*/
-  background-image: url('/img/GhostBlade_Aeolian.jpg');
-  background-size: cover;
+  background: #221f1f;
   width: 100%;
-  height: 420px;
+  /*height: 420px;*/
   margin: 0 auto;
   position: relative;
   border-radius: 5px;
@@ -76,7 +74,7 @@
   width: 15px !important;
   height: 15px !important;
 }
-#video-container.small .progressBar {
+#video-container.small .progress-bar {
   height: 6px !important;
 }
 #video-container.small .overlay .button {
@@ -93,6 +91,7 @@
   visibility: visible;
   width: 100%;
   height: 50px;
+  background: linear-gradient(to top, rgb(40, 40, 40), transparent);
   position: absolute;
   right: 0;
   bottom: 0;
@@ -112,7 +111,7 @@
   background: linear-gradient(to top, rgb(40, 40, 40), transparent);
   z-index: -1;
 }
-#video-controls .playButton {
+#video-controls .play-vid {
   width: 50px;
   height: 80%;
   display: flex;
@@ -123,13 +122,18 @@
   font-weight: 100;
   transition: all 0.4s;
 }
-#video-controls .playButton .playPause {
+#video-controls .play-vid .icon {
+  opacity: 0.8;
   width: 18px;
   height: 18px;
-  background: url('/img/pause-button.svg');
+  background-image: url('/img/pause-button.svg');
   background-size: 100% 100%;
+  transition: all .2s;
 }
-#video-controls .ProgressContainer {
+#video-controls .play-vid:hover > .icon {
+  opacity: 1;
+}
+#video-controls .progress-container {
   color: #fff;
   width: calc(100% - 100px);
   height: 100%;
@@ -138,24 +142,40 @@
   justify-content: flex-start;
   position: relative;
 }
-#video-controls .ProgressContainer .progressBar {
+#video-controls .progress-bar {
+  position: relative;
   width: 100%;
-  height: 6px;
-  background: rgba(255, 255, 255, .2);
+  height: 5px;
+  background: rgba(255, 255, 255, .3);
   cursor: pointer;
-  overflow: hidden;
+  /*overflow: hidden;*/
 }
-#video-controls .ProgressContainer .progressBar:hover + .time {
+#video-controls .progress-bar::before {
+  display: block;
+  margin-top: -10px;
+  content: "";
+  width: 100%;
+  height: 10px;
+}
+#video-controls .progress-bar:hover + .time {
   opacity: 1;
   transform: translateY(0);
 }
-#video-controls .ProgressContainer .progressBar .progress {
+#video-controls .progress-bar .progress {
   width: 0%;
   height: 100%;
-  background: #fff;
-  border-radius: 20px;
+  background: #e50914;
 }
-#video-controls .ProgressContainer .timer {
+#video-controls .progress-bar .progress-indicator {
+  position: absolute;
+  background-color: #fff;
+  border-radius: 50%;
+  width: 12px;
+  height: 12px;
+  top: -4px;
+  left: calc(0% - 6px);
+}
+#video-controls .progress-container .timer {
   margin: 0 10px;
   font-family: Arial, sans-serif;
   font-weight: 300;
@@ -164,7 +184,7 @@
   color: #fff;
   letter-spacing: 1px;
 }
-#video-controls .ProgressContainer .time {
+#video-controls .progress-container .time {
   width: 80px;
   height: 25px;
   background: #000;
@@ -182,7 +202,7 @@
   transform: translateY(10px);
   transition: transform 0.3s, opacity 0.3s;
 }
-#video-controls .ProgressContainer .time::after {
+#video-controls .progress-container .time::after {
   content: "";
   display: block;
   width: 0;
@@ -204,12 +224,16 @@
   margin-left: 10px;
 }
 #video-controls .volume .icon {
-  width: 18px;
+  opacity: 0.9;
+  width: 20px;
   height: 18px;
-  background: url(https://goo.gl/orkf0V);
+  background: url('/img/volume.svg');
   background-size: 100% 100%;
   cursor: pointer;
   margin-right: 10px;
+}
+#video-controls .volume .icon:hover {
+  opacity: 1;
 }
 #video-controls .volume .intensityBar {
   position: relative;
@@ -217,8 +241,7 @@
   height: 4px;
   background: rgba(255, 255, 255, .2);
   max-width: 70px;
-  /*overflow: hidden;*/
-  /*transform-origin: right center;*/
+  margin-left: 0px;
   cursor: pointer;
   transition: all 0.4s;
 }
@@ -237,7 +260,7 @@
   left: calc(100% - 6px);
 }
 
-#video-controls .subtitle {
+#video-controls .caption {
   width: 30px;
   height: 100%;
   margin-left: 18px;
@@ -248,28 +271,35 @@
   font-weight: 100;
   transition: all 0.4s;
 }
-#video-controls .subtitle .icon {
+#video-controls .caption .icon {
   width: 20px;
   height: 20px;
+  opacity: 0.9;
   background: url('/img/closed-caption-logo.svg');
   background-size: 100% 100%;
   cursor: pointer;
 }
+#video-controls .caption .icon:hover {
+  opacity: 1;
+}
 #video-controls .scale {
-  width: 70px;
+  width: 30px;
   height: 100%;
   display: flex;
   align-items: center;
   justify-content: center;
-  margin-left: 5px;
+  margin-left: 10px;
+  margin-right: 10px;
   cursor: pointer;
   transition: all 0.4s;
 }
 #video-controls .scale .icon {
+  opacity: 0.9;
   width: 18px;
   height: 18px;
-  background: url(../img/expand.svg);
+  background: url(../img/fullscreen.svg);
   background-size: 100% 100%;
-  background: url(https://goo.gl/PZsHVo);
-  background-size: 100% 100%;
+}
+#video-controls .scale .icon {
+  opacity: 1;
 }
