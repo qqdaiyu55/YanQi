@@ -2593,7 +2593,7 @@ var loaded = false;
 global.WEBTORRENT_ANNOUNCE = ['udp://[2604:a880:1:20::f:e001]:8000', 'ws://[2604:a880:1:20::f:e001]:8000'];
 
 // Display webtorrent video
-function displayVideo(props) {
+var displayVideo = function displayVideo(props) {
   client.add(props.torrentID, function (torrent) {
     torrent.on('download', function () {
       if (!loaded) {
@@ -2619,13 +2619,13 @@ function displayVideo(props) {
   });
 
   torrentID = props.torrentID;
-}
-function switchVideo(props) {
+};
+var switchVideo = function switchVideo(props) {
   client.remove(torrentID);
   $("#video-container .video-wrapper").html('');
 
   displayVideo(props);
-}
+};
 
 var Video = function (_React$Component) {
   _inherits(Video, _React$Component);
@@ -2635,6 +2635,7 @@ var Video = function (_React$Component) {
 
     var _this = _possibleConstructorReturn(this, (Video.__proto__ || Object.getPrototypeOf(Video)).call(this));
 
+    _this.removeOverlay = _this.removeOverlay.bind(_this);
     _this.closeVideo = _this.closeVideo.bind(_this);
 
     _this.updateplayer = _this.updateplayer.bind(_this);
@@ -2652,7 +2653,9 @@ var Video = function (_React$Component) {
     value: function componentDidMount() {
       var _this2 = this;
 
+      var topBar = $('#video-topbar');
       var videoContainer = $('#video-container');
+      var videoControls = $('#video-controls');
       var playVid = $('#video-controls .play-vid');
       var video = $('#video-container video').get(0);
       var volume = $('#video-controls .volume .icon');
@@ -2714,14 +2717,16 @@ var Video = function (_React$Component) {
           // Reset the activity tracker
           userActivity = false;
 
-          $('#video-controls').addClass('is-visible');
-          $('#video-container').css('cursor', 'auto');
+          videoControls.addClass('is-visible');
+          topBar.addClass('is-visible');
+          videoContainer.css('cursor', 'auto');
           clearTimeout(autohideControls);
           // In X seconds, if no more activity has occurred
           // the user will be considered inactive
           autohideControls = setTimeout(function () {
-            $('#video-controls').removeClass('is-visible');
-            $('#video-container').css('cursor', 'none');
+            videoControls.removeClass('is-visible');
+            topBar.removeClass('is-visible');
+            videoContainer.css('cursor', 'none');
           }, 2000);
         }
       }, 100);
@@ -2731,9 +2736,11 @@ var Video = function (_React$Component) {
         if (video.paused) {
           video.play();
           playVid.find('.icon').css('background-image', 'url(/img/pause-button.svg)');
+          $('#video-components .fs-overlay').show();
         } else {
           video.pause();
           playVid.find('.icon').css('background-image', 'url(/img/play-button.svg)');
+          $('#video-components .fs-overlay').hide();
         }
       });
 
@@ -2864,10 +2871,12 @@ var Video = function (_React$Component) {
       var videoContainer = $('#video-container');
       var videoContainerHTML = videoContainer.get(0);
       var videoControls = $('#video-controls');
+      var topBar = $('#video-topbar');
 
       videoControls.addClass('fullscreen');
       videoContainer.addClass('fullscreen');
       videoContainer.draggable('disable');
+      topBar.addClass('fullscreen');
 
       if (videoContainerHTML.requestFullscreen) {
         videoContainerHTML.requestFullscreen();
@@ -2886,10 +2895,12 @@ var Video = function (_React$Component) {
     value: function exitFullScreen() {
       var videoContainer = $('#video-container');
       var videoControls = $('#video-controls');
+      var topBar = $('#video-topbar');
 
       videoControls.removeClass('fullscreen');
       videoContainer.removeClass('fullscreen');
       videoContainer.draggable('enable');
+      topBar.removeClass('fullscreen');
 
       if (document.webkitExitFullscreen) {
         document.webkitExitFullscreen();
@@ -2901,12 +2912,17 @@ var Video = function (_React$Component) {
         console.log('Error: exiting fullscreen.');
       }
     }
+  }, {
+    key: 'removeOverlay',
+    value: function removeOverlay() {
+      $('#video-components .fs-overlay').hide();
+    }
     // Close the popup (hide it) and remove video
 
   }, {
     key: 'closeVideo',
     value: function closeVideo() {
-      $("#video-container").hide();
+      $("#video-components").hide();
       client.remove(torrentID);
 
       $("#video-container .video-wrapper").html('');
@@ -2916,61 +2932,72 @@ var Video = function (_React$Component) {
     value: function render() {
       return _react2.default.createElement(
         'div',
-        { id: 'video-container' },
+        { id: 'video-components' },
+        _react2.default.createElement('div', { className: 'fs-overlay', onClick: this.removeOverlay }),
         _react2.default.createElement(
           'div',
-          { className: 'video-wrapper' },
-          _react2.default.createElement('video', { src: '/img/test.mp4', constrols: true, autoPlay: true })
-        ),
-        _react2.default.createElement(
-          'div',
-          { id: 'video-controls' },
-          _react2.default.createElement('div', { className: 'overlay' }),
+          { id: 'video-container' },
           _react2.default.createElement(
             'div',
-            { className: 'play-vid' },
-            _react2.default.createElement('div', { className: 'icon' })
-          ),
-          _react2.default.createElement(
-            'div',
-            { className: 'progress-container' },
+            { id: 'video-topbar' },
+            _react2.default.createElement('div', { className: 'close', onClick: this.closeVideo }),
             _react2.default.createElement(
               'div',
-              { className: 'timer' },
-              '00:00'
+              { className: 'title' },
+              'Title'
+            )
+          ),
+          _react2.default.createElement('div', { className: 'video-wrapper' }),
+          _react2.default.createElement(
+            'div',
+            { id: 'video-controls' },
+            _react2.default.createElement('div', { className: 'overlay' }),
+            _react2.default.createElement(
+              'div',
+              { className: 'play-vid' },
+              _react2.default.createElement('div', { className: 'icon' })
             ),
             _react2.default.createElement(
               'div',
-              { className: 'progress-bar' },
-              _react2.default.createElement('div', { className: 'progress' }),
-              _react2.default.createElement('div', { className: 'progress-indicator' })
+              { className: 'progress-container' },
+              _react2.default.createElement(
+                'div',
+                { className: 'timer' },
+                '00:00'
+              ),
+              _react2.default.createElement(
+                'div',
+                { className: 'progress-bar' },
+                _react2.default.createElement('div', { className: 'progress' }),
+                _react2.default.createElement('div', { className: 'progress-indicator' })
+              ),
+              _react2.default.createElement(
+                'div',
+                { className: 'time' },
+                '00:00'
+              )
             ),
             _react2.default.createElement(
               'div',
-              { className: 'time' },
-              '00:00'
-            )
-          ),
-          _react2.default.createElement(
-            'div',
-            { className: 'volume' },
-            _react2.default.createElement('div', { className: 'icon' }),
+              { className: 'volume' },
+              _react2.default.createElement('div', { className: 'icon' }),
+              _react2.default.createElement(
+                'div',
+                { className: 'intensityBar' },
+                _react2.default.createElement('div', { className: 'intensity' }),
+                _react2.default.createElement('div', { className: 'volume-indicator' })
+              )
+            ),
             _react2.default.createElement(
               'div',
-              { className: 'intensityBar' },
-              _react2.default.createElement('div', { className: 'intensity' }),
-              _react2.default.createElement('div', { className: 'volume-indicator' })
+              { className: 'caption' },
+              _react2.default.createElement('div', { className: 'icon' })
+            ),
+            _react2.default.createElement(
+              'div',
+              { className: 'scale' },
+              _react2.default.createElement('div', { className: 'icon' })
             )
-          ),
-          _react2.default.createElement(
-            'div',
-            { className: 'caption' },
-            _react2.default.createElement('div', { className: 'icon' })
-          ),
-          _react2.default.createElement(
-            'div',
-            { className: 'scale' },
-            _react2.default.createElement('div', { className: 'icon' })
           )
         )
       );
@@ -29237,8 +29264,6 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
 
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
-// import Clipboard from 'clipboard'
-
 
 var VideoPage = function (_React$Component) {
   _inherits(VideoPage, _React$Component);
@@ -29422,8 +29447,8 @@ var RscCard = function (_React$Component2) {
     key: 'handleClick',
     value: function handleClick(e) {
       if (e.target.tagName !== 'I') {
-        if ($("#video-container").css("display") == "none") {
-          $("#video-container").show();
+        if ($("#video-components").css("display") === "none") {
+          $("#video-components").show();
           (0, _Video.displayVideo)({ torrentID: this.props.data[2] });
         } else {
           (0, _Video.switchVideo)({ torrentID: this.props.data[2] });
@@ -29433,11 +29458,7 @@ var RscCard = function (_React$Component2) {
   }, {
     key: 'copyMagnet',
     value: function copyMagnet(e) {
-      // console.log(e.target.nextSibling.innerHTML)
       _clipboardPolyfill2.default.writeText(e.target.nextSibling.innerHTML);
-      // e.target.nextSibling.select()
-      // document.execCommand("Copy")
-      // clipboard.copy(e.target.nextSibling.innerHTML)
     }
   }, {
     key: 'render',

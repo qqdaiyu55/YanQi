@@ -14,7 +14,7 @@ global.WEBTORRENT_ANNOUNCE = [
 ]
 
 // Display webtorrent video
-function displayVideo(props) {
+var displayVideo = (props) => {
   client.add(props.torrentID, function(torrent) {
     torrent.on('download', function () {
       if (!loaded) {
@@ -30,22 +30,22 @@ function displayVideo(props) {
     file.appendTo("#video-container .video-wrapper")
 
     // A trick to get loaded video intrinsic height
-    setInterval(()=>{
-      let video_height = $("#video-container video").height();
-      let video_wrapper_height = $("#video-container .video-wrapper").height();
+    setInterval(() => {
+      let video_height = $("#video-container video").height()
+      let video_wrapper_height = $("#video-container .video-wrapper").height()
       if (video_height !== video_wrapper_height) {
-        $('#video-container .video-wrapper').css('height', video_height);
+        $('#video-container .video-wrapper').css('height', video_height)
       }
-    }, 1000);
+    }, 1000)
   })
 
   torrentID = props.torrentID
 }
-function switchVideo(props) {
-  client.remove(torrentID);
-  $("#video-container .video-wrapper").html('');
+var switchVideo = (props) => {
+  client.remove(torrentID)
+  $("#video-container .video-wrapper").html('')
 
-  displayVideo(props);
+  displayVideo(props)
 }
 
 
@@ -53,6 +53,7 @@ class Video extends React.Component {
   constructor(props) {
     super()
 
+    this.removeOverlay = this.removeOverlay.bind(this)
     this.closeVideo = this.closeVideo.bind(this)
 
     this.updateplayer = this.updateplayer.bind(this)
@@ -64,7 +65,9 @@ class Video extends React.Component {
     this.exitFullScreen = this.exitFullScreen.bind(this)
   }
   componentDidMount() {
+    var topBar = $('#video-topbar')
     var videoContainer = $('#video-container')
+    var videoControls = $('#video-controls')
     var playVid = $('#video-controls .play-vid')
     var video = $('#video-container video').get(0)
     var volume = $('#video-controls .volume .icon')
@@ -126,14 +129,16 @@ class Video extends React.Component {
         // Reset the activity tracker
         userActivity = false
 
-        $('#video-controls').addClass('is-visible')
-        $('#video-container').css('cursor', 'auto')
+        videoControls.addClass('is-visible')
+        topBar.addClass('is-visible')
+        videoContainer.css('cursor', 'auto')
         clearTimeout(autohideControls)
         // In X seconds, if no more activity has occurred
         // the user will be considered inactive
         autohideControls = setTimeout(function() {
-          $('#video-controls').removeClass('is-visible')
-          $('#video-container').css('cursor', 'none')
+          videoControls.removeClass('is-visible')
+          topBar.removeClass('is-visible')
+          videoContainer.css('cursor', 'none')
         }, 2000)
       }
     }, 100)
@@ -144,10 +149,12 @@ class Video extends React.Component {
       if (video.paused) {
         video.play()
         playVid.find('.icon').css('background-image', 'url(/img/pause-button.svg)')
+        $('#video-components .fs-overlay').show()
       }
       else {
         video.pause()
         playVid.find('.icon').css('background-image', 'url(/img/play-button.svg)')
+        $('#video-components .fs-overlay').hide()
       }
     })
 
@@ -265,10 +272,12 @@ class Video extends React.Component {
     var videoContainer = $('#video-container')
     var videoContainerHTML = videoContainer.get(0)
     var videoControls = $('#video-controls')
+    var topBar = $('#video-topbar')
 
     videoControls.addClass('fullscreen')
     videoContainer.addClass('fullscreen')
     videoContainer.draggable('disable')
+    topBar.addClass('fullscreen')
 
     if (videoContainerHTML.requestFullscreen) {
        videoContainerHTML.requestFullscreen()
@@ -285,10 +294,12 @@ class Video extends React.Component {
   exitFullScreen() {
     var videoContainer = $('#video-container')
     var videoControls = $('#video-controls')
+    var topBar = $('#video-topbar')
 
     videoControls.removeClass('fullscreen')
     videoContainer.removeClass('fullscreen')
     videoContainer.draggable('enable')
+    topBar.removeClass('fullscreen')
 
     if (document.webkitExitFullscreen) {
        document.webkitExitFullscreen()
@@ -300,47 +311,56 @@ class Video extends React.Component {
        console.log('Error: exiting fullscreen.')
     }
   }
+  removeOverlay() {
+    $('#video-components .fs-overlay').hide()
+  }
   // Close the popup (hide it) and remove video
   closeVideo() {
-    $("#video-container").hide()
+    $("#video-components").hide()
     client.remove(torrentID)
 
     $("#video-container .video-wrapper").html('')
   }
   render() {
     return (
-      <div id="video-container">
-        {/* <span onClick={this.closeVideo} className="close">&times;</span> */}
-
-        {/* <div className="loader-inner ball-pulse"></div> */}
-        <div className="video-wrapper">
-          <video src='/img/test.mp4' constrols autoPlay></video>
-        </div>
-        <div id="video-controls">
-          <div className='overlay'></div>
-          <div className="play-vid">
-            <div className="icon"></div>
+      <div id='video-components'>
+        <div className='fs-overlay' onClick={this.removeOverlay}></div>
+        <div id="video-container">
+          {/* <div className="loader-inner ball-pulse"></div> */}
+          <div id='video-topbar'>
+            {/* <div className='overlay'></div> */}
+            <div className='close' onClick={this.closeVideo}></div>
+            <div className='title'>Title</div>
           </div>
-          <div className="progress-container">
-            <div className="timer">00:00</div>
-            <div className="progress-bar">
-              <div className="progress"></div>
-              <div className='progress-indicator'></div>
+          <div className="video-wrapper">
+            {/* <video src='/img/test.mp4' constrols autoPlay></video> */}
+          </div>
+          <div id="video-controls">
+            <div className='overlay'></div>
+            <div className="play-vid">
+              <div className="icon"></div>
             </div>
-            <div className="time">00:00</div>
-          </div>
-          <div className="volume">
-            <div className="icon"></div>
-            <div className="intensityBar">
-              <div className="intensity"></div>
-              <div className='volume-indicator'></div>
+            <div className="progress-container">
+              <div className="timer">00:00</div>
+              <div className="progress-bar">
+                <div className="progress"></div>
+                <div className='progress-indicator'></div>
+              </div>
+              <div className="time">00:00</div>
             </div>
-          </div>
-          <div className='caption'>
-            <div className='icon'></div>
-          </div>
-          <div className="scale">
-            <div className="icon"></div>
+            <div className="volume">
+              <div className="icon"></div>
+              <div className="intensityBar">
+                <div className="intensity"></div>
+                <div className='volume-indicator'></div>
+              </div>
+            </div>
+            <div className='caption'>
+              <div className='icon'></div>
+            </div>
+            <div className="scale">
+              <div className="icon"></div>
+            </div>
           </div>
         </div>
       </div>

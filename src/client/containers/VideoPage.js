@@ -5,7 +5,6 @@ import { displayVideo, switchVideo } from '../containers/Video'
 import Modal from '../components/Modal'
 import EditVideoCard from '../components/EditVideoCard'
 import { uuidv8 } from '../modules/Library'
-// import Clipboard from 'clipboard'
 import clipboard from 'clipboard-polyfill'
 
 class VideoPage extends React.Component {
@@ -121,28 +120,24 @@ class VideoPage extends React.Component {
 
 class RscCard extends React.Component {
   constructor(props) {
-    super(props);
+    super(props)
 
     this.handleClick = this.handleClick.bind(this)
     this.copyMagnet = this.copyMagnet.bind(this)
   }
   handleClick(e) {
     if (e.target.tagName !== 'I') {
-      if ($("#video-container").css("display") == "none") {
-        $("#video-container").show();
-        displayVideo({torrentID: this.props.data[2]});
+      if ($("#video-components").css("display") === "none") {
+        $("#video-components").show()
+        displayVideo({torrentID: this.props.data[2]})
       }
       else {
-        switchVideo({torrentID: this.props.data[2]});
+        switchVideo({torrentID: this.props.data[2]})
       }
     }
   }
   copyMagnet(e) {
-    // console.log(e.target.nextSibling.innerHTML)
     clipboard.writeText(e.target.nextSibling.innerHTML)
-    // e.target.nextSibling.select()
-    // document.execCommand("Copy")
-    // clipboard.copy(e.target.nextSibling.innerHTML)
   }
   render() {
     const data = this.props.data;
