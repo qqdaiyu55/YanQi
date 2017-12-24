@@ -2652,32 +2652,92 @@ var Video = function (_React$Component) {
     value: function componentDidMount() {
       var _this2 = this;
 
-      $("#video-container").draggable();
+      var videoContainer = $('#video-container');
+      var playVid = $('#video-controls .play-vid');
+      var video = $('#video-container video').get(0);
+      var volume = $('#video-controls .volume .icon');
+      var volumeIntensity = $('#video-controls .volume .intensityBar');
+      var progressBar = $('#video-controls .progress-bar');
+      var expandButton = $('#video-controls .scale');
+      var timeState = $('#video-controls .time');
+      var update;
+      var autohideControls;
+      var userActivity = false;
+
+      videoContainer.draggable();
       $('.loader-inner').loaders();
 
-      var playVid = $('#video-controls .play-vid'),
-          video = $('#video-container video').get(0),
-          volume = $('#video-controls .volume .icon'),
-          volumeIntesity = $('#video-controls .volume .intensityBar'),
-          progressBar = $('#video-controls .progress-bar'),
-          expandButton = $('#video-controls .scale'),
-          timeState = $('#video-controls .time'),
-          update;
+      update = setInterval(this.updateplayer, 500);
 
-      update = setInterval(this.updateplayer, 1000);
+      // Bind keyboards
+      $(window).keypress(function (e) {
+        // Press SPACE: play or pause
+        if (e.keyCode === 0 || e.keyCode === 32) {
+          e.preventDefault();
+          playVid.click();
+        }
+      });
+      $(window).keyup(function (e) {
+        // Press ESC
+        if (e.keyCode === 27 && expandButton.hasClass('active')) {
+          e.preventDefault();
+          expandButton.toggleClass('active');
+          _this2.exitFullScreen();
+        }
 
+        // Press Right Arrow: skip 10 seconds
+        if (e.keyCode === 39) {
+          e.preventDefault();
+          video.currentTime += 10;
+          _this2.updateplayer();
+        }
+
+        // Press Left Arrow: back 10 seconds
+        if (e.keyCode === 37) {
+          e.preventDefault();
+          video.currentTime -= 10;
+          _this2.updateplayer();
+        }
+      });
+
+      // Click video: play or pause
+      $('#video-container .video-wrapper').click(function () {
+        playVid.click();
+      });
+
+      // Mouse move over the video: show controls and top bar
+      videoContainer.mousemove(function () {
+        userActivity = true;
+      });
+      var activityCheck = setInterval(function () {
+        if (userActivity) {
+          // Reset the activity tracker
+          userActivity = false;
+
+          $('#video-controls').addClass('is-visible');
+          $('#video-container').css('cursor', 'auto');
+          clearTimeout(autohideControls);
+          // In X seconds, if no more activity has occurred
+          // the user will be considered inactive
+          autohideControls = setTimeout(function () {
+            $('#video-controls').removeClass('is-visible');
+            $('#video-container').css('cursor', 'none');
+          }, 2000);
+        }
+      }, 100);
+
+      // Click button: play or pause
       playVid.click(function () {
         if (video.paused) {
           video.play();
           playVid.find('.icon').css('background-image', 'url(/img/pause-button.svg)');
-          // update = setInterval(this.updateplayer, 500)
         } else {
           video.pause();
           playVid.find('.icon').css('background-image', 'url(/img/play-button.svg)');
-          // clearInterval(update)
         }
       });
 
+      // Click progress bar: skip
       progressBar.click(function (e) {
         var mouseX = e.pageX - progressBar.offset().left,
             width = progressBar.outerWidth();
@@ -2685,42 +2745,49 @@ var Video = function (_React$Component) {
         _this2.updateplayer();
       });
 
+      // Mouse moves the progress bar: show time information
       progressBar.mousemove(function (e) {
         return timeState.text(_this2.getTimeState(e));
       });
 
+      // Click volume button: mute or unmute
       volume.click(function () {
         _this2.toggleMute();
       });
 
-      volumeIntesity.click(function (e) {
+      // Click volume intensity: change video volume
+      volumeIntensity.click(function (e) {
         _this2.changeVolume(e);
       });
 
+      // Click expand button: enter or exit full screen
       expandButton.click(function () {
         expandButton.toggleClass('active');
         if (expandButton.hasClass('active')) {
-          //  $('#video-controls').addClass('is-visible')
           _this2.fullScreen();
         } else {
-          //  $('#video-controls').removeClass('is-visible')
-          _this2.exitTheFullScreen();
+          _this2.exitFullScreen();
         }
       });
-
-      // overlayButton.click(function () { playVid();});
     }
+
     // Update video player: time, progress bar
 
   }, {
     key: 'updateplayer',
     value: function updateplayer() {
       var video = $('#video-container video').get(0);
+      var videoHeigth = $('#video-container video').height();
+      var playIcon = $('#video-controls .play-vid .icon');
       var progressBar = $('#video-controls .progress-bar');
       var progress = $('#video-controls .progress-bar .progress');
       var progressIndicator = $('#video-controls .progress-bar .progress-indicator');
       var timer = $('#video-controls .progress-container .timer');
       var percentage = video.currentTime / video.duration * 100;
+
+      if ($('#video-container').height() !== videoHeigth) {
+        $('#video-container').height(videoHeigth);
+      }
 
       progress.css('width', percentage + '%');
       progressIndicator.css('left', progressBar.width() * percentage / 100 - 6 + 'px');
@@ -2733,13 +2800,8 @@ var Video = function (_React$Component) {
     key: 'getFormatedTime',
     value: function getFormatedTime() {
       var video = $('#video-container video').get(0);
-      var seconeds = Math.round(video.currentTime);
-      var minutes = Math.floor(seconeds / 60);
-
-      if (minutes > 0) {
-        seconeds -= minutes * 60;
-      }
-      return (0, _Library.formatNumberLength)(minutes, 2) + ':' + (0, _Library.formatNumberLength)(seconeds, 2);
+      var seconds = Math.round(video.currentTime);
+      return (0, _Library.formatVideoTime)(seconds);
     }
   }, {
     key: 'getTimeState',
@@ -2748,19 +2810,13 @@ var Video = function (_React$Component) {
       var progressBar = $('#video-controls .progress-bar');
       var timeState = $('#video-controls .time');
 
-      var mouseX = e.pageX - progressBar.offset().left,
-          width = progressBar.outerWidth();
-
-      var currentSeconeds = Math.round(mouseX / width * video.duration);
-      var currentMinutes = Math.floor(currentSeconeds / 60);
-
-      if (currentMinutes > 0) {
-        currentSeconeds -= currentMinutes * 60;
-      }
+      var mouseX = e.pageX - progressBar.offset().left;
+      var width = progressBar.outerWidth();
 
       timeState.css('left', mouseX / width * progressBar.width() + 18 + 'px');
 
-      return (0, _Library.formatNumberLength)(currentMinutes, 2) + ':' + (0, _Library.formatNumberLength)(currentSeconeds, 2);
+      var currentSeconeds = Math.round(mouseX / width * video.duration);
+      return (0, _Library.formatVideoTime)(currentSeconeds);
     }
   }, {
     key: 'toggleMute',
@@ -2787,34 +2843,40 @@ var Video = function (_React$Component) {
     value: function changeVolume(e) {
       var video = $('#video-container video').get(0);
       var volume = $('#video-controls .volume .icon');
-      var volumeIntesity = $('#video-controls .volume .intensityBar');
+      var volumeIntensity = $('#video-controls .volume .intensityBar');
       var intensity = $('#video-controls .intensity');
       var volumeIndicator = $('#video-controls .volume-indicator');
 
-      var mouseX = e.pageX - volumeIntesity.offset().left,
-          width = volumeIntesity.outerWidth();
+      var mouseX = e.pageX - volumeIntensity.offset().left,
+          width = volumeIntensity.outerWidth();
 
       video.volume = mouseX / width;
       video.muted = false;
       volume.css('background-image', 'url(/img/volume.svg)');
       intensity.css('width', mouseX + 'px');
       intensity.show();
-      volumeIndicator.css('left', mouseX / width * volumeIntesity.width() - 6 + 'px');
+      volumeIndicator.css('left', mouseX / width * volumeIntensity.width() - 6 + 'px');
       volumeIndicator.show();
     }
   }, {
     key: 'fullScreen',
     value: function fullScreen() {
-      var video = $('#video-container video').get(0);
+      var videoContainer = $('#video-container');
+      var videoContainerHTML = videoContainer.get(0);
+      var videoControls = $('#video-controls');
 
-      if (video.requestFullscreen) {
-        video.requestFullscreen();
-      } else if (video.webkitRequestFullscreen) {
-        video.webkitRequestFullscreen();
-      } else if (video.mozRequestFullscreen) {
-        video.mozRequestFullscreen();
-      } else if (video.msRequestFullscreen) {
-        video.msRequestFullscreen();
+      videoControls.addClass('fullscreen');
+      videoContainer.addClass('fullscreen');
+      videoContainer.draggable('disable');
+
+      if (videoContainerHTML.requestFullscreen) {
+        videoContainerHTML.requestFullscreen();
+      } else if (videoContainerHTML.webkitRequestFullscreen) {
+        videoContainerHTML.webkitRequestFullscreen();
+      } else if (videoContainerHTML.mozRequestFullscreen) {
+        videoContainerHTML.mozRequestFullscreen();
+      } else if (videoContainerHTML.msRequestFullscreen) {
+        videoContainerHTML.msRequestFullscreen();
       } else {
         console.log('Error: entering fullscreen.');
       }
@@ -2822,17 +2884,24 @@ var Video = function (_React$Component) {
   }, {
     key: 'exitFullScreen',
     value: function exitFullScreen() {
-      if (document.webkitExitFullscreen()) {
+      var videoContainer = $('#video-container');
+      var videoControls = $('#video-controls');
+
+      videoControls.removeClass('fullscreen');
+      videoContainer.removeClass('fullscreen');
+      videoContainer.draggable('enable');
+
+      if (document.webkitExitFullscreen) {
         document.webkitExitFullscreen();
-      } else if (document.mozCancelFullScreen()) {
+      } else if (document.mozCancelFullScreen) {
         document.mozCancelFullScreen();
-      } else if (document.msExitFullscreen()) {
+      } else if (document.msExitFullscreen) {
         document.msExitFullscreen();
       } else {
         console.log('Error: exiting fullscreen.');
       }
     }
-    // close the popup (hide it) and remove video
+    // Close the popup (hide it) and remove video
 
   }, {
     key: 'closeVideo',
@@ -2849,12 +2918,6 @@ var Video = function (_React$Component) {
         'div',
         { id: 'video-container' },
         _react2.default.createElement(
-          'span',
-          { onClick: this.closeVideo, className: 'close' },
-          '\xD7'
-        ),
-        _react2.default.createElement('div', { className: 'loader-inner ball-pulse' }),
-        _react2.default.createElement(
           'div',
           { className: 'video-wrapper' },
           _react2.default.createElement('video', { src: '/img/test.mp4', constrols: true, autoPlay: true })
@@ -2862,6 +2925,7 @@ var Video = function (_React$Component) {
         _react2.default.createElement(
           'div',
           { id: 'video-controls' },
+          _react2.default.createElement('div', { className: 'overlay' }),
           _react2.default.createElement(
             'div',
             { className: 'play-vid' },
@@ -2884,7 +2948,7 @@ var Video = function (_React$Component) {
             _react2.default.createElement(
               'div',
               { className: 'time' },
-              '16:00'
+              '00:00'
             )
           ),
           _react2.default.createElement(
@@ -3506,60 +3570,75 @@ exports.default = EditVideoCard;
 
 
 Object.defineProperty(exports, "__esModule", {
-    value: true
+  value: true
 });
 // Judge if two arrays are equal
 var arraysEqual = function arraysEqual(arr1, arr2) {
-    if (arr1.length !== arr2.length) return false;
-    for (var i = arr1.length; i--;) {
-        if (arr1[i] !== arr2[i]) return false;
-    }
+  if (arr1.length !== arr2.length) return false;
+  for (var i = arr1.length; i--;) {
+    if (arr1[i] !== arr2[i]) return false;
+  }
 
-    return true;
+  return true;
 };
 
 // Generate 8 bits unique id
 var uuidv8 = function uuidv8() {
-    return Math.random().toString(36).substr(2, 8);
+  return Math.random().toString(36).substr(2, 8);
 };
 
 // Convert MB size to GB, TB
 var MBtoSize = function MBtoSize(num, decimals) {
-    if (num == 0) return '0 MB';
-    var k = 1024,
-        dm = decimals || 2,
-        sizes = ['MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'],
-        i = Math.floor(Math.log(num) / Math.log(k));
-    return parseFloat((num / Math.pow(k, i)).toFixed(dm)) + ' ' + sizes[i];
+  if (num == 0) return '0 MB';
+  var k = 1024,
+      dm = decimals || 2,
+      sizes = ['MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'],
+      i = Math.floor(Math.log(num) / Math.log(k));
+  return parseFloat((num / Math.pow(k, i)).toFixed(dm)) + ' ' + sizes[i];
 };
 
 // Convert data url to blob
 var dataURItoBlob = function dataURItoBlob(dataURI) {
-    // Convert base64 to raw binary data held in a string
-    var byteString = atob(dataURI.split(',')[1]);
+  // Convert base64 to raw binary data held in a string
+  var byteString = atob(dataURI.split(',')[1]);
 
-    // Separate out the mime component
-    var mimeString = dataURI.split(',')[0].split(':')[1].split(';')[0];
+  // Separate out the mime component
+  var mimeString = dataURI.split(',')[0].split(':')[1].split(';')[0];
 
-    // Write the bytes of the string to an ArrayBuffer
-    var arrayBuffer = new ArrayBuffer(byteString.length);
-    var _ia = new Uint8Array(arrayBuffer);
-    for (var i = 0; i < byteString.length; i++) {
-        _ia[i] = byteString.charCodeAt(i);
-    }
+  // Write the bytes of the string to an ArrayBuffer
+  var arrayBuffer = new ArrayBuffer(byteString.length);
+  var _ia = new Uint8Array(arrayBuffer);
+  for (var i = 0; i < byteString.length; i++) {
+    _ia[i] = byteString.charCodeAt(i);
+  }
 
-    var dataView = new DataView(arrayBuffer);
-    var blob = new Blob([dataView], { type: mimeString });
-    return blob;
+  var dataView = new DataView(arrayBuffer);
+  var blob = new Blob([dataView], { type: mimeString });
+  return blob;
 };
 
 // Format an integer to specific length
 var formatNumberLength = function formatNumberLength(num, length) {
-    var r = num.toString();
-    while (r.length < length) {
-        r = '0' + r;
-    }
-    return r;
+  var r = num.toString();
+  while (r.length < length) {
+    r = '0' + r;
+  }
+  return r;
+};
+
+// Format given time: hours:minutes:seconds
+// E.G. 01:30:23, 23:30
+var formatVideoTime = function formatVideoTime(time) {
+  var hours = Math.floor(time / 3600);
+  time -= hours * 3600;
+  var minutes = Math.floor(time / 60);
+  var seconds = time - minutes * 60;
+
+  if (hours > 0) {
+    return hours + ':' + formatNumberLength(minutes, 2) + ':' + formatNumberLength(seconds, 2);
+  } else {
+    return formatNumberLength(minutes, 2) + ':' + formatNumberLength(seconds, 2);
+  }
 };
 
 exports.arraysEqual = arraysEqual;
@@ -3567,6 +3646,7 @@ exports.uuidv8 = uuidv8;
 exports.MBtoSize = MBtoSize;
 exports.dataURItoBlob = dataURItoBlob;
 exports.formatNumberLength = formatNumberLength;
+exports.formatVideoTime = formatVideoTime;
 
 /***/ }),
 /* 41 */

@@ -53,4 +53,19 @@ var formatNumberLength = (num, length) => {
   return r
 }
 
-export { arraysEqual, uuidv8, MBtoSize, dataURItoBlob, formatNumberLength }
+// Format given time: hours:minutes:seconds
+// E.G. 01:30:23, 23:30
+var formatVideoTime = (time) => {
+  var hours = Math.floor(time / 3600)
+  time -= hours * 3600
+  var minutes = Math.floor(time / 60)
+  var seconds = time - minutes * 60
+
+  if (hours > 0) {
+     return hours+':'+formatNumberLength(minutes, 2)+':'+formatNumberLength(seconds, 2)
+  } else {
+    return formatNumberLength(minutes, 2)+':'+formatNumberLength(seconds, 2)
+  }
+}
+
+export { arraysEqual, uuidv8, MBtoSize, dataURItoBlob, formatNumberLength, formatVideoTime }

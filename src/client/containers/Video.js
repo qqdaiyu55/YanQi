@@ -1,7 +1,7 @@
 import React from 'react'
 // var WebTorrent = require('webtorrent')
 import WebTorrent from 'webtorrent/webtorrent.min'
-import { formatNumberLength } from '../modules/Library'
+import { formatVideoTime } from '../modules/Library'
 
 const client = new WebTorrent({ dht: false })
 var torrentID = ''
@@ -64,73 +64,141 @@ class Video extends React.Component {
     this.exitFullScreen = this.exitFullScreen.bind(this)
   }
   componentDidMount() {
-    $("#video-container").draggable()
+    var videoContainer = $('#video-container')
+    var playVid = $('#video-controls .play-vid')
+    var video = $('#video-container video').get(0)
+    var volume = $('#video-controls .volume .icon')
+    var volumeIntensity = $('#video-controls .volume .intensityBar')
+    var progressBar = $('#video-controls .progress-bar')
+    var expandButton = $('#video-controls .scale')
+    var timeState = $('#video-controls .time')
+    var update
+    var autohideControls
+    var userActivity = false
+
+    videoContainer.draggable()
     $('.loader-inner').loaders()
 
-    var playVid     = $('#video-controls .play-vid'),
-        video          = $('#video-container video').get(0),
-        volume         = $('#video-controls .volume .icon'),
-        volumeIntesity = $('#video-controls .volume .intensityBar'),
-        progressBar    = $('#video-controls .progress-bar'),
-        expandButton   = $('#video-controls .scale'),
-        timeState      = $('#video-controls .time'),
-        update
+    update = setInterval(this.updateplayer, 500)
 
-    update = setInterval(this.updateplayer, 1000)
+    // Bind keyboards
+    $(window).keypress((e) => {
+      // Press SPACE: play or pause
+      if (e.keyCode === 0 || e.keyCode === 32) {
+        e.preventDefault()
+        playVid.click()
+      }
+    })
+    $(window).keyup((e) => {
+      // Press ESC
+      if (e.keyCode === 27 && expandButton.hasClass('active')) {
+        e.preventDefault()
+        expandButton.toggleClass('active')
+        this.exitFullScreen()
+      }
 
+      // Press Right Arrow: skip 10 seconds
+      if (e.keyCode === 39) {
+        e.preventDefault()
+        video.currentTime += 10
+        this.updateplayer()
+      }
+
+      // Press Left Arrow: back 10 seconds
+      if (e.keyCode === 37) {
+        e.preventDefault()
+        video.currentTime -= 10
+        this.updateplayer()
+      }
+    })
+
+    // Click video: play or pause
+    $('#video-container .video-wrapper').click(() => {
+      playVid.click()
+    })
+
+    // Mouse move over the video: show controls and top bar
+    videoContainer.mousemove(() => {
+      userActivity = true
+    })
+    var activityCheck = setInterval(() => {
+      if (userActivity) {
+        // Reset the activity tracker
+        userActivity = false
+
+        $('#video-controls').addClass('is-visible')
+        $('#video-container').css('cursor', 'auto')
+        clearTimeout(autohideControls)
+        // In X seconds, if no more activity has occurred
+        // the user will be considered inactive
+        autohideControls = setTimeout(function() {
+          $('#video-controls').removeClass('is-visible')
+          $('#video-container').css('cursor', 'none')
+        }, 2000)
+      }
+    }, 100)
+
+
+    // Click button: play or pause
     playVid.click(() => {
       if (video.paused) {
         video.play()
         playVid.find('.icon').css('background-image', 'url(/img/pause-button.svg)')
-        // update = setInterval(this.updateplayer, 500)
       }
       else {
         video.pause()
         playVid.find('.icon').css('background-image', 'url(/img/play-button.svg)')
-        // clearInterval(update)
       }
     })
 
+    // Click progress bar: skip
     progressBar.click((e) => {
       var mouseX = e.pageX - progressBar.offset().left,
           width  = progressBar.outerWidth()
-      video.currentTime = (mouseX / width) * video.duration;
+      video.currentTime = (mouseX / width) * video.duration
       this.updateplayer()
     })
 
+    // Mouse moves the progress bar: show time information
     progressBar.mousemove((e) =>
       timeState.text(this.getTimeState(e))
     )
 
+    // Click volume button: mute or unmute
     volume.click(() => {
       this.toggleMute()
     })
 
-    volumeIntesity.click((e) => {
+    // Click volume intensity: change video volume
+    volumeIntensity.click((e) => {
       this.changeVolume(e)
     })
 
+    // Click expand button: enter or exit full screen
     expandButton.click(() => {
        expandButton.toggleClass('active')
        if (expandButton.hasClass('active')) {
-        //  $('#video-controls').addClass('is-visible')
          this.fullScreen()
       } else {
-        //  $('#video-controls').removeClass('is-visible')
-         this.exitTheFullScreen()
+         this.exitFullScreen()
       }
     })
-
-    // overlayButton.click(function () { playVid();});
   }
+
   // Update video player: time, progress bar
   updateplayer() {
     var video = $('#video-container video').get(0)
+    var videoHeigth = $('#video-container video').height()
+    var playIcon = $('#video-controls .play-vid .icon')
     var progressBar = $('#video-controls .progress-bar')
     var progress = $('#video-controls .progress-bar .progress')
     var progressIndicator = $('#video-controls .progress-bar .progress-indicator')
     var timer = $('#video-controls .progress-container .timer')
     var percentage = (video.currentTime / video.duration) * 100
+
+    if ($('#video-container').height() !== videoHeigth) {
+      $('#video-container').height(videoHeigth)
+    }
 
     progress.css('width', percentage + '%')
     progressIndicator.css('left', (progressBar.width()*percentage/100 - 6) + 'px')
@@ -141,32 +209,21 @@ class Video extends React.Component {
   }
   getFormatedTime() {
     var video = $('#video-container video').get(0)
-    var seconeds = Math.round(video.currentTime)
-    var minutes  = Math.floor(seconeds / 60)
-
-    if (minutes > 0) {
-       seconeds -= minutes * 60;
-    }
-    return formatNumberLength(minutes, 2) + ':' + formatNumberLength(seconeds, 2)
+    var seconds = Math.round(video.currentTime)
+    return formatVideoTime(seconds)
   }
   getTimeState(e) {
     var video = $('#video-container video').get(0)
     var progressBar = $('#video-controls .progress-bar')
     var timeState  = $('#video-controls .time')
 
-    var mouseX = e.pageX - progressBar.offset().left,
-        width  = progressBar.outerWidth()
+    var mouseX = e.pageX - progressBar.offset().left
+    var width  = progressBar.outerWidth()
 
-     var currentSeconeds = Math.round((mouseX / width) * video.duration);
-     var currentMinutes  = Math.floor(currentSeconeds / 60);
+    timeState.css('left', (mouseX / width) * progressBar.width() + 18 + 'px');
 
-     if (currentMinutes > 0) {
-        currentSeconeds -= currentMinutes * 60;
-     }
-
-     timeState.css('left', (mouseX / width) * progressBar.width() + 18 + 'px');
-
-     return formatNumberLength(currentMinutes, 2) + ':' + formatNumberLength(currentSeconeds, 2)
+    var currentSeconeds = Math.round((mouseX / width) * video.duration);
+    return formatVideoTime(currentSeconeds)
   }
   toggleMute() {
     var video = $('#video-container video').get(0)
@@ -189,48 +246,61 @@ class Video extends React.Component {
   changeVolume(e) {
     var video = $('#video-container video').get(0)
     var volume = $('#video-controls .volume .icon')
-    var volumeIntesity = $('#video-controls .volume .intensityBar')
+    var volumeIntensity = $('#video-controls .volume .intensityBar')
     var intensity = $('#video-controls .intensity')
     var volumeIndicator = $('#video-controls .volume-indicator')
 
-    var mouseX = e.pageX - volumeIntesity.offset().left,
-        width  = volumeIntesity.outerWidth();
+    var mouseX = e.pageX - volumeIntensity.offset().left,
+        width  = volumeIntensity.outerWidth();
 
     video.volume = mouseX / width
     video.muted = false
     volume.css('background-image', 'url(/img/volume.svg)')
     intensity.css('width', mouseX + 'px');
     intensity.show()
-    volumeIndicator.css('left', (mouseX / width) * volumeIntesity.width() - 6 + 'px')
+    volumeIndicator.css('left', (mouseX / width) * volumeIntensity.width() - 6 + 'px')
     volumeIndicator.show()
   }
   fullScreen() {
-    var video = $('#video-container video').get(0)
+    var videoContainer = $('#video-container')
+    var videoContainerHTML = videoContainer.get(0)
+    var videoControls = $('#video-controls')
 
-    if (video.requestFullscreen) {
-       video.requestFullscreen()
-    } else if (video.webkitRequestFullscreen) {
-       video.webkitRequestFullscreen()
-    } else if (video.mozRequestFullscreen) {
-       video.mozRequestFullscreen()
-    } else if (video.msRequestFullscreen) {
-       video.msRequestFullscreen()
+    videoControls.addClass('fullscreen')
+    videoContainer.addClass('fullscreen')
+    videoContainer.draggable('disable')
+
+    if (videoContainerHTML.requestFullscreen) {
+       videoContainerHTML.requestFullscreen()
+    } else if (videoContainerHTML.webkitRequestFullscreen) {
+       videoContainerHTML.webkitRequestFullscreen()
+    } else if (videoContainerHTML.mozRequestFullscreen) {
+       videoContainerHTML.mozRequestFullscreen()
+    } else if (videoContainerHTML.msRequestFullscreen) {
+       videoContainerHTML.msRequestFullscreen()
     } else {
        console.log('Error: entering fullscreen.')
     }
   }
   exitFullScreen() {
-    if (document.webkitExitFullscreen()) {
+    var videoContainer = $('#video-container')
+    var videoControls = $('#video-controls')
+
+    videoControls.removeClass('fullscreen')
+    videoContainer.removeClass('fullscreen')
+    videoContainer.draggable('enable')
+
+    if (document.webkitExitFullscreen) {
        document.webkitExitFullscreen()
-    } else if (document.mozCancelFullScreen()) {
+    } else if (document.mozCancelFullScreen) {
        document.mozCancelFullScreen()
-    } else if (document.msExitFullscreen()) {
+    } else if (document.msExitFullscreen) {
        document.msExitFullscreen()
     } else {
        console.log('Error: exiting fullscreen.')
     }
   }
-  // close the popup (hide it) and remove video
+  // Close the popup (hide it) and remove video
   closeVideo() {
     $("#video-container").hide()
     client.remove(torrentID)
@@ -240,14 +310,14 @@ class Video extends React.Component {
   render() {
     return (
       <div id="video-container">
-        <span onClick={this.closeVideo} className="close">&times;</span>
+        {/* <span onClick={this.closeVideo} className="close">&times;</span> */}
 
-        <div className="loader-inner ball-pulse"></div>
+        {/* <div className="loader-inner ball-pulse"></div> */}
         <div className="video-wrapper">
           <video src='/img/test.mp4' constrols autoPlay></video>
         </div>
         <div id="video-controls">
-          {/* <div className='overlay'></div> */}
+          <div className='overlay'></div>
           <div className="play-vid">
             <div className="icon"></div>
           </div>
@@ -257,8 +327,7 @@ class Video extends React.Component {
               <div className="progress"></div>
               <div className='progress-indicator'></div>
             </div>
-            <div className="time">16:00</div>
-            {/* <div className="timer fullTime">00:00</div> */}
+            <div className="time">00:00</div>
           </div>
           <div className="volume">
             <div className="icon"></div>
