@@ -10,6 +10,7 @@
   display: flex;
 }
 .profile .user .image {
+  cursor: pointer;
   border-radius: 22px;
   margin-left: 10px;
   overflow: hidden;
@@ -34,9 +35,6 @@
   font-size: 18px;
   font-weight: 300;
   height: 44px;
-}
-.profile .user:hover {
-  cursor: pointer;
 }
 
 

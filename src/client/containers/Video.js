@@ -9,34 +9,25 @@ var loaded = false
 
 // Announces list
 global.WEBTORRENT_ANNOUNCE = [
-  'udp://[2604:a880:1:20::f:e001]:8000',
-  'ws://[2604:a880:1:20::f:e001]:8000'
+  'udp://[2604:a880:1:20::2f90:7001]:8000',
+  'ws://[2604:a880:1:20::2f90:7001]:8000'
 ]
 
 // Display webtorrent video
 var displayVideo = (props) => {
+  // Show overlay
+  $('#video-components .fs-overlay').css({ 'visibility': 'visible', 'opacity': '1', 'width': '100vw', 'height': '100vh' })
+  $('#video-topbar .title').html(props.title)
+
   client.add(props.torrentID, function(torrent) {
-    torrent.on('download', function () {
-      if (!loaded) {
-        $('#video-container .loader-inner').hide()
-        $('#video-controls').css('visibility', 'visible')
-        loaded = true
-      }
-    })
+    // torrent.on('download', () => {
+    //   console.log(torrent.progress, torrent.numPeers, torrent.downloadSpeed)
+    // })
     const file = torrent.files.find(function (file) {
       return file.name.endsWith('.mp4')
     })
 
     file.appendTo("#video-container .video-wrapper")
-
-    // A trick to get loaded video intrinsic height
-    setInterval(() => {
-      let video_height = $("#video-container video").height()
-      let video_wrapper_height = $("#video-container .video-wrapper").height()
-      if (video_height !== video_wrapper_height) {
-        $('#video-container .video-wrapper').css('height', video_height)
-      }
-    }, 1000)
   })
 
   torrentID = props.torrentID
@@ -52,7 +43,11 @@ var switchVideo = (props) => {
 class Video extends React.Component {
   constructor(props) {
     super()
+    this.state = {
+      videoLoaded: false
+    }
 
+    this.showOverlay = this.showOverlay.bind(this)
     this.removeOverlay = this.removeOverlay.bind(this)
     this.closeVideo = this.closeVideo.bind(this)
 
@@ -93,6 +88,9 @@ class Video extends React.Component {
       }
     })
     $(window).keyup((e) => {
+      var video = $('#video-container video').get(0)
+      if (!video) return
+
       // Press ESC
       if (e.keyCode === 27 && expandButton.hasClass('active')) {
         e.preventDefault()
@@ -115,14 +113,15 @@ class Video extends React.Component {
       }
     })
 
-    // Click video: play or pause
-    $('#video-container .video-wrapper').click(() => {
-      playVid.click()
-    })
-
     // Mouse move over the video: show controls and top bar
     videoContainer.mousemove(() => {
       userActivity = true
+    })
+    videoContainer.mouseleave(() => {
+      userActivity = false
+      videoControls.removeClass('is-visible')
+      topBar.removeClass('is-visible')
+      videoContainer.css('cursor', 'none')
     })
     var activityCheck = setInterval(() => {
       if (userActivity) {
@@ -146,20 +145,24 @@ class Video extends React.Component {
 
     // Click button: play or pause
     playVid.click(() => {
+      var video = $('#video-container video').get(0)
+      var videoControls = $('#video-controls')
       if (video.paused) {
         video.play()
         playVid.find('.icon').css('background-image', 'url(/img/pause-button.svg)')
-        $('#video-components .fs-overlay').show()
+        this.showOverlay()
       }
       else {
         video.pause()
         playVid.find('.icon').css('background-image', 'url(/img/play-button.svg)')
-        $('#video-components .fs-overlay').hide()
+        this.removeOverlay()
       }
     })
 
     // Click progress bar: skip
     progressBar.click((e) => {
+      var video = $('#video-container video').get(0)
+      var videoControls = $('#video-controls')
       var mouseX = e.pageX - progressBar.offset().left,
           width  = progressBar.outerWidth()
       video.currentTime = (mouseX / width) * video.duration
@@ -188,30 +191,47 @@ class Video extends React.Component {
          this.fullScreen()
       } else {
          this.exitFullScreen()
+         expandButton.find('.icon').css('background-image', 'url(/img/fullscreen.svg)')
       }
     })
+  }
+  componentWillUpdate() {
+    $('.loader-inner').loaders()
   }
 
   // Update video player: time, progress bar
   updateplayer() {
     var video = $('#video-container video').get(0)
-    var videoHeigth = $('#video-container video').height()
-    var playIcon = $('#video-controls .play-vid .icon')
-    var progressBar = $('#video-controls .progress-bar')
-    var progress = $('#video-controls .progress-bar .progress')
-    var progressIndicator = $('#video-controls .progress-bar .progress-indicator')
-    var timer = $('#video-controls .progress-container .timer')
-    var percentage = (video.currentTime / video.duration) * 100
+    if (video) {
+      if (!this.state.videoLoaded) {
+        this.setState({ videoLoaded: true })
+      }
+      var videoHeigth = $('#video-container video').height()
+      var playIcon = $('#video-controls .play-vid .icon')
+      var progressBar = $('#video-controls .progress-bar')
+      var progress = $('#video-controls .progress-bar .progress')
+      var progressIndicator = $('#video-controls .progress-bar .progress-indicator')
+      var timer = $('#video-controls .progress-container .timer')
+      var percentage = (video.currentTime / video.duration) * 100
 
-    if ($('#video-container').height() !== videoHeigth) {
-      $('#video-container').height(videoHeigth)
-    }
+      if ($('#video-container').height() !== videoHeigth) {
+        $('#video-container').height(videoHeigth)
+      }
 
-    progress.css('width', percentage + '%')
-    progressIndicator.css('left', (progressBar.width()*percentage/100 - 6) + 'px')
-    timer.text(this.getFormatedTime())
-    if (video.ended || video.paused) {
+      progress.css('width', percentage + '%')
+      progressIndicator.css('left', (progressBar.width() * percentage / 100 - 6) + 'px')
+      timer.text(this.getFormatedTime())
+      if (video.ended || video.paused) {
         playIcon.css('background-image', 'url(/img/play-button.svg)')
+      } else {
+        playIcon.css('background-image', 'url(/img/pause-button.svg)')
+      }
+    }
+    else {
+      if (this.state.videoLoaded) {
+        this.setState({ videoLoaded: false })
+        this.forceUpdate()
+      }
     }
   }
   getFormatedTime() {
@@ -273,11 +293,13 @@ class Video extends React.Component {
     var videoContainerHTML = videoContainer.get(0)
     var videoControls = $('#video-controls')
     var topBar = $('#video-topbar')
+    var expandButton = $('#video-controls .scale')
 
     videoControls.addClass('fullscreen')
     videoContainer.addClass('fullscreen')
     videoContainer.draggable('disable')
     topBar.addClass('fullscreen')
+    expandButton.find('.icon').css('background-image', 'url(/img/fullscreen-exit.svg)')
 
     if (videoContainerHTML.requestFullscreen) {
        videoContainerHTML.requestFullscreen()
@@ -295,11 +317,13 @@ class Video extends React.Component {
     var videoContainer = $('#video-container')
     var videoControls = $('#video-controls')
     var topBar = $('#video-topbar')
+    var expandButton = $('#video-controls .scale')
 
     videoControls.removeClass('fullscreen')
     videoContainer.removeClass('fullscreen')
     videoContainer.draggable('enable')
     topBar.removeClass('fullscreen')
+    expandButton.find('.icon').css('background-image', 'url(/img/fullscreen.svg)')
 
     if (document.webkitExitFullscreen) {
        document.webkitExitFullscreen()
@@ -311,8 +335,11 @@ class Video extends React.Component {
        console.log('Error: exiting fullscreen.')
     }
   }
+  showOverlay() {
+    $('#video-components .fs-overlay').css({ 'visibility': 'visible', 'opacity': '1', 'width': '100vw', 'height': '100vh' })
+  }
   removeOverlay() {
-    $('#video-components .fs-overlay').hide()
+    $('#video-components .fs-overlay').css({ 'visibility': 'hidden', 'opacity': '0', 'width': '0', 'height': '0' })
   }
   // Close the popup (hide it) and remove video
   closeVideo() {
@@ -326,7 +353,7 @@ class Video extends React.Component {
       <div id='video-components'>
         <div className='fs-overlay' onClick={this.removeOverlay}></div>
         <div id="video-container">
-          {/* <div className="loader-inner ball-pulse"></div> */}
+          {!this.state.videoLoaded && <div className="loader-inner ball-pulse"></div>}
           <div id='video-topbar'>
             {/* <div className='overlay'></div> */}
             <div className='close' onClick={this.closeVideo}></div>
@@ -355,7 +382,7 @@ class Video extends React.Component {
                 <div className='volume-indicator'></div>
               </div>
             </div>
-            <div className='caption'>
+            <div className='subtitle'>
               <div className='icon'></div>
             </div>
             <div className="scale">

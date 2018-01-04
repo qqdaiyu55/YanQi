@@ -20,7 +20,10 @@
 .cover-title-wrapper .title {
   display: block;
   position: absolute;
+  /* font-family: 'Open Sans', 'Helvetica', 'Arial', sans-serif; */
+  font-family: -apple-system, BlinkMacSystemFont, "Helvetica Neue", Helvetica, Arial, Ubuntu, sans-serif;
   font-size: 55px;
+  font-weight: 300;
   bottom: 45px;
   left: 60px;
   z-index: 4;
@@ -94,7 +97,8 @@
 }
 .videopage-cards-wrapper li > div {
   width: 100%;
-  height: 33%;
+  height: 27%;
+  margin-top: 5%;
   font-size: 12px;
   white-space: nowrap;
   text-align: center;
@@ -104,13 +108,10 @@
   cursor: pointer;
   font-size: 20px;
   color: rgb(246, 86, 130);
-  transition: .2s ease;
+  transition: color .2s ease;
 }
 .videopage-cards-wrapper .rsc-magnet:hover {
   color: rgb(250, 150, 177);
-}
-.videopage-cards-wrapper .rsc-magnet:active {
-
 }
 .videopage-cards-wrapper .magnet-content {
   display: none;
@@ -124,5 +125,6 @@
   margin: 20px 0;
 }
 .videopage-content .intro p {
+  color: rgb(221, 221, 221);
   font-size: 18px;
 }

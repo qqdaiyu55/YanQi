@@ -129,10 +129,16 @@ class RscCard extends React.Component {
     if (e.target.tagName !== 'I') {
       if ($("#video-components").css("display") === "none") {
         $("#video-components").show()
-        displayVideo({torrentID: this.props.data[2]})
+        displayVideo({ 
+          title: this.props.data[0],
+          torrentID: this.props.data[2]
+        })
       }
       else {
-        switchVideo({torrentID: this.props.data[2]})
+        switchVideo({
+          title: this.props.data[0],
+          torrentID: this.props.data[2]
+        })
       }
     }
   }
@@ -145,18 +151,10 @@ class RscCard extends React.Component {
       <li onClick={this.handleClick}>
         <div>{data[0]}</div>
         <div>{data[1]}</div>
-        <div><i className="fa fa-magnet rsc-magnet clip-magnet" onClick={this.copyMagnet}></i><div className="magnet-content">{data[2]}</div></div>
+        <div><i className="fa fa-magnet rsc-magnet" onClick={this.copyMagnet}></i><div className="magnet-content">{data[2]}</div></div>
       </li>
     );
   }
 }
-
-// var clipboard = new Clipboard('.clip-magnet')
-// clipboard.on('success', (e) => {
-//   console.info('Trigger:', e.trigger);
-  // target: (trigger) => {
-  //   return trigger.nextSibling.innerHTML
-  // }
-// })
 
 export default withRouter(VideoPage)
