@@ -166,7 +166,7 @@ class Navigation extends React.Component {
               </div>
             </li>
             <Link to='/list' className='link'><li>My list</li></Link>
-            <li>New</li>
+            <Link to='/new' className='link'><li>New</li></Link>
             <li>Download</li>
             <li>FAQ</li>
             <li onClick={this.openEditVideoModal}><i className='fa fa-fw fa-plus'></i></li>

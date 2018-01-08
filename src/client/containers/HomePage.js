@@ -9,6 +9,7 @@ import Hero from '../components/Hero'
 import SearchPage from './SearchPage'
 import VideoPage from './VideoPage'
 import MyList from './MyList'
+import NewList from './NewList'
 
 
 const Homepage = () => (
@@ -19,6 +20,7 @@ const Homepage = () => (
     <Route path='/search/:term' component={SearchPage} />
     <Route path='/video/:id' component={VideoPage} />
     <Route path='/list' component={MyList} />
+    <Route path='/new' component={NewList} />
   </div>
 )
 

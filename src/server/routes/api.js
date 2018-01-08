@@ -108,4 +108,29 @@ router.get('/videolist/all', (req, res) => {
   })
 })
 
-module.exports = router;
+router.get('/new', (req, res) => {
+  var searchPattern = {
+    sort: {
+      update_time: 'desc'
+    },
+    size: 30,
+    query: {
+      match_all: {}
+    }
+  }
+
+  Video.esSearch(searchPattern, (err, results) => {
+    if (err) throw err
+    const data = results.hits.hits.map((v) => {
+      return ({
+        'id': v._id,
+        'title': v._source.title,
+        'backdrop': v._source.backdrop
+      })
+    })
+
+    res.status(200).json({ data: data })
+  })
+})
+
+module.exports = router

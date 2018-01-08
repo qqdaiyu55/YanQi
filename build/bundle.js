@@ -28195,6 +28195,10 @@ var _MyList = __webpack_require__(100);
 
 var _MyList2 = _interopRequireDefault(_MyList);
 
+var _NewList = __webpack_require__(105);
+
+var _NewList2 = _interopRequireDefault(_NewList);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 var Homepage = function Homepage() {
@@ -28206,7 +28210,8 @@ var Homepage = function Homepage() {
     _react2.default.createElement(_reactRouterDom.Route, { exact: true, path: '/', component: _Hero2.default }),
     _react2.default.createElement(_reactRouterDom.Route, { path: '/search/:term', component: _SearchPage2.default }),
     _react2.default.createElement(_reactRouterDom.Route, { path: '/video/:id', component: _VideoPage2.default }),
-    _react2.default.createElement(_reactRouterDom.Route, { path: '/list', component: _MyList2.default })
+    _react2.default.createElement(_reactRouterDom.Route, { path: '/list', component: _MyList2.default }),
+    _react2.default.createElement(_reactRouterDom.Route, { path: '/new', component: _NewList2.default })
   );
 };
 
@@ -28947,9 +28952,13 @@ var Navigation = function (_React$Component) {
               )
             ),
             _react2.default.createElement(
-              'li',
-              null,
-              'New'
+              _reactRouterDom.Link,
+              { to: '/new', className: 'link' },
+              _react2.default.createElement(
+                'li',
+                null,
+                'New'
+              )
             ),
             _react2.default.createElement(
               'li',
@@ -31079,6 +31088,122 @@ SignUpForm.propTypes = {
 };
 
 exports.default = SignUpForm;
+
+/***/ }),
+/* 105 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _react = __webpack_require__(0);
+
+var _react2 = _interopRequireDefault(_react);
+
+var _Auth = __webpack_require__(6);
+
+var _Auth2 = _interopRequireDefault(_Auth);
+
+var _VideoList = __webpack_require__(42);
+
+var _VideoList2 = _interopRequireDefault(_VideoList);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+var NewList = function (_React$Component) {
+  _inherits(NewList, _React$Component);
+
+  function NewList() {
+    _classCallCheck(this, NewList);
+
+    var _this = _possibleConstructorReturn(this, (NewList.__proto__ || Object.getPrototypeOf(NewList)).call(this));
+
+    _this.state = {
+      data: [],
+      videolist: []
+    };
+
+    _this.loadContent = _this.loadContent.bind(_this);
+    _this.getVideoList = _this.getVideoList.bind(_this);
+    return _this;
+  }
+
+  _createClass(NewList, [{
+    key: 'componentDidMount',
+    value: function componentDidMount() {
+      this.getVideoList();
+      this.loadContent();
+    }
+    // Get list of videos the user liked
+
+  }, {
+    key: 'loadContent',
+    value: function loadContent() {
+      var _this2 = this;
+
+      var token = _Auth2.default.getToken();
+      $.ajax({
+        url: '/api/new',
+        headers: { 'Authorization': 'bearer ' + token },
+        contentType: 'application/json',
+        method: 'GET'
+      }).done(function (results) {
+        _this2.setState({
+          data: results.data
+        });
+      }).fail(function () {
+        console.log('There is an error when getting video list.');
+      });
+    }
+  }, {
+    key: 'getVideoList',
+    value: function getVideoList() {
+      var _this3 = this;
+
+      var token = _Auth2.default.getToken();
+      $.ajax({
+        url: '/api/videolist/id',
+        headers: { 'Authorization': 'bearer ' + token },
+        contentType: 'application/json',
+        method: 'GET'
+      }).done(function (data) {
+        _this3.setState({ videolist: data.video_list });
+      }).fail(function () {
+        console.log('There is an error when getting video list.');
+      });
+    }
+  }, {
+    key: 'render',
+    value: function render() {
+      return _react2.default.createElement(
+        'div',
+        { className: 'search-results-wrapper' },
+        _react2.default.createElement(
+          'div',
+          { className: 'title' },
+          'Newest'
+        ),
+        _react2.default.createElement(_VideoList2.default, { data: this.state.data, videolist: this.state.videolist })
+      );
+    }
+  }]);
+
+  return NewList;
+}(_react2.default.Component);
+
+exports.default = NewList;
 
 /***/ })
 /******/ ]);
