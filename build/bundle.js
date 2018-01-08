@@ -2713,7 +2713,8 @@ var Video = function (_React$Component) {
     var _this = _possibleConstructorReturn(this, (Video.__proto__ || Object.getPrototypeOf(Video)).call(this));
 
     _this.state = {
-      videoLoaded: false
+      videoLoaded: false,
+      progress: 0
     };
 
     _this.showOverlay = _this.showOverlay.bind(_this);
@@ -2867,6 +2868,16 @@ var Video = function (_React$Component) {
           expandButton.find('.icon').css('background-image', 'url(/img/fullscreen.svg)');
         }
       });
+
+      // Get webtorrent status: progress, peers, speed
+      // client.on('torrent', () => {
+      //   this.
+      // })
+      setInterval(function () {
+        if (_this2.state.videoLoaded) {
+          _this2.setState({ progress: client.progress });
+        }
+      }, 1000);
     }
   }, {
     key: 'componentWillUpdate',
@@ -3116,13 +3127,89 @@ var Video = function (_React$Component) {
               { className: 'scale' },
               _react2.default.createElement('div', { className: 'icon' })
             )
-          )
+          ),
+          _react2.default.createElement(ProgressRing, { radius: 25, stroke: 4, videoLoaded: this.state.videoLoaded })
         )
       );
     }
   }]);
 
   return Video;
+}(_react2.default.Component);
+
+var ProgressRing = function (_React$Component2) {
+  _inherits(ProgressRing, _React$Component2);
+
+  function ProgressRing(props) {
+    _classCallCheck(this, ProgressRing);
+
+    var _this3 = _possibleConstructorReturn(this, (ProgressRing.__proto__ || Object.getPrototypeOf(ProgressRing)).call(this, props));
+
+    _this3.normalizedRadius = _this3.props.radius - _this3.props.stroke * 2;
+    _this3.circumference = _this3.normalizedRadius * 2 * Math.PI;
+    _this3.radius = _this3.props.radius;
+    _this3.stroke = _this3.props.stroke;
+
+    _this3.state = {
+      progress: 0
+    };
+    return _this3;
+  }
+
+  _createClass(ProgressRing, [{
+    key: 'componentDidMount',
+    value: function componentDidMount() {
+      var _this4 = this;
+
+      setInterval(function () {
+        if (_this4.props.videoLoaded) {
+          _this4.setState({ progress: client.progress });
+        }
+      }, 1000);
+    }
+    // componentWillReceiveProps(nextProps) {
+    //   this.setState({ progress: nextProps.progress })
+    // }
+
+  }, {
+    key: 'render',
+    value: function render() {
+      var strokeDashoffset = this.circumference - this.state.progress * this.circumference;
+
+      return _react2.default.createElement(
+        'div',
+        { id: 'video-status' },
+        _react2.default.createElement(
+          'svg',
+          {
+            height: this.radius * 2,
+            width: this.radius * 2
+          },
+          _react2.default.createElement('circle', {
+            stroke: '#3498db',
+            fill: 'transparent',
+            strokeWidth: this.stroke,
+            strokeDasharray: this.circumference + ' ' + this.circumference,
+            style: { strokeDashoffset: strokeDashoffset },
+            r: this.normalizedRadius,
+            cx: this.radius,
+            cy: this.radius
+          }),
+          _react2.default.createElement(
+            'text',
+            {
+              fill: 'white',
+              x: this.radius,
+              y: this.radius
+            },
+            this.state.progress * 100
+          )
+        )
+      );
+    }
+  }]);
+
+  return ProgressRing;
 }(_react2.default.Component);
 
 exports.Video = Video;
@@ -3159,6 +3246,8 @@ var _imageCompressor = __webpack_require__(41);
 
 var _imageCompressor2 = _interopRequireDefault(_imageCompressor);
 
+var _Library = __webpack_require__(15);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -3181,6 +3270,8 @@ var EditVideoCard = function (_React$Component) {
       count: 1
     };
     _this.mode = 'add';
+    _this.coverChanged = false;
+    _this.videoId = '';
     _this.state = {
       cover: null,
       isCoverUploaded: false,
@@ -3201,88 +3292,57 @@ var EditVideoCard = function (_React$Component) {
     _this.closeCard = _this.closeCard.bind(_this);
     _this.submitCard = _this.submitCard.bind(_this);
 
-    _this.loadConten = _this.loadContent.bind(_this);
+    _this.loadContent = _this.loadContent.bind(_this);
     return _this;
   }
 
   _createClass(EditVideoCard, [{
     key: 'componentDidMount',
     value: function componentDidMount() {
-      var _this2 = this;
-
-      $(".horizon-scroll ul").sortable({
+      $('.horizon-scroll ul').sortable({
         axis: 'x',
         animation_direction: 'x',
         animation: 200
       });
-
-      setInterval(function () {
-        var passData_str = $("#videopage-data").val();
-        if (passData_str) {
-          // const passData = JSON.parse(passData_str);
-          $("#videopage-data").val("");
-          //
-          // this.mode = 'edit';
-          // console.log(passData);
-          // passData.rscInfo.forEach((e) => {
-          //   this.handleRsc(true, {
-          //     title: e[0],
-          //     size: e[1],
-          //     magnet: e[2]
-          //   });
-          // });
-          //
-          // this.setState({
-          //   isCoverUploaded: true,
-          //   tags: passData.tags
-          // });
-          //
-          // $("#cover-img").attr('src', '/backdrop/'+passData.backdrop);
-          _this2.loadContent(passData_str);
-        }
-      }, 200);
     }
+
+    // Load content on 'edit' mode
+
   }, {
     key: 'loadContent',
     value: function loadContent(id) {
-      var _this3 = this;
+      var _this2 = this;
 
-      console.log(this.refs.myRef);
-      var requestUrl = '/api/video';
+      this.videoId = id;
       var token = encodeURIComponent(_Auth2.default.getToken());
 
       var data = 'id=' + id;
       $.ajax({
-        url: requestUrl,
+        url: '/api/video',
         data: data,
-        headers: { "Authorization": 'bearer ' + token },
-        cache: false,
+        headers: { 'Authorization': 'bearer ' + token },
         contentType: 'application/x-www-form-urlencoded',
         method: 'GET'
       }).done(function (data) {
-        _this3.mode = 'edit';
-        data.rscInfo.forEach(function (e) {
-          _this3.handleRsc(true, {
+        _this2.mode = 'edit';
+        data.rsc_info.forEach(function (e) {
+          _this2.handleRsc(true, {
             title: e[0],
             size: e[1],
             magnet: e[2]
           });
         });
 
-        // if (this.refs.myRef) {
-        //   this.setState({
-        //     isCoverUploaded: true,
-        //     tags: data.tags
-        //   });
-        // }
-        _this3.setState({
+        _this2.setState({
           isCoverUploaded: true,
           tags: data.tags
         });
 
-        $("#cover-img").attr('src', '/backdrop/' + data.backdrop);
+        $('#cover-img').attr('src', '/backdrop/' + data.backdrop);
+        $('#edit-video-card .title').val(data.title);
+        $('#edit-video-card .intro').val(data.introduction);
       }).fail(function () {
-        console.log("There has an error.");
+        console.log('There has an error getting video information.');
       });
     }
 
@@ -3301,29 +3361,42 @@ var EditVideoCard = function (_React$Component) {
         this.setState({
           isCoverUploaded: true
         });
+
+        this.coverChanged = true;
       }
     }
 
     // Remove cover
+    //  * trigger: true->trigger by resetComponent, false: trigger by remove cover button
 
   }, {
     key: 'removeCover',
-    value: function removeCover() {
-      $("#cover-img").attr('src', '#');
-      $("#upload-cover").val("");
-      this.setState({
-        isCoverUploaded: false
-      });
+    value: function removeCover(trigger) {
+      var r = true;
+      if (!trigger) {
+        var r = confirm('Do you want to remove the backdrop?');
+      }
+      if (r) {
+        $("#cover-img").attr('src', '#');
+        $("#upload-cover").val('');
+        if (this.mode === 'edit') {
+          this.coverChanged = true;
+        }
+
+        this.setState({
+          isCoverUploaded: false
+        });
+      }
     }
 
-    // create new resource card and add info
+    // Create new resource card and add info
 
   }, {
     key: 'addResource',
     value: function addResource() {
       this.rscCardStatus.addNew = true;
-      $("#edit-resource-card input").val("");
-      $('#edit-resource-card').css({ "visibility": "visible", "opacity": "1", "top": "50%" });
+      $('#edit-resource-card input').val('');
+      $('#edit-resource-card').css({ 'visibility': 'visible', 'opacity': '1', 'top': '50%' });
     }
 
     // Clear text and hide the resource edit card when cancelling
@@ -3338,13 +3411,18 @@ var EditVideoCard = function (_React$Component) {
           magnet: ''
         }
       });
-      $("#edit-resource-card input").val("");
-      $('#edit-resource-card').css({ "visibility": "hidden", "opacity": "0", "top": "60%" });
+      $('#edit-resource-card input').val('');
+      $('#edit-resource-card').css({ 'visibility': 'hidden', 'opacity': '0', 'top': '60%' });
     }
+
+    // Handle resource info
+    //  * addNew: true -> add mode, false -> edit mode
+    //  * data: new resource info
+
   }, {
     key: 'handleRsc',
     value: function handleRsc(addNew, data) {
-      var _this4 = this;
+      var _this3 = this;
 
       var title = data.title,
           size = data.size,
@@ -3366,8 +3444,8 @@ var EditVideoCard = function (_React$Component) {
           $('#edit-resource-card input[name="size"]').val(tmp[2].split(' ')[0]);
           $('#edit-resource-card select').val(tmp[2].split(' ')[1]);
           $('#edit-resource-card input[name="magnet"]').val(tmp[3]);
-          _this4.rscCardStatus.addNew = false;
-          _this4.rscCardStatus.rscId = rsc_id;
+          _this3.rscCardStatus.addNew = false;
+          _this3.rscCardStatus.rscId = rsc_id;
           $('#edit-resource-card').css({ "visibility": "visible", "opacity": "1", "top": "50%" });
         });
 
@@ -3400,13 +3478,11 @@ var EditVideoCard = function (_React$Component) {
         alert('Please check if all the values are filled.');
         return;
       }
-
       // Check if size has non-numeric character
       if (size.match(/[^$.\d]/)) {
         alert('Size cannot contain non numeric characters.');
         return;
       }
-
       // Verify the magnet link
       if (!magnet.match(/magnet:\?xt=urn:btih:[a-z0-9]{20,50}/i)) {
         alert('Please check the magnet link format.');
@@ -3422,8 +3498,8 @@ var EditVideoCard = function (_React$Component) {
       });
 
       // Clear text and hide edit card
-      $("#edit-resource-card input").val("");
-      $("#edit-resource-card").css({ "visibility": "hidden", "opacity": "0", "top": "60%" });
+      $('#edit-resource-card input').val('');
+      $('#edit-resource-card').css({ 'visibility': 'hidden', 'opacity': '0', 'top': '60%' });
     }
 
     // Handle changes of tags
@@ -3436,15 +3512,17 @@ var EditVideoCard = function (_React$Component) {
   }, {
     key: 'resetComponent',
     value: function resetComponent() {
-      $("#edit-video-card").css({ "visibility": "hidden", "opacity": "0" });
-      this.removeCover();
-      $("#edit-video-card .title").val("");
+      $("#edit-video-card").css({ 'visibility': 'hidden', 'opacity': '0' });
+      this.removeCover(true);
+      $("#edit-video-card .title").val('');
       this.cancelEditResource();
       this.setState({
         tags: []
       });
-      $("#edit-video-card .horizon-scroll ul").html("");
-      $("#edit-video-card .intro").val("");
+      $("#edit-video-card .horizon-scroll ul").html('');
+      $("#edit-video-card .intro").val('');
+      this.mode = 'add';
+      this.coverChanged = false;
     }
 
     // Close card and clear content
@@ -3514,20 +3592,30 @@ var EditVideoCard = function (_React$Component) {
         // Cover file
         var cover = $("#upload-cover")[0];
         var file = cover.files[0];
-        if (!file) {
+        var backdrop;
+        if (this.mode === 'add' && !file) {
           alert('Cover is empty.');
           return;
         }
 
         // Genrate a random unique filename
-        var splitFileName = file.name.split('.');
-        var backdrop = uuidv8() + uuidv8() + '.' + splitFileName[splitFileName.length - 1];
+        if (file) {
+          var splitFileName = file.name.split('.');
+          var backdrop = (0, _Library.uuidv8)() + (0, _Library.uuidv8)();
+          // extension
+          var ext = splitFileName[splitFileName.length - 1];
+          var backdropName = backdrop + '.' + ext;
+          var backdropThumbnailName = backdrop + '_thumbnail.' + ext;
+        }
 
         // Post the information
         var token = _Auth2.default.getToken();
         var data = {
+          id: this.videoId,
+          mode: this.mode,
+          coverChanged: this.coverChanged,
           title: title,
-          backdrop: backdrop,
+          backdrop: backdropName,
           rscInfo: rscInfo,
           tags: tags,
           introduction: introduction
@@ -3546,29 +3634,32 @@ var EditVideoCard = function (_React$Component) {
           console.log('There is an error when uploading video information.');
         });
 
-        // Compress and upload avatar to server
-        var imageCompressor = new _imageCompressor2.default();
-        imageCompressor.compress(file).then(function (result) {
-          var fd = new FormData();
-          // Append backdrop file and set the filename
-          fd.append('backdrop', result, backdrop);
-          // A trick: set contentType to false, so the boundary will be added automatically
-          $.ajax({
-            url: '/upload/backdrop',
-            headers: { "Authorization": 'bearer ' + token },
-            data: fd,
-            cache: false,
-            contentType: false,
-            processData: false,
-            method: 'POST'
-          }).done(function () {
-            console.log('Successfully upload backdrop.');
-          }).fail(function () {
-            console.log('There is an error when uploading backdrop.');
+        // Compress and upload backdrop to server
+        if (this.coverChanged && file) {
+          var imageCompressor = new _imageCompressor2.default();
+          imageCompressor.compress(file, { maxWidth: 500 }).then(function (result) {
+            var fd = new FormData();
+            // Append backdrop file and set the filename
+            fd.append('backdrop', file, backdropName);
+            fd.append('backdrop_thumbnail', result, backdropThumbnailName);
+            // A trick: set contentType to false, so the boundary will be added automatically
+            $.ajax({
+              url: '/upload/backdrop',
+              headers: { "Authorization": 'bearer ' + token },
+              data: fd,
+              cache: false,
+              contentType: false,
+              processData: false,
+              method: 'POST'
+            }).done(function () {
+              console.log('Successfully upload backdrop.');
+            }).fail(function () {
+              console.log('There is an error when uploading backdrop.');
+            });
+          }).catch(function (err) {
+            console.log('Something wrong when compressing backdrop.');
           });
-        }).catch(function (err) {
-          console.log('Something wrong when compressing backdrop.');
-        });
+        }
 
         this.resetComponent();
       }
@@ -3576,20 +3667,22 @@ var EditVideoCard = function (_React$Component) {
   }, {
     key: 'render',
     value: function render() {
-      var _this5 = this;
+      var _this4 = this;
 
       return _react2.default.createElement(
         'div',
         { className: 'Video-card' },
         _react2.default.createElement(
           'div',
-          { className: 'cover-wrapper', ref: 'myRef' },
+          { className: 'cover-wrapper' },
           this.state.isCoverUploaded && _react2.default.createElement(
             'div',
             { className: 'cover-img-wrapper' },
             _react2.default.createElement(
               'div',
-              { onClick: this.removeCover },
+              { onClick: function onClick() {
+                  return _this4.removeCover(false);
+                } },
               _react2.default.createElement('i', { className: 'fa fa-fw fa-times' })
             ),
             _react2.default.createElement('img', { id: 'cover-img', src: '#' })
@@ -3602,7 +3695,7 @@ var EditVideoCard = function (_React$Component) {
             'COVER'
           ),
           _react2.default.createElement('input', { type: 'file', id: 'upload-cover', style: { display: "none" }, onChange: function onChange(e) {
-              return _this5.previewCover(e);
+              return _this4.previewCover(e);
             } })
         ),
         _react2.default.createElement('input', { type: 'text', className: 'title', required: true, placeholder: 'Title' }),
@@ -3629,7 +3722,9 @@ var EditVideoCard = function (_React$Component) {
           _react2.default.createElement('i', { onClick: this.closeCard, className: 'fa fa-fw fa-times' }),
           _react2.default.createElement('i', { onClick: this.submitCard, className: 'fa fa-fw fa-check' })
         ),
-        _react2.default.createElement('input', { type: 'hidden', id: 'videopage-data', value: '' })
+        _react2.default.createElement('input', { type: 'hidden', id: 'edit-video-card-flag', value: '', onClick: function onClick(e) {
+            _this4.loadContent(e.target.value);
+          } })
       );
     }
   }]);
@@ -3698,11 +3793,6 @@ var ResourceCardInput = function ResourceCardInput(_ref2) {
     ),
     _react2.default.createElement('label', { htmlFor: name })
   );
-};
-
-// Generate 8 bits unique id
-var uuidv8 = function uuidv8() {
-  return Math.random().toString(36).substr(2, 8);
 };
 
 exports.default = EditVideoCard;
@@ -4638,8 +4728,9 @@ var VideoList = function (_React$Component) {
       return data.map(function (v, i) {
         if (i < 30) {
           var title = v.title;
-          var backdrop = '/backdrop/' + v.backdrop;
           var id = v.id;
+          var splittedBackdrop = v.backdrop.split('.');
+          var backdrop = '/backdrop/' + splittedBackdrop[0] + '_thumbnail.' + splittedBackdrop[1];
           var liked = _this2.props.videolist.includes(id) ? true : false;
 
           return _react2.default.createElement(Item, { key: id, id: id, title: title, backdrop: backdrop, liked: liked });
@@ -28702,11 +28793,6 @@ var Navigation = function (_React$Component) {
 
       // setInterval(this.updateTags, 10000)
     }
-  }, {
-    key: 'componentWillUpdate',
-    value: function componentWillUpdate() {
-      console.log('Update.');
-    }
 
     // Update tags
 
@@ -28904,7 +28990,7 @@ var Navigation = function (_React$Component) {
         _react2.default.createElement(
           _Modal2.default,
           { id: 'edit-video-card', show: true },
-          _react2.default.createElement(_EditVideoCard2.default, null)
+          _react2.default.createElement(_EditVideoCard2.default, { ref: 'edit-video-card-ref' })
         )
       );
     }
@@ -30212,15 +30298,13 @@ var VideoPage = function (_React$Component) {
       var _this2 = this;
 
       var id = this.props.match.params.id;
-      var requestUrl = '/api/video';
       var token = encodeURIComponent(_Auth2.default.getToken());
 
       var data = 'id=' + id;
       $.ajax({
         url: '/api/video',
         data: data,
-        headers: { "Authorization": 'bearer ' + token },
-        cache: false,
+        headers: { 'Authorization': 'bearer ' + token },
         contentType: 'application/x-www-form-urlencoded',
         method: 'GET'
       }).done(function (data) {
@@ -30240,20 +30324,9 @@ var VideoPage = function (_React$Component) {
   }, {
     key: 'openEditVideoModal',
     value: function openEditVideoModal() {
-      var data = this.state.data;
-      $("#edit-video-card .title").val(data.title);
-      $("#edit-video-card .intro").val(data.introduction);
-
-      var passData = {
-        backdrop: data.backdrop,
-        tags: data.tags,
-        rscInfo: data.rscInfo
-      };
-
-      $("#edit-video-card").css({ "visibility": "visible", "opacity": "1" });
-      // Set the EditVideoCard to edit mode and pass data
-      // $("#videopage-data").val(JSON.stringify(passData));
-      $("#videopage-data").val(this.props.match.params.id);
+      $('#edit-video-card').css({ "visibility": "visible", "opacity": "1" });
+      $('#edit-video-card-flag').val(this.props.match.params.id);
+      $('#edit-video-card-flag').click();
     }
   }, {
     key: 'searchTag',

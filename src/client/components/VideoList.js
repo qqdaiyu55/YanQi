@@ -12,8 +12,9 @@ class VideoList extends React.Component {
     return data.map((v, i) => {
       if (i < 30) {
         var title = v.title
-        var backdrop = '/backdrop/' + v.backdrop
         var id = v.id
+        var splittedBackdrop = v.backdrop.split('.')
+        var backdrop = '/backdrop/' + splittedBackdrop[0] + '_thumbnail.' + splittedBackdrop[1]
         var liked = this.props.videolist.includes(id) ? true : false
 
         return (

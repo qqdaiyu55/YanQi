@@ -44,7 +44,8 @@ class Video extends React.Component {
   constructor(props) {
     super()
     this.state = {
-      videoLoaded: false
+      videoLoaded: false,
+      progress: 0
     }
 
     this.showOverlay = this.showOverlay.bind(this)
@@ -194,6 +195,16 @@ class Video extends React.Component {
          expandButton.find('.icon').css('background-image', 'url(/img/fullscreen.svg)')
       }
     })
+
+    // Get webtorrent status: progress, peers, speed
+    // client.on('torrent', () => {
+    //   this.
+    // })
+    setInterval(() => {
+      if (this.state.videoLoaded) {
+        this.setState({ progress: client.progress })
+      }
+    }, 1000)
   }
   componentWillUpdate() {
     $('.loader-inner').loaders()
@@ -389,9 +400,66 @@ class Video extends React.Component {
               <div className="icon"></div>
             </div>
           </div>
+          <ProgressRing radius={25} stroke={4} videoLoaded={this.state.videoLoaded} />
         </div>
       </div>
     );
+  }
+}
+
+class ProgressRing extends React.Component {
+  constructor(props) {
+    super(props)
+
+    this.normalizedRadius = this.props.radius - this.props.stroke * 2
+    this.circumference = this.normalizedRadius * 2 * Math.PI
+    this.radius = this.props.radius
+    this.stroke = this.props.stroke
+
+    this.state = {
+      progress: 0
+    }
+  }
+  componentDidMount() {
+    setInterval(() => {
+      if (this.props.videoLoaded) {
+        this.setState({ progress: client.progress })
+      }
+    }, 1000)
+  }
+  // componentWillReceiveProps(nextProps) {
+  //   this.setState({ progress: nextProps.progress })
+  // }
+
+  render() {
+    const strokeDashoffset = this.circumference - this.state.progress * this.circumference
+
+    return (
+      <div id='video-status'>
+        <svg
+          height={this.radius * 2}
+          width={this.radius * 2}
+        >
+          <circle
+            stroke='#3498db'
+            fill='transparent'
+            strokeWidth={this.stroke}
+            strokeDasharray={this.circumference + ' ' + this.circumference}
+            style={{ strokeDashoffset }}
+            r={this.normalizedRadius}
+            cx={this.radius}
+            cy={this.radius}
+          />
+          <text 
+            fill='white'
+            x={this.radius}
+            y={this.radius}
+          >
+          {this.state.progress * 100}
+          </text>
+        </svg>
+      </div>
+    )
   }
 }
 

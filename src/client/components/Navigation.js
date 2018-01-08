@@ -59,9 +59,6 @@ class Navigation extends React.Component {
 
     // setInterval(this.updateTags, 10000)
   }
-  componentWillUpdate() {
-    console.log('Update.')
-  }
 
   // Update tags
   updateTags() {
@@ -147,7 +144,7 @@ class Navigation extends React.Component {
 
   // open edit-video-card
   openEditVideoModal() {
-    $('#edit-video-card').css({'visibility':'visible', 'opacity':'1'})
+    $('#edit-video-card').css({ 'visibility':'visible', 'opacity':'1' })
   }
 
   render() {
@@ -187,7 +184,7 @@ class Navigation extends React.Component {
           </div>
         </Modal>
         <Modal id='edit-video-card' show={true}>
-          <EditVideoCard />
+          <EditVideoCard ref='edit-video-card-ref' />
         </Modal>
       </div>
     );

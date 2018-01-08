@@ -1,10 +1,10 @@
-const express = require('express');
-const mongoose = require('mongoose');
-const User = require('mongoose').model('User');
-const Video = require('mongoose').model('Video');
-const jwt = require('jsonwebtoken');
-const config = require('../config');
-const multer = require('multer');
+const express = require('express')
+const mongoose = require('mongoose')
+const User = require('mongoose').model('User')
+const Video = require('mongoose').model('Video')
+const jwt = require('jsonwebtoken')
+const config = require('../config')
+const multer = require('multer')
 
 const router = new express.Router();
 
@@ -19,10 +19,10 @@ router.post('/tags', (req, res, next) => {
     if (err) {
       res.status(400).json({
         error: 'Failure in updating tags!'
-      });
+      })
     }
-  });
-});
+  })
+})
 
 router.post('/videolist', (req, res) => {
   const token = req.body.token

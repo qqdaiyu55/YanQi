@@ -26,19 +26,17 @@ class VideoPage extends React.Component {
     this.searchTag = this.searchTag.bind(this)
   }
   componentWillMount() {
-    this.loadContent();
+    this.loadContent()
   }
   loadContent() {
-    const id = this.props.match.params.id;
-    const requestUrl = '/api/video';
-    const token = encodeURIComponent(Auth.getToken());
+    const id = this.props.match.params.id
+    const token = encodeURIComponent(Auth.getToken())
 
-    const data = `id=${id}`;
+    const data = `id=${id}`
     $.ajax({
       url: '/api/video',
       data: data,
-      headers: {"Authorization": `bearer ${token}`},
-      cache: false,
+      headers: {'Authorization': `bearer ${token}`},
       contentType: 'application/x-www-form-urlencoded',
       method: 'GET'
     }).done((data)=>{
@@ -52,38 +50,27 @@ class VideoPage extends React.Component {
         }
       })
     }).fail(()=>{
-      console.log("There has an error.");
+      console.log("There has an error.")
     });
   }
   openEditVideoModal() {
-    const data = this.state.data;
-    $("#edit-video-card .title").val(data.title)
-    $("#edit-video-card .intro").val(data.introduction);
-
-    const passData = {
-      backdrop: data.backdrop,
-      tags: data.tags,
-      rscInfo: data.rscInfo
-    };
-
-    $("#edit-video-card").css({"visibility":"visible", "opacity":"1"});
-    // Set the EditVideoCard to edit mode and pass data
-    // $("#videopage-data").val(JSON.stringify(passData));
-    $("#videopage-data").val(this.props.match.params.id);
+    $('#edit-video-card').css({ "visibility":"visible", "opacity":"1" })
+    $('#edit-video-card-flag').val(this.props.match.params.id)
+    $('#edit-video-card-flag').click()
   }
   searchTag(e) {
     this.props.history.push('/search/tag='+e.target.innerHTML)
   }
   render() {
-    const title = this.state.data.title;
-    const backdrop = this.state.data.backdrop;
-    const tags_data = this.state.data.tags;
-    const rscInfo = this.state.data.rscInfo;
-    const introduction = this.state.data.introduction;
+    const title = this.state.data.title
+    const backdrop = this.state.data.backdrop
+    const tags_data = this.state.data.tags
+    const rscInfo = this.state.data.rscInfo
+    const introduction = this.state.data.introduction
     if (tags_data) {
       var tags = tags_data.map(function(t, i) {
-        return (<li key={uuidv8()} onClick={this.searchTag}>{t}</li>);
-      }.bind(this));
+        return (<li key={uuidv8()} onClick={this.searchTag}>{t}</li>)
+      }.bind(this))
     }
     if (rscInfo) {
       var rsc = rscInfo.map(function(t, i) {
@@ -146,7 +133,7 @@ class RscCard extends React.Component {
     clipboard.writeText(e.target.nextSibling.innerHTML)
   }
   render() {
-    const data = this.props.data;
+    const data = this.props.data
     return (
       <li onClick={this.handleClick}>
         <div>{data[0]}</div>
