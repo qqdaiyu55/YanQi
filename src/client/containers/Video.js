@@ -1,7 +1,7 @@
 import React from 'react'
 // var WebTorrent = require('webtorrent')
 import WebTorrent from 'webtorrent/webtorrent.min'
-import { formatVideoTime } from '../modules/Library'
+import { formatVideoTime, BytestoSize } from '../modules/Library'
 
 const client = new WebTorrent({ dht: false })
 var torrentID = ''
@@ -419,6 +419,8 @@ class ProgressRing extends React.Component {
     this.state = {
       progress: 0
     }
+
+    this.getBuffer = this.getBuffer.bind(this)
   }
   componentDidMount() {
     setInterval(() => {
@@ -427,12 +429,33 @@ class ProgressRing extends React.Component {
       }
     }, 1000)
   }
-  // componentWillReceiveProps(nextProps) {
-  //   this.setState({ progress: nextProps.progress })
-  // }
-
+  getBuffer() {
+    console.log('CLICKED')
+    client.torrents[0].files[0].getBuffer()
+  }
   render() {
-    const strokeDashoffset = this.circumference - this.state.progress * this.circumference
+    var torrent = client.torrents[0]
+    var downloadSpeed = 0,
+        uploadSpeed = 0,
+        downloaded = 0,
+        uploaded = 0,
+        numPeers = 0
+    if (torrent) {
+      downloadSpeed = torrent.downloadSpeed
+      uploadSpeed = torrent.uploadSpeed
+      downloaded = torrent.downloaded
+      uploaded = torrent.uploaded
+      numPeers = torrent.numPeers
+    }
+
+    var progress = this.state.progress
+    if (downloaded == 0) {
+      progress = 0
+    }
+    if (progress == 0 && downloaded > 2000) {
+      progress = 1
+    }
+    const strokeDashoffset = this.circumference - progress * this.circumference
 
     return (
       <div id='video-status'>
@@ -441,23 +464,64 @@ class ProgressRing extends React.Component {
           width={this.radius * 2}
         >
           <circle
-            stroke='#3498db'
+            // stroke='#3498db'
+            stroke='#e50914'
             fill='transparent'
             strokeWidth={this.stroke}
             strokeDasharray={this.circumference + ' ' + this.circumference}
+            strokeLinecap='round'
             style={{ strokeDashoffset }}
             r={this.normalizedRadius}
             cx={this.radius}
             cy={this.radius}
           />
-          <text 
-            fill='white'
-            x={this.radius}
-            y={this.radius}
-          >
-          {this.state.progress * 100}
-          </text>
+          <circle
+            stroke='rgba(255,255,255,.3)'
+            fill='transparent'
+            strokeWidth={this.stroke}
+            r={this.normalizedRadius}
+            cx={this.radius}
+            cy={this.radius}
+          />
+          {progress == 1 ? 
+            <text
+              id='video-get-buffer'
+              fill='#8cc0e2'
+              fontFamily='FontAwesome'
+              fontSize='15px'
+              textAnchor='middle'
+              alignmentBaseline='central'
+              cursor='pointer'
+              x={this.radius}
+              y={this.radius}
+              onClick={this.getBuffer}
+            >
+              {'\uf019'}
+            </text>
+          :
+            <text
+              fill='white'
+              fontFamily='Arial, FontAwesome, sans-serif'
+              fontSize='13px'
+              textAnchor='middle'
+              alignmentBaseline='central'
+              x={this.radius}
+              y={this.radius}
+            >
+              {Math.trunc(progress * 100)}
+            </text>
+          }
         </svg>
+
+        <div className='speed-status' data-type="peer">
+          {numPeers} peers
+        </div>
+        <div className='speed-status' data-type='download'>
+          {BytestoSize(downloaded, 1)}, {BytestoSize(downloadSpeed, 1)+'/s'}
+        </div>
+        <div className='speed-status' data-type='upload'>
+          {BytestoSize(uploadSpeed, 1)}, {BytestoSize(uploadSpeed, 1)+'/s'}
+        </div>
       </div>
     )
   }

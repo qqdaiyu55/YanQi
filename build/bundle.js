@@ -1104,6 +1104,16 @@ var MBtoSize = function MBtoSize(num, decimals) {
   return parseFloat((num / Math.pow(k, i)).toFixed(dm)) + ' ' + sizes[i];
 };
 
+// Convert Bytes to KB, MB, GB
+var BytestoSize = function BytestoSize(num, decimals) {
+  if (num == 0) return '0 B';
+  var k = 1024,
+      dm = decimals || 2,
+      sizes = ['B', 'KB', 'MB', 'GB'],
+      i = Math.floor(Math.log(num) / Math.log(k));
+  return parseFloat((num / Math.pow(k, i)).toFixed(dm)) + ' ' + sizes[i];
+};
+
 // Convert data url to blob
 var dataURItoBlob = function dataURItoBlob(dataURI) {
   // Convert base64 to raw binary data held in a string
@@ -1151,6 +1161,7 @@ var formatVideoTime = function formatVideoTime(time) {
 exports.arraysEqual = arraysEqual;
 exports.uuidv8 = uuidv8;
 exports.MBtoSize = MBtoSize;
+exports.BytestoSize = BytestoSize;
 exports.dataURItoBlob = dataURItoBlob;
 exports.formatNumberLength = formatNumberLength;
 exports.formatVideoTime = formatVideoTime;
@@ -3153,6 +3164,8 @@ var ProgressRing = function (_React$Component2) {
     _this3.state = {
       progress: 0
     };
+
+    _this3.getBuffer = _this3.getBuffer.bind(_this3);
     return _this3;
   }
 
@@ -3167,14 +3180,37 @@ var ProgressRing = function (_React$Component2) {
         }
       }, 1000);
     }
-    // componentWillReceiveProps(nextProps) {
-    //   this.setState({ progress: nextProps.progress })
-    // }
-
+  }, {
+    key: 'getBuffer',
+    value: function getBuffer() {
+      console.log('CLICKED');
+      client.torrents[0].files[0].getBuffer();
+    }
   }, {
     key: 'render',
     value: function render() {
-      var strokeDashoffset = this.circumference - this.state.progress * this.circumference;
+      var torrent = client.torrents[0];
+      var downloadSpeed = 0,
+          uploadSpeed = 0,
+          downloaded = 0,
+          uploaded = 0,
+          numPeers = 0;
+      if (torrent) {
+        downloadSpeed = torrent.downloadSpeed;
+        uploadSpeed = torrent.uploadSpeed;
+        downloaded = torrent.downloaded;
+        uploaded = torrent.uploaded;
+        numPeers = torrent.numPeers;
+      }
+
+      var progress = this.state.progress;
+      if (downloaded == 0) {
+        progress = 0;
+      }
+      if (progress == 0 && downloaded > 2000) {
+        progress = 1;
+      }
+      var strokeDashoffset = this.circumference - progress * this.circumference;
 
       return _react2.default.createElement(
         'div',
@@ -3186,24 +3222,73 @@ var ProgressRing = function (_React$Component2) {
             width: this.radius * 2
           },
           _react2.default.createElement('circle', {
-            stroke: '#3498db',
+            // stroke='#3498db'
+            stroke: '#e50914',
             fill: 'transparent',
             strokeWidth: this.stroke,
             strokeDasharray: this.circumference + ' ' + this.circumference,
+            strokeLinecap: 'round',
             style: { strokeDashoffset: strokeDashoffset },
             r: this.normalizedRadius,
             cx: this.radius,
             cy: this.radius
           }),
-          _react2.default.createElement(
+          _react2.default.createElement('circle', {
+            stroke: 'rgba(255,255,255,.3)',
+            fill: 'transparent',
+            strokeWidth: this.stroke,
+            r: this.normalizedRadius,
+            cx: this.radius,
+            cy: this.radius
+          }),
+          progress == 1 ? _react2.default.createElement(
+            'text',
+            {
+              id: 'video-get-buffer',
+              fill: '#8cc0e2',
+              fontFamily: 'FontAwesome',
+              fontSize: '15px',
+              textAnchor: 'middle',
+              alignmentBaseline: 'central',
+              cursor: 'pointer',
+              x: this.radius,
+              y: this.radius,
+              onClick: this.getBuffer
+            },
+            '\uF019'
+          ) : _react2.default.createElement(
             'text',
             {
               fill: 'white',
+              fontFamily: 'Arial, FontAwesome, sans-serif',
+              fontSize: '13px',
+              textAnchor: 'middle',
+              alignmentBaseline: 'central',
               x: this.radius,
               y: this.radius
             },
-            this.state.progress * 100
+            Math.trunc(progress * 100)
           )
+        ),
+        _react2.default.createElement(
+          'div',
+          { className: 'speed-status', 'data-type': 'peer' },
+          numPeers,
+          ' peers'
+        ),
+        _react2.default.createElement(
+          'div',
+          { className: 'speed-status', 'data-type': 'download' },
+          (0, _Library.BytestoSize)(downloaded, 1),
+          ', ',
+          (0, _Library.BytestoSize)(downloadSpeed, 1) + '/s'
+        ),
+        _react2.default.createElement(
+          'div',
+          { className: 'speed-status', 'data-type': 'upload' },
+          (0, _Library.BytestoSize)(uploadSpeed, 1),
+          ', ',
+          (0, _Library.BytestoSize)(uploadSpeed, 1) + '/s'
         )
       );
     }

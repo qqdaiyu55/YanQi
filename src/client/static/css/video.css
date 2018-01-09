@@ -347,12 +347,44 @@
 
 
 #video-status {
+  display: block;
   position: absolute;
-  right: -50px;
+  left: calc(100% + 10px);
 }
-
 #video-status circle {
   transition: stroke-dashoffset 0.35s;
   transform: rotate(-90deg);
   transform-origin: 50% 50%;
+}
+#video-status .download-button {
+  
+}
+
+#video-status .speed-status {
+  white-space: nowrap;
+  position: relative;
+  margin: 10px 0 0 10px;
+  font-size: 13px;
+  line-height: 20px;
+  vertical-align: middle;
+}
+#video-status .speed-status:before {
+  font-family: FontAwesome;
+  text-decoration: inherit;
+  font-size: 20px;
+  line-height: 20px;
+  vertical-align: middle;
+  margin-right: 5px;
+}
+#video-status .speed-status[data-type="peer"]:before {
+  content: "\f140";
+  color: #e50914;
+}
+#video-status .speed-status[data-type="download"]:before {
+  content: "\f01a";
+  color: #2ecc71;
+}
+#video-status .speed-status[data-type="upload"]:before {
+  content: "\f01b";
+  color: #f39c12;
 }

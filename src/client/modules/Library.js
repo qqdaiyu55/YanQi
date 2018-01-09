@@ -16,12 +16,22 @@ var uuidv8 = () => {
 
 // Convert MB size to GB, TB
 var MBtoSize = (num, decimals) => {
-  if(num == 0) return '0 MB';
-   var k = 1024,
-       dm = decimals || 2,
-       sizes = ['MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'],
-       i = Math.floor(Math.log(num) / Math.log(k));
-   return parseFloat((num / Math.pow(k, i)).toFixed(dm)) + ' ' + sizes[i];
+  if (num == 0) return '0 MB';
+  var k = 1024,
+      dm = decimals || 2,
+      sizes = ['MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'],
+      i = Math.floor(Math.log(num) / Math.log(k))
+  return parseFloat((num / Math.pow(k, i)).toFixed(dm)) + ' ' + sizes[i]
+}
+
+// Convert Bytes to KB, MB, GB
+var BytestoSize = (num, decimals) => {
+  if (num == 0) return '0 B'
+  var k = 1024,
+      dm = decimals || 2,
+      sizes = ['B', 'KB', 'MB', 'GB'],
+      i = Math.floor(Math.log(num) / Math.log(k))
+  return parseFloat((num / Math.pow(k, i)).toFixed(dm)) + ' ' + sizes[i]
 }
 
 // Convert data url to blob
@@ -68,4 +78,4 @@ var formatVideoTime = (time) => {
   }
 }
 
-export { arraysEqual, uuidv8, MBtoSize, dataURItoBlob, formatNumberLength, formatVideoTime }
+export { arraysEqual, uuidv8, MBtoSize, BytestoSize, dataURItoBlob, formatNumberLength, formatVideoTime }
