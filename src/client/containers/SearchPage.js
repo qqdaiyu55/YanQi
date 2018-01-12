@@ -34,8 +34,8 @@ class SearchPage extends React.Component {
       if (parsedQuery[0] === 'title') flag = 0
       if (parsedQuery[0] === 'tag') flag = 1
 
-      this.loadContent(parsedQuery[1], flag)
       this.getVideoList()
+      this.loadContent(parsedQuery[1], flag)
       this.setState({ searchTerm: parsedQuery[1] })
     }
   }

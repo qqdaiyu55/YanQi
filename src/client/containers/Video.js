@@ -19,15 +19,26 @@ var displayVideo = (props) => {
   $('#video-components .fs-overlay').css({ 'visibility': 'visible', 'opacity': '1', 'width': '100vw', 'height': '100vh' })
   $('#video-topbar .title').html(props.title)
 
+  // Reset loader
+  $('#video-loader .loader-inner').show()
+  $('#video-loader p').html('')
+
   client.add(props.torrentID, function(torrent) {
-    // torrent.on('download', () => {
-    //   console.log(torrent.progress, torrent.numPeers, torrent.downloadSpeed)
-    // })
-    const file = torrent.files.find(function (file) {
-      return file.name.endsWith('.mp4')
+    const file = torrent.files.find((file) => {
+      return file.name.endsWith('.mp4') || file.name.endsWith('.m4a') || file.name.endsWith('.m4v')
     })
 
-    file.appendTo("#video-container .video-wrapper")
+    if (file) {
+      if (file.length/(1024*1024*1024) > 2) {
+        $('#video-loader .loader-inner').hide()
+        $('#video-loader p').html('Warning: size of video larger than 2GB.')
+      } else {
+        file.appendTo('#video-container .video-wrapper')
+      }
+    } else {
+      $('#video-loader .loader-inner').hide()
+      $('#video-loader p').html('Error: only support .mp4 .m4a .m4v format now.')
+    }
   })
 
   torrentID = props.torrentID
@@ -195,16 +206,6 @@ class Video extends React.Component {
          expandButton.find('.icon').css('background-image', 'url(/img/fullscreen.svg)')
       }
     })
-
-    // Get webtorrent status: progress, peers, speed
-    // client.on('torrent', () => {
-    //   this.
-    // })
-    setInterval(() => {
-      if (this.state.videoLoaded) {
-        this.setState({ progress: client.progress })
-      }
-    }, 1000)
   }
   componentWillUpdate() {
     $('.loader-inner').loaders()
@@ -364,7 +365,12 @@ class Video extends React.Component {
       <div id='video-components'>
         <div className='fs-overlay' onClick={this.removeOverlay}></div>
         <div id="video-container">
-          {!this.state.videoLoaded && <div className="loader-inner ball-pulse"></div>}
+          {!this.state.videoLoaded &&
+          <div id='video-loader'>
+            <div className='loader-inner ball-pulse'></div>
+            <p></p>
+          </div>
+          }
           <div id='video-topbar'>
             {/* <div className='overlay'></div> */}
             <div className='close' onClick={this.closeVideo}></div>
@@ -407,6 +413,7 @@ class Video extends React.Component {
   }
 }
 
+
 class ProgressRing extends React.Component {
   constructor(props) {
     super(props)
@@ -420,7 +427,9 @@ class ProgressRing extends React.Component {
       progress: 0
     }
 
-    this.getBuffer = this.getBuffer.bind(this)
+    this.download = this.download.bind(this)
+    this.mouseoverStyle = this.mouseoverStyle.bind(this)
+    this.mouseoutStyle = this.mouseoutStyle.bind(this)
   }
   componentDidMount() {
     setInterval(() => {
@@ -429,9 +438,24 @@ class ProgressRing extends React.Component {
       }
     }, 1000)
   }
-  getBuffer() {
-    console.log('CLICKED')
-    client.torrents[0].files[0].getBuffer()
+  // Trick to download video
+  download() {
+    var file = client.torrents[0].files[0]
+    file.getBlobURL((err, url) => {
+      var a = document.createElement('a')
+      a.download = file.name
+      a.href = url
+      a.click()
+      a.remove()
+    })
+  }
+  mouseoverStyle() {
+    $('#progress-ring-1').attr('stroke', '#e50914')
+    $('#video-status text').css('opacity', '1')
+  }
+  mouseoutStyle() {
+    $('#progress-ring-1').attr('stroke', 'rgba(255,255,255,.15)')
+    $('#video-status text').css('opacity', '0')
   }
   render() {
     var torrent = client.torrents[0]
@@ -452,20 +476,20 @@ class ProgressRing extends React.Component {
     if (downloaded == 0) {
       progress = 0
     }
-    if (progress == 0 && downloaded > 2000) {
+    if (progress == 0 && downloaded > 500000) {
       progress = 1
     }
     const strokeDashoffset = this.circumference - progress * this.circumference
 
     return (
-      <div id='video-status'>
+      <div id='video-status' onMouseOver={this.mouseoverStyle} onMouseOut={this.mouseoutStyle}>
         <svg
           height={this.radius * 2}
           width={this.radius * 2}
         >
           <circle
-            // stroke='#3498db'
-            stroke='#e50914'
+            id = 'progress-ring-1'
+            stroke='rgba(255,255,255,.15)'
             fill='transparent'
             strokeWidth={this.stroke}
             strokeDasharray={this.circumference + ' ' + this.circumference}
@@ -476,7 +500,8 @@ class ProgressRing extends React.Component {
             cy={this.radius}
           />
           <circle
-            stroke='rgba(255,255,255,.3)'
+            id = 'progress-ring-2'
+            stroke='rgba(255,255,255,.15)'
             fill='transparent'
             strokeWidth={this.stroke}
             r={this.normalizedRadius}
@@ -486,7 +511,7 @@ class ProgressRing extends React.Component {
           {progress == 1 ? 
             <text
               id='video-get-buffer'
-              fill='#8cc0e2'
+              fill='#EC5862'
               fontFamily='FontAwesome'
               fontSize='15px'
               textAnchor='middle'
@@ -494,7 +519,7 @@ class ProgressRing extends React.Component {
               cursor='pointer'
               x={this.radius}
               y={this.radius}
-              onClick={this.getBuffer}
+              onClick={this.download}
             >
               {'\uf019'}
             </text>

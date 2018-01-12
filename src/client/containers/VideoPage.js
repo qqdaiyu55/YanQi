@@ -17,11 +17,14 @@ class VideoPage extends React.Component {
         backdrop: '',
         tags: [],
         rscInfo: [],
-        introduction: ''
+        introduction: '',
+        liked: false
       }
     };
 
     this.loadContent = this.loadContent.bind(this)
+    this.getLiked = this.getLiked.bind(this)
+    this.addToList = this.addToList.bind(this)
     this.openEditVideoModal = this.openEditVideoModal.bind(this)
     this.searchTag = this.searchTag.bind(this)
   }
@@ -31,6 +34,8 @@ class VideoPage extends React.Component {
   loadContent() {
     const id = this.props.match.params.id
     const token = encodeURIComponent(Auth.getToken())
+
+    this.getLiked()
 
     const data = `id=${id}`
     $.ajax({
@@ -52,6 +57,48 @@ class VideoPage extends React.Component {
     }).fail(()=>{
       console.log("There has an error.")
     });
+  }
+  addToList(e) {
+    if (this.state.liked === true) {
+      this.setState({ liked: false })
+    } else {
+      this.setState({ liked: true })
+    }
+
+    const id = this.props.match.params.id
+    const token = Auth.getToken()
+    const data = {
+      token: token,
+      videoId: id,
+      add: this.state.liked
+    }
+
+    $.ajax({
+      url: '/update/videolist',
+      headers: { 'Authorization': `bearer ${token}` },
+      data: JSON.stringify(data),
+      contentType: 'application/json',
+      method: 'POST'
+    }).fail(() => {
+      console.log('There is an error when updating video list.')
+    })
+  }
+  getLiked() {
+    const id = this.props.match.params.id
+
+    const token = Auth.getToken()
+    $.ajax({
+      url: '/api/videolist/id',
+      headers: { 'Authorization': `bearer ${token}` },
+      contentType: 'application/json',
+      method: 'GET'
+    }).done((data) => {
+      if (data.video_list.includes(id)) {
+        this.setState({ liked: true })
+      }
+    }).fail(() => {
+      console.log('There is an error when getting video list.')
+    })
   }
   openEditVideoModal() {
     $('#edit-video-card').css({ "visibility":"visible", "opacity":"1" })
@@ -87,7 +134,10 @@ class VideoPage extends React.Component {
             <h1>{title}</h1>
           </div>
           <div className="overlay"></div>
-            <div className="buttons-wrapper" onClick={this.openEditVideoModal}><i className="fa fa-pencil-square-o"></i></div>
+          <div className="buttons-wrapper">
+            <i className='fa fa-heart' data-toggled={this.state.liked} onClick={this.addToList}></i>
+            <i className='fa fa-pencil' onClick={this.openEditVideoModal}></i>
+          </div>
         </div>
         <div className="tags">
           <ul>{tags}</ul>

@@ -329,6 +329,14 @@ p {
   left: 10vw;
   top: 10vw;
 }
+.Hero .content h1 {
+  font-size: 60px;
+  font-weight: 600;
+  font-family: Georgia, 'Times New Roman', Times, serif;
+  line-height: 1;
+  padding-top: 1em;
+  margin-bottom: .3em;
+}
 .Hero .content .logo {
   max-width: 400px;
   display: block;

@@ -31,10 +31,33 @@
 .cover-title-wrapper .buttons-wrapper {
   cursor: pointer;
   position: absolute;
-  font-size: 30px;
   right: 20px;
-  bottom: 35px;
+  bottom: 25px;
   z-index: 4;
+}
+.cover-title-wrapper .buttons-wrapper i {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  align-content: center;
+  width: 43px;
+  height: 43px;
+  margin-right: 22px;
+  color: #fff;
+  font-size: 15px;
+  border: 2px solid #fff;
+  border-radius: 50%;
+  transition: all .25s ease;
+}
+.cover-title-wrapper .buttons-wrapper i:hover {
+  background-color: #fff;
+  color: #e50914;
+}
+.cover-title-wrapper .buttons-wrapper .fa-heart[data-toggled="true"]{
+  color: #e50914;
+}
+.cover-title-wrapper .buttons-wrapper .fa-heart[data-toggled="false"]{
+  color: #fff;
 }
 
 
@@ -92,8 +115,6 @@
   box-shadow: 0 0px 15px rgb(43, 199, 110), 0 0px 15px rgb(43, 199, 110) inset;
   padding: 3px;
   transition: .2s;
-}
-.videopage-cards-wrapper ul li:hover {
 }
 .videopage-cards-wrapper li > div {
   width: 100%;

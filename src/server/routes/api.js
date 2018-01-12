@@ -1,12 +1,12 @@
-const express = require('express');
-const mongoose = require('mongoose');
-const User = require('mongoose').model('User');
-const Video = require('mongoose').model('Video');
-const jwt = require('jsonwebtoken');
-const config = require('../config');
-const multer = require('multer');
+const express = require('express')
+const mongoose = require('mongoose')
+const User = require('mongoose').model('User')
+const Video = require('mongoose').model('Video')
+const jwt = require('jsonwebtoken')
+const config = require('../config')
+const multer = require('multer')
 
-const router = new express.Router();
+const router = new express.Router()
 
 // Get user profile
 router.get('/profile', (req, res, next) => {

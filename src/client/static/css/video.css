@@ -34,11 +34,13 @@
   display: none !important;
 }
 
-#video-container .loader-inner {
-  visibility: visible;
+#video-loader {
   position: absolute;
   top: 50%;
   left: 50%;
+  align-content: center;
+  text-align: center;
+  font: rgba(255,255,255,.8);
   transform: translate(-50%, -50%);
   z-index: 7;
 }
@@ -352,21 +354,47 @@
   left: calc(100% + 10px);
 }
 #video-status circle {
-  transition: stroke-dashoffset 0.35s;
+  transition: all 0.3s;
   transform: rotate(-90deg);
   transform-origin: 50% 50%;
 }
-#video-status .download-button {
-  
+/* #progress-ring-1 {
+  stroke: rgba(255,255,255,.3);
 }
+#video-status:hover > #progress-ring-1 {
+  stroke: #e50914;
+}
+#progress-ring-2 {
+  fill: rgba(255,255,255,.3);
+}
+#video-status:hover > #progress-ring-2 {
+  fill: transparent;
+} */
+
+#video-status text {
+  opacity: 0;
+  transition: opacity .25s ease;
+}
+/* #video-status:hover > text {
+  opacity: 1;
+} */
 
 #video-status .speed-status {
-  white-space: nowrap;
+  visibility: hidden;
   position: relative;
-  margin: 10px 0 0 10px;
+  margin-top: 2px;
+  margin-left: 10px;
   font-size: 13px;
   line-height: 20px;
   vertical-align: middle;
+  white-space: nowrap;
+  opacity: 0;
+  transition: all .25s ease;
+}
+#video-status:hover > .speed-status {
+  visibility: visible;
+  opacity: 1;
+  margin-top: 10px;
 }
 #video-status .speed-status:before {
   font-family: FontAwesome;

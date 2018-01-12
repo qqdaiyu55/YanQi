@@ -18,7 +18,6 @@
     "clipboard-polyfill": "^2.3.0",
     "draft-js": "^0.10.3",
     "express": "^4.14.0",
-    "fs": "^0.0.1-security",
     "jsonwebtoken": "^7.2.1",
     "mongoosastic": "^4.3.0",
     "mongoose": "^4.7.3",

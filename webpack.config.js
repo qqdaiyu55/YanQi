@@ -11,11 +11,6 @@ module.exports = {
     filename: 'bundle.js',
   },
 
-  // node: {
-  //   fs: 'empty'
-  // },
-
-
   module: {
 
     // apply loaders to files that meet given conditions
