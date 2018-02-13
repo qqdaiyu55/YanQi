@@ -53,11 +53,8 @@
   background-color: #fff;
   color: #e50914;
 }
-.cover-title-wrapper .buttons-wrapper .fa-heart[data-toggled="true"]{
+.cover-title-wrapper .buttons-wrapper .fa-heart[data-toggled="true"] {
   color: #e50914;
-}
-.cover-title-wrapper .buttons-wrapper .fa-heart[data-toggled="false"]{
-  color: #fff;
 }
 
 
@@ -88,28 +85,29 @@
 .videopage-rsc {
   display: block;
   position: relative;
-  box-sizing: border-box;
-  width: 80%;
-  height: 120px;
+  /* box-sizing: border-box; */
+  width: 90%;
+  height: auto;
   left: 4%;
   margin: 20px 0;
-  overflow: hidden;
+  /* overflow: auto; */
 }
 .videopage-cards-wrapper {
   position: relative;
   width: 100%;
-  height: 100%;
+  height: auto;
 }
 .videopage-cards-wrapper ul {
-  position: absolute;
+  position: relative;
   display: flex;
-  height: 100%;
+  flex-wrap: wrap;
+  height: auto;
 }
 .videopage-cards-wrapper ul li {
   cursor: pointer;
   width: 130px;
   height: 100px;
-  margin-left: 20px;
+  margin: 10px;
   border: 2px solid rgb(43, 199, 110);
   border-radius: 10px;
   box-shadow: 0 0px 15px rgb(43, 199, 110), 0 0px 15px rgb(43, 199, 110) inset;
@@ -124,6 +122,12 @@
   white-space: nowrap;
   text-align: center;
   overflow: hidden;
+}
+.videopage-cards-wrapper li span {
+  margin-left: 8px;
+}
+.videopage-cards-wrapper .rsc-icon {
+  margin-right: 2px;
 }
 .videopage-cards-wrapper .rsc-magnet {
   cursor: pointer;
@@ -141,7 +145,7 @@
 .videopage-content .intro {
   display: block;
   position: relative;
-  width: 88%;
+  width: 90%;
   left: 5%;
   margin: 20px 0;
 }

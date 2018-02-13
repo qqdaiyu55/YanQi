@@ -2,7 +2,6 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import { withRouter, Link } from 'react-router-dom'
 import Auth from '../modules/Auth'
-import Logo from '../components/Logo'
 import Navigation from '../components/Navigation'
 import UserProfile from '../components/UserProfile'
 
@@ -61,7 +60,7 @@ class Header extends React.Component {
   render() {
     return (
       <header className='Header'>
-        <Link to='/'><Logo /></Link>
+        <Link to='/'><div className='logo'></div></Link>
         <Navigation />
         <div id='search' className='Search'>
           <input onKeyUp={this.handleKeyUp} onChange={this.handleChange} type='search' placeholder='Search for a title...' value={this.state.searchTerm}/>

@@ -53,6 +53,8 @@ class ProfileCard extends React.Component {
     this.onCrop = this.onCrop.bind(this)
     this.onClose = this.onClose.bind(this)
     this.updateAvatar = this.updateAvatar.bind(this)
+
+    this.logout = this.logout.bind(this)
   }
   openAvatarEditor() {
     $('#avatar-editor').css({ 'visibility':'visible', 'opacity':'1'})
@@ -109,6 +111,10 @@ class ProfileCard extends React.Component {
 
     this.closeAvatarEditor()
   }
+  logout() {
+    Auth.deauthenticateUser()
+    this.props.history.push('/')
+  }
 
   render() {
     const labelStyle = {
@@ -133,6 +139,7 @@ class ProfileCard extends React.Component {
             <img src={'/avatar/'+this.props.avatarUrl} alt='avatar' />
             <div className='overlay'>Change</div>
           </div>
+          <div className='logout' onClick={this.logout}>Log out</div>
         </div>
         <div className='right-panel'>
           <div className='profile-data-wrapper'>

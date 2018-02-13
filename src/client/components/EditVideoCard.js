@@ -261,7 +261,7 @@ class EditVideoCard extends React.Component {
       }).get()
       var rscInfo = []
       htmlRscInfo.forEach((e) => {
-      var tmp = e.match('<div class="item">(.*?)</div><div class="item">(.*?)</div><div class="item">.*?content">(.*?)</div></div>')
+        var tmp = e.match('<div class="item">(.*?)</div><div class="item">(.*?)</div><div class="item">.*?content">(.*?)</div></div>')
         tmp = [tmp[1], tmp[2], tmp[3].split('&')[0]]
         rscInfo.push(tmp)
       })

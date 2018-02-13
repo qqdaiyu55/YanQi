@@ -6,10 +6,13 @@ import Modal from '../components/Modal'
 import EditVideoCard from '../components/EditVideoCard'
 import { uuidv8 } from '../modules/Library'
 import clipboard from 'clipboard-polyfill'
+var Tracker = require('bittorrent-tracker')
 
 class VideoPage extends React.Component {
   constructor(props) {
-    super(props);
+    super(props)
+    
+    this.announce = ['ws://104.131.128.61:8000']
 
     this.state = {
       data: {
@@ -17,10 +20,11 @@ class VideoPage extends React.Component {
         backdrop: '',
         tags: [],
         rscInfo: [],
-        introduction: '',
-        liked: false
-      }
-    };
+        introduction: ''
+      },
+      seeders: [],
+      liked: false
+    }
 
     this.loadContent = this.loadContent.bind(this)
     this.getLiked = this.getLiked.bind(this)
@@ -28,14 +32,18 @@ class VideoPage extends React.Component {
     this.openEditVideoModal = this.openEditVideoModal.bind(this)
     this.searchTag = this.searchTag.bind(this)
   }
+  componentDidMount() {
+    // Tracker.scrape({ announce: [this.announce], infoHash: [infoHash1] }, function (err, results) {
+    //   console.log(results.length)
+    // })
+  }
   componentWillMount() {
+    this.getLiked()
     this.loadContent()
   }
   loadContent() {
     const id = this.props.match.params.id
     const token = encodeURIComponent(Auth.getToken())
-
-    this.getLiked()
 
     const data = `id=${id}`
     $.ajax({
@@ -54,11 +62,31 @@ class VideoPage extends React.Component {
           introduction: data.introduction
         }
       })
+
+      var infoHash = data.rsc_info.map((r) => {
+        return r[2].split('magnet:?xt=urn:btih:')[1]
+      })
+      var seeders = new Array(infoHash.length).fill(0)
+      Tracker.scrape({ announce: [this.announce], infoHash: infoHash }, ((err, results) => {
+        if (err) {
+          throw err
+          return
+        }
+        if (infoHash.length >= 1) {
+          var i
+          for (i = 0; i < infoHash.length; i++) {
+            seeders[i] = results[infoHash[i]].complete
+          }
+        } else {
+          seeders[0] = results.complete
+        }
+        this.setState({ seeders: seeders })
+      }).bind(this))
     }).fail(()=>{
       console.log("There has an error.")
-    });
+    })
   }
-  addToList(e) {
+  addToList() {
     if (this.state.liked === true) {
       this.setState({ liked: false })
     } else {
@@ -114,6 +142,7 @@ class VideoPage extends React.Component {
     const tags_data = this.state.data.tags
     const rscInfo = this.state.data.rscInfo
     const introduction = this.state.data.introduction
+    const seeders = this.state.seeders
     if (tags_data) {
       var tags = tags_data.map(function(t, i) {
         return (<li key={uuidv8()} onClick={this.searchTag}>{t}</li>)
@@ -122,7 +151,7 @@ class VideoPage extends React.Component {
     if (rscInfo) {
       var rsc = rscInfo.map(function(t, i) {
         return(
-          <RscCard key={uuidv8()} data={t} />
+          <RscCard key={uuidv8()} data={t} seeder={seeders[i]} />
         )
       })
     }
@@ -184,10 +213,14 @@ class RscCard extends React.Component {
   }
   render() {
     const data = this.props.data
+    const seeder = this.props.seeder
     return (
       <li onClick={this.handleClick}>
         <div>{data[0]}</div>
-        <div>{data[1]}</div>
+        <div>
+          <span><i className='fa fa-arrow-circle-up rsc-icon'></i>{seeder}</span>
+          <span><i className='fa fa-file rsc-icon'></i>{data[1]}</span>
+        </div>
         <div><i className="fa fa-magnet rsc-magnet" onClick={this.copyMagnet}></i><div className="magnet-content">{data[2]}</div></div>
       </li>
     );

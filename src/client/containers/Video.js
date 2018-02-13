@@ -9,8 +9,7 @@ var loaded = false
 
 // Announces list
 global.WEBTORRENT_ANNOUNCE = [
-  'udp://[2604:a880:1:20::2f90:7001]:8000',
-  'ws://[2604:a880:1:20::2f90:7001]:8000'
+  'ws://104.131.128.61:8000'
 ]
 
 // Display webtorrent video

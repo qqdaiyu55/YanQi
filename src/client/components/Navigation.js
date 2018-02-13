@@ -36,28 +36,76 @@ class Navigation extends React.Component {
   }
   componentDidMount() {
     $('.tags-box ul').sortable()
-    // $('.tags-box').droppable({
-    //   // greedy: true,
-    //   activeClass: 'ui-state-hover',
-    //   drop: (e, ui) => {
-    //     console.log(ui.draggable[0].innerHTML)
-    //   },
-    //   accepet: '.tags-box .ui-sortable-handle'
-    // })
+    $('.tags-box').droppable({
+      greedy: true,
+      drop: (e, ui) => {
+        setTimeout(()=>{
+          var newTags = $('.tags-box ul').children().map(function () {
+            if (this.innerHTML != '') return this.innerHTML
+          }).get()
+
+          // Get token from local storage
+          const token = Auth.getToken()
+
+          // Judge if new tags and previous tags (5 seconds before) is equal
+          if (!arraysEqual(newTags, this.tags)) {
+            const data = {
+              token: token,
+              tags: newTags
+            }
+            $.ajax({
+              url: '/update/tags',
+              data: JSON.stringify(data),
+              headers: { 'Authorization': `bearer ${token}` },
+              contentType: 'application/json',
+              method: 'POST'
+            }).fail(() => {
+              console.log('There has an error when updating tags.')
+            })
+
+            this.tags = newTags
+
+            this.forceUpdate()
+          }
+        }, 100)
+      },
+      accepet: '.tags-box .ui-sortable-handle'
+    })
     $('#root').droppable({
       drop: ((e, ui) => {
         // ui.draggable.remove()
         const removeTag = ui.draggable[0].innerHTML
-        console.log(ui.draggable[0].innerHTML)
-        // this.tags = this.tags.filter(t => t!==removeTag)
-        // console.log(this.tags)
-        // this.tags = newTags
-        // this.forceUpdate()
+        console.log(removeTag)
+        var newTags = this.tags.filter(t => t !== removeTag)
+
+        // Get token from local storage
+        const token = Auth.getToken()
+
+        // Judge if new tags and previous tags (5 seconds before) is equal
+        if (!arraysEqual(newTags, this.tags)) {
+          const data = {
+            token: token,
+            tags: newTags
+          }
+          $.ajax({
+            url: '/update/tags',
+            data: JSON.stringify(data),
+            headers: { 'Authorization': `bearer ${token}` },
+            contentType: 'application/json',
+            method: 'POST'
+          }).fail(() => {
+            console.log('There has an error when updating tags.')
+          })
+
+          this.tags = newTags
+
+          this.forceUpdate()
+        }
       }).bind(this),
-      accept: '.ui-sortable-handle'
+      accept: '.tags-box .ui-sortable-handle'
     })
 
-    // setInterval(this.updateTags, 10000)
+    // setInterval(this.updateTags, 1000)
   }
 
   // Update tags
@@ -86,7 +134,9 @@ class Navigation extends React.Component {
         console.log('There has an error when updating tags.')
       })
 
-      this.tags = newTags;
+      this.tags = newTags
+
+      this.forceUpdate
     }
   }
 
@@ -168,7 +218,7 @@ class Navigation extends React.Component {
             <Link to='/list' className='link'><li>My list</li></Link>
             <Link to='/new' className='link'><li>New</li></Link>
             <li>Download</li>
-            <li>FAQ</li>
+            <li><a href='/doc' style={{textDecoration: 'none', color: '#fff'}}>FAQ</a></li>
             <li onClick={this.openEditVideoModal}><i className='fa fa-fw fa-plus'></i></li>
           </ul>
         </nav>

@@ -2,7 +2,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 
 const Hero = () => (
-  <div id="hero" className="Hero" style={{ backgroundImage: 'url(/img/g0i4vc7unqakxeeano9p.png)'}}>
+  <div id="hero" className="Hero" style={{ backgroundImage: 'url(/img/GhostBlade_Aeolian.jpg)'}}>
     <div className="content">
       {/* <img className="logo" src="/img/black-mirror-uproxx-1.jpg" alt="BLACK MIRROR" /> */}
       {/* http://www.returndates.com/backgrounds/narcos.logo.png */}

@@ -11,6 +11,7 @@ const app = express()
 app.use(express.static('./src/client/static/'))
 app.use(express.static('./build/'))
 app.use(express.static('./public/'))
+
 // tell the app to parse HTTP body messages
 app.use(bodyParser.urlencoded({ extended: false }))
 app.use(bodyParser.json())
@@ -37,6 +38,9 @@ app.use('/auth', authRoutes)
 app.use('/api', apiRoutes)
 app.use('/update', updateRoutes)
 app.use('/upload', uploadRoutes)
+
+// docs
+app.use('/doc', express.static('./docs/'))
 
 // start the server
 app.listen(3000, () => {

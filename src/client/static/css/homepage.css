@@ -98,31 +98,16 @@ p {
   z-index: 5;
 }
 
-.Logo {
+
+.logo {
   width: 151px;
   height: 41px;
   margin-right: 10px;
-  -webkit-transition: margin .125s ease;
-  transition: margin .125s ease;
+  background: url('/img/logo.svg');
+  background-size: cover;
+  background-repeat: no-repeat;
 }
-.Logo svg {
-  -webkit-transform: scale(0.5);
-          transform: scale(0.5);
-  -webkit-transform-origin: 0 0;
-          transform-origin: 0 0;
-}
-.Logo svg path {
-  fill: #e50914;
-  -webkit-transition: fill .125s ease;
-  transition: fill .125s ease;
-}
-.Logo:hover {
-  cursor: pointer;
-  margin-top: 2px;
-}
-.Logo:hover svg path {
-  fill: #ffffff !important;
-}
+
 
 .Navigation .link {
   color: #ffffff;

@@ -103,6 +103,16 @@
   width: 100%;
   height: 100%;
 }
+#profile-card .logout {
+  position: absolute;
+  cursor: pointer;
+  color: #e50914;
+  font-size: 15px;
+  font-weight: 300;
+  top: 120px;
+  left: 50%;
+  transform: translate(-50%);
+}
 
 
 #profile-card .right-panel {
