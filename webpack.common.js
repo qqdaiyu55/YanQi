@@ -1,6 +1,5 @@
 const path = require('path')
 
-
 module.exports = {
   // the entry file for the bundle
   entry: path.join(__dirname, '/src/client/App.js'),
@@ -12,14 +11,10 @@ module.exports = {
   },
 
   module: {
-
     // apply loaders to files that meet given conditions
     loaders: [
       { test: /\.js$/, loader: 'babel-loader', exclude: /node_modules/ },
       { test: /\.jsx$/, loader: 'babel-loader', exclude: /node_modules/ }
     ]
-  },
-
-  // start Webpack in a watch mode, so Webpack will rebuild the bundle on changes
-  watch: true
-};
+  }
+}
