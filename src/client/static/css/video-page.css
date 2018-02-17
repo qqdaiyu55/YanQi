@@ -104,24 +104,32 @@
   height: auto;
 }
 .videopage-cards-wrapper ul li {
+  position: relative;
   cursor: pointer;
-  width: 130px;
-  height: 100px;
+  height: 60px;
   margin: 10px;
-  border: 2px solid rgb(43, 199, 110);
+  box-sizing: border-box;
+  /* border: 2px solid rgba(43, 199, 110, .7); */
+  /* border: 2px solid rgba(245, 245, 241, 0.4); */
+  border: 2px solid rgba(116,156,214,.4);
   border-radius: 10px;
-  box-shadow: 0 0px 15px rgb(43, 199, 110), 0 0px 15px rgb(43, 199, 110) inset;
-  padding: 3px;
-  transition: .2s;
+  /* box-shadow: 0 0px 15px rgb(43, 199, 110), 0 0px 15px rgb(43, 199, 110) inset; */
+  padding: 0 6px;
+  transition: border .35s;
+  overflow: hidden;
 }
-.videopage-cards-wrapper li > div {
+.videopage-cards-wrapper ul li:hover {
+  /* border: 2px solid #f5f5f1; */
+  border: 2px solid rgb(116,156,214);
+}
+.videopage-cards-wrapper .visual-info {
+  display: flex;
+  align-items: center;
+  justify-content: center;
   width: 100%;
-  height: 27%;
-  margin-top: 5%;
+  height: 50%;
   font-size: 12px;
   white-space: nowrap;
-  text-align: center;
-  overflow: hidden;
 }
 .videopage-cards-wrapper li span {
   margin-left: 8px;
@@ -129,14 +137,31 @@
 .videopage-cards-wrapper .rsc-icon {
   margin-right: 2px;
 }
+.videopage-cards-wrapper .magnet-info {
+  position: absolute;
+  width: 0;
+  height: 100%;
+  top: 0;
+  right: 0;
+  background: #749CD6;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transition: opacity .25s ease, width .25s ease;
+}
+.videopage-cards-wrapper li:hover > .magnet-info {
+  opacity: 1;
+  width: 45px;
+}
 .videopage-cards-wrapper .rsc-magnet {
   cursor: pointer;
   font-size: 20px;
-  color: rgb(246, 86, 130);
+  color: rgb(250, 150, 177);
   transition: color .2s ease;
 }
 .videopage-cards-wrapper .rsc-magnet:hover {
-  color: rgb(250, 150, 177);
+  color: rgb(255, 198, 213);
 }
 .videopage-cards-wrapper .magnet-content {
   display: none;
@@ -148,8 +173,7 @@
   width: 90%;
   left: 5%;
   margin: 20px 0;
-}
-.videopage-content .intro p {
   color: rgb(221, 221, 221);
   font-size: 18px;
+  line-height: 25px;
 }

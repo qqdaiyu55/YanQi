@@ -50,7 +50,6 @@ class Navigation extends React.Component {
           // Judge if new tags and previous tags (5 seconds before) is equal
           if (!arraysEqual(newTags, this.tags)) {
             const data = {
-              token: token,
               tags: newTags
             }
             $.ajax({
@@ -104,8 +103,6 @@ class Navigation extends React.Component {
       }).bind(this),
       accept: '.tags-box .ui-sortable-handle'
     })
-
-    // setInterval(this.updateTags, 1000)
   }
 
   // Update tags
@@ -121,7 +118,6 @@ class Navigation extends React.Component {
     // Judge if new tags and previous tags (5 seconds before) is equal
     if (!arraysEqual(newTags, this.tags)) {
       const data = {
-        token: token,
         tags: newTags
       }
       $.ajax({

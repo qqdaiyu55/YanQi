@@ -15,8 +15,8 @@ class NewList extends React.Component {
     this.getVideoList = this.getVideoList.bind(this)
   }
   componentDidMount() {
-    this.getVideoList()
     this.loadContent()
+    this.getVideoList()
   }
   // Get list of videos the user liked
   loadContent() {

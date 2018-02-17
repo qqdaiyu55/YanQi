@@ -5,6 +5,7 @@ import {
 } from 'react-router-dom'
 import { Video } from './Video'
 import Header from './Header'
+import Notification from '../components/Notification'
 import Hero from '../components/Hero'
 import SearchPage from './SearchPage'
 import VideoPage from './VideoPage'
@@ -16,6 +17,7 @@ const Homepage = () => (
   <div>
     <Header />
     <Video />
+    <Notification />
     <Route exact path='/' component={Hero} />
     <Route path='/search/:term' component={SearchPage} />
     <Route path='/video/:id' component={VideoPage} />

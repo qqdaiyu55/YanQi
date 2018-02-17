@@ -66,7 +66,7 @@ router.post('/avatar', (req, res) => {
 })
 
 
-router.post('/video', (req, res, next) => {
+router.post('/video', (req, res) => {
   const info = req.body
   // 'edit' mode
   if (info.mode === 'edit') {
@@ -90,7 +90,12 @@ router.post('/video', (req, res, next) => {
     }
     // {new: true} is necessary to force elasticsearch update after findOneAndUpdate
     Video.findOneAndUpdate({ _id: info.id }, data, { new: true, upsert: false }, (err) => {
-      if (err) throw err
+      if (err) {
+        throw err
+        res.status(400).json({})
+      } else {
+        res.status(200).json({})
+      }
     })
   }
   // 'add' mode
@@ -102,7 +107,12 @@ router.post('/video', (req, res, next) => {
       tags: info.tags,
       introduction: info.introduction
       }], (err) => {
-        if (err) throw err
+        if (err) {
+          throw err
+          res.status(400).json({})
+        } else {
+          res.status(200).json({})
+        }
     })
   }
 });

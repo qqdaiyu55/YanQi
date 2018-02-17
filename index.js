@@ -54,5 +54,5 @@ app.use('/doc', express.static('./docs/'))
 
 // start the server
 app.listen(PORT, () => {
-  console.log('Server is running on http://localhost:' + PORT + 'or http://127.0.0.1:' + PORT);
+  console.log('Server is running on http://localhost:' + PORT + ' or http://127.0.0.1:' + PORT);
 });

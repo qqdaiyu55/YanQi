@@ -37,6 +37,8 @@ class EditVideoCard extends React.Component {
     this.submitCard = this.submitCard.bind(this)
 
     this.loadContent = this.loadContent.bind(this)
+
+    this.dispNotification = this.dispNotification.bind(this)
   }
   componentDidMount() {
     $('.horizon-scroll ul').sortable({
@@ -250,6 +252,26 @@ class EditVideoCard extends React.Component {
     }
   }
 
+  dispNotification(success) {
+    // remove class
+    if ($('#notification').hasClass('show-success')) {
+      $('#notification').removeClass('show-success')
+    }
+    if ($('#notification').hasClass('show-error')) {
+      $('#notification').removeClass('show-error')
+    }
+    // add class to trigger animation
+    if (success) {
+      setTimeout(()=>{
+        $('#notification').addClass('show-success')
+      }, 200)
+    } else {
+      setTimeout(() => {
+        $('#notification').addClass('show-error')
+      }, 200)
+    }
+  }
+
   // Submit all information to server
   submitCard() {
     var r = confirm('Do you want to submit the information now?')
@@ -341,8 +363,17 @@ class EditVideoCard extends React.Component {
         method: 'POST'
       }).done(() => {
         console.log('Success on uploading video information.')
+
+        // show notification
+        $('#notification').html('SUCCESS')
+        this.dispNotification(true)
+        // $('#notification').remove()
       }).fail(() => {
         console.log('There is an error when uploading video information.')
+
+        // show notification
+        $('#notification').html('ERROR')
+        this.dispNotification(false)
       })
 
       // Compress and upload backdrop to server

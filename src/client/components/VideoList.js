@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom'
 
 class VideoList extends React.Component {
   constructor(props) {
-    super(props);
+    super(props)
 
     this.getItems = this.getItems.bind(this)
   }
@@ -82,9 +82,7 @@ class ListToggle extends React.Component {
     var requestUrl = '/update/videolist'
     const token = Auth.getToken()
     const data = {
-      token: token,
-      videoId: this.props.id,
-      add: this.state.liked
+      videoId: this.props.id
     }
 
     $.ajax({

@@ -32,11 +32,6 @@ class VideoPage extends React.Component {
     this.openEditVideoModal = this.openEditVideoModal.bind(this)
     this.searchTag = this.searchTag.bind(this)
   }
-  componentDidMount() {
-    // Tracker.scrape({ announce: [this.announce], infoHash: [infoHash1] }, function (err, results) {
-    //   console.log(results.length)
-    // })
-  }
   componentWillMount() {
     this.getLiked()
     this.loadContent()
@@ -72,7 +67,7 @@ class VideoPage extends React.Component {
           throw err
           return
         }
-        if (infoHash.length >= 1) {
+        if (infoHash.length > 1) {
           var i
           for (i = 0; i < infoHash.length; i++) {
             seeders[i] = results[infoHash[i]].complete
@@ -141,8 +136,8 @@ class VideoPage extends React.Component {
     const backdrop = this.state.data.backdrop
     const tags_data = this.state.data.tags
     const rscInfo = this.state.data.rscInfo
-    const introduction = this.state.data.introduction
-    const seeders = this.state.seeders
+    var introduction = this.state.data.introduction
+    var seeders = this.state.seeders
     if (tags_data) {
       var tags = tags_data.map(function(t, i) {
         return (<li key={uuidv8()} onClick={this.searchTag}>{t}</li>)
@@ -155,6 +150,7 @@ class VideoPage extends React.Component {
         )
       })
     }
+
     return (
       typeof title !== "undefined" &&
       <div className="videopage-content">
@@ -176,9 +172,9 @@ class VideoPage extends React.Component {
             <ul>{rsc}</ul>
           </div>
         </div>
-        <div className="intro">
-          <p>{introduction}</p>
-        </div>
+        <article className='intro'>
+          {introduction}
+        </article>
       </div>
     )
   }
@@ -216,12 +212,12 @@ class RscCard extends React.Component {
     const seeder = this.props.seeder
     return (
       <li onClick={this.handleClick}>
-        <div>{data[0]}</div>
-        <div>
+        <div className='visual-info'>{data[0]}</div>
+        <div className='visual-info'>
           <span><i className='fa fa-arrow-circle-up rsc-icon'></i>{seeder}</span>
           <span><i className='fa fa-file rsc-icon'></i>{data[1]}</span>
         </div>
-        <div><i className="fa fa-magnet rsc-magnet" onClick={this.copyMagnet}></i><div className="magnet-content">{data[2]}</div></div>
+        <div className='magnet-info'><i className="fa fa-magnet rsc-magnet" onClick={this.copyMagnet}></i><div className="magnet-content">{data[2]}</div></div>
       </li>
     );
   }
