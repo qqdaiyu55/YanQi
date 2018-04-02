@@ -1,15 +1,18 @@
 import React from 'react'
-// var WebTorrent = require('webtorrent')
 import WebTorrent from 'webtorrent/webtorrent.min'
+import Auth from '../modules/Auth'
 import { formatVideoTime, BytestoSize } from '../modules/Library'
 
-const client = new WebTorrent({ dht: false })
 var torrentID = ''
 var loaded = false
+// Disable DHT
+var client = new WebTorrent({
+  dht: false
+})
 
 // Announces list
 global.WEBTORRENT_ANNOUNCE = [
-  'ws://104.131.128.61:8000'
+  'ws://0.0.0.0:6969'
 ]
 
 // Display webtorrent video
@@ -23,11 +26,14 @@ var displayVideo = (props) => {
   $('#video-loader p').html('')
 
   client.add(props.torrentID, function(torrent) {
+    // Allowed online streaming file extensions: mp4, m4a, m4v
+    // Refer to: https://webtorrent.io/faq
     const file = torrent.files.find((file) => {
       return file.name.endsWith('.mp4') || file.name.endsWith('.m4a') || file.name.endsWith('.m4v')
     })
 
     if (file) {
+      // Limit the file size to 2GB to prevent memory leaks
       if (file.length/(1024*1024*1024) > 2) {
         $('#video-loader .loader-inner').hide()
         $('#video-loader p').html('Warning: size of video larger than 2GB.')
@@ -42,6 +48,8 @@ var displayVideo = (props) => {
 
   torrentID = props.torrentID
 }
+
+// Switch between videos
 var switchVideo = (props) => {
   client.remove(torrentID)
   $("#video-container .video-wrapper").html('')
@@ -49,10 +57,20 @@ var switchVideo = (props) => {
   displayVideo(props)
 }
 
+// Set the peer id for verication
+var setPeerId = (peerId) => {
+  client.destroy()
+  client = new WebTorrent({
+    peerId: peerId,
+    dht: false
+  })
+}
+
 
 class Video extends React.Component {
-  constructor(props) {
+  constructor() {
     super()
+
     this.state = {
       videoLoaded: false,
       progress: 0
@@ -69,6 +87,20 @@ class Video extends React.Component {
     this.changeVolume = this.changeVolume.bind(this)
     this.fullScreen = this.fullScreen.bind(this)
     this.exitFullScreen = this.exitFullScreen.bind(this)
+  }
+  componentWillMount() {
+    const token = Auth.getToken()
+    $.ajax({
+      url: '/api/peerId',
+      headers: { 'Authorization': `bearer ${token}` },
+      contentType: 'application/json',
+      method: 'GET'
+    }).done((data) => {
+      setPeerId(data.peer_id)
+      this.forceUpdate()
+    }).fail(() => {
+      console.log('There is an error when getting peer Id.')
+    })
   }
   componentDidMount() {
     var topBar = $('#video-topbar')
@@ -209,7 +241,7 @@ class Video extends React.Component {
   componentWillUpdate() {
     $('.loader-inner').loaders()
   }
-
+  
   // Update video player: time, progress bar
   updateplayer() {
     var video = $('#video-container video').get(0)
@@ -371,12 +403,10 @@ class Video extends React.Component {
           </div>
           }
           <div id='video-topbar'>
-            {/* <div className='overlay'></div> */}
             <div className='close' onClick={this.closeVideo}></div>
             <div className='title'>Title</div>
           </div>
           <div className="video-wrapper">
-            {/* <video src='/img/test.mp4' constrols autoPlay></video> */}
           </div>
           <div id="video-controls">
             <div className='overlay'></div>
@@ -511,7 +541,8 @@ class ProgressRing extends React.Component {
             <text
               id='video-get-buffer'
               fill='#EC5862'
-              fontFamily='FontAwesome'
+              fontFamily='Font Awesome\ 5 Free'
+              fontWeight='900'
               fontSize='15px'
               textAnchor='middle'
               alignmentBaseline='central'
@@ -525,7 +556,7 @@ class ProgressRing extends React.Component {
           :
             <text
               fill='white'
-              fontFamily='Arial, FontAwesome, sans-serif'
+              fontFamily='Arial, Font Awesome\ 5 Free, sans-serif'
               fontSize='13px'
               textAnchor='middle'
               alignmentBaseline='central'
@@ -551,4 +582,4 @@ class ProgressRing extends React.Component {
   }
 }
 
-export { Video, displayVideo, switchVideo }
+export { Video, displayVideo, switchVideo, setPeerId }

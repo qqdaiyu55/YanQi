@@ -164,14 +164,17 @@
   overflow: auto;
 }
 .cards-wrapper ul {
-  position: absolute;
+  position: relative;
   display: flex;
+  width: auto;
   height: 100%;
+  align-items: center;
 }
 .cards-wrapper ul li {
+  position: relative;
   cursor: pointer;
   width: 100px;
-  height: 70px;
+  height: 60px;
   margin-left: 7px;
   border: 2px solid rgb(43, 199, 110);
   border-radius: 10px;
@@ -183,27 +186,31 @@
   width: 110px;
   height: 80px;
 }
+.cards-wrapper li .remove-rsc-card {
+  position: absolute;
+  cursor: pointer;
+  top: 3px;
+  right: 3px;
+  background: #494444;
+  color: #fff;
+  font-size: 16px;
+  border-radius: 8px;
+  transition: all .2s ease;
+}
+.cards-wrapper li .remove-rsc-card:hover {
+  color: #e50914;
+}
 .cards-wrapper li .item {
+  display: flex;
   width: 100%;
-  height: 33%;
+  height: 50%;
   font-size: 12px;
   white-space: nowrap;
-  text-align: center;
+  justify-content: center;
+  align-items: center;
   overflow: hidden;
 }
-.cards-wrapper .rsc-magnet {
-  cursor: pointer;
-  font-size: 20px;
-  color: rgb(246, 86, 130);
-  transition: .2s ease;
-}
-.cards-wrapper .rsc-magnet:hover {
-  color: rgb(250, 150, 177);
-}
-.cards-wrapper .rsc-magnet:active {
-
-}
-.cards-wrapper .magnet-content {
+.cards-wrapper li .item-magnet {
   display: none;
 }
 .cards-wrapper .edit {
@@ -237,6 +244,8 @@
   border-bottom: 1px solid black;
   padding-bottom: 3px;
   margin-bottom: 5px;
+  justify-content: center;
+  align-items: center;
 }
 #edit-resource-card .resource-text-input input {
   position: relative;
@@ -267,12 +276,18 @@
   content: "\f076";
 }
 #edit-resource-card .resource-text-input label {
-  font-family: FontAwesome;
+  font-family: 'Font Awesome\ 5 Free';
   font-size: 13px;
+  font-weight: 900;
 }
 #edit-resource-card .resource-text-input select {
   position: absolute;
   right: 5px;
+  background: none;
+  border: 1px solid;
+}
+#edit-resource-card .resource-text-input select:focus {
+  outline: 0;
 }
 #edit-resource-card button {
   background: transparent;
@@ -287,9 +302,6 @@
   font-weight: 500px;
   background: transparent;
   transition: transform .3s;
-}
-#edit-resource-card button:hover {
-  /*transform: rotateX(60deg);*/
 }
 #edit-resource-card button[name="submit"] {
   left: 0;

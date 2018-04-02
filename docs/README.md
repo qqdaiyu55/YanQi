@@ -1,1 +1,0 @@
-YANQI.tv 是一个基于 webtorrent 技术，支持在线播放磁力链接的分享社区。

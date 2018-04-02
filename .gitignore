@@ -1,4 +1,22 @@
+# Dependency directory
+# Commenting this out is preferred by some people, see
+# https://www.npmjs.org/doc/misc/npm-faq.html#should-i-check-my-node_modules-folder-into-git-
 node_modules
-public
 
-.DS_Store
+# Public data
+public/
+
+# Compiled css and js
+build/
+
+# Logs
+logs
+*.log
+
+# Users Environment Variables
+.lock-wscript
+
+# OS X
+*.DS_Store
+
+yarn.lock

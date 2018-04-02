@@ -10,7 +10,7 @@ import UserProfile from '../components/UserProfile'
 // Note: There has to update modal state manually instead of pass show property of modal, or there'll be a conflict with droppable ul when rerendering: **Failed to execute 'removeChild' on 'Node': The node to be removed is not a child of this node**.
 class Header extends React.Component {
   constructor(props) {
-    super(props);
+    super(props)
 
     this.state = {
       searchTerm: '',
@@ -25,6 +25,7 @@ class Header extends React.Component {
     this.handleKeyUp = this.handleKeyUp.bind(this)
     this.handleChange = this.handleChange.bind(this)
   }
+  
   componentWillMount() {
     const token = Auth.getToken()
     $.ajax({
@@ -45,18 +46,20 @@ class Header extends React.Component {
       console.log('There is an error when getting user profile.')
     })
   }
+
   // Process the search
   handleKeyUp(e) {
     if (e.key === 'Enter' && this.state.searchTerm !== '') {
-
       // Redirect to '/search'
       this.props.history.push('/search/title='+this.state.searchTerm)
     }
   }
+
   // Set the state when search term is changed
   handleChange(e) {
-      this.setState({ searchTerm: e.target.value })
+    this.setState({ searchTerm: e.target.value })
   }
+
   render() {
     return (
       <header className='Header'>
@@ -72,4 +75,4 @@ class Header extends React.Component {
 }
 
 
-export default withRouter(Header);
+export default withRouter(Header)

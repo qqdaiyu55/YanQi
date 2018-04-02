@@ -4,7 +4,7 @@ import VideoList from '../components/VideoList'
 
 class SearchPage extends React.Component {
   constructor(props) {
-    super(props);
+    super(props)
 
     this.state = {
       data: [],
@@ -15,7 +15,8 @@ class SearchPage extends React.Component {
     this.loadContent = this.loadContent.bind(this)
     this.getVideoList = this.getVideoList.bind(this)
   }
-  componentDidMount() {
+
+  componentWillMount() {
     const parsedQuery = this.props.match.params.term.split('=')
     var flag = 0
     if (parsedQuery[0] === 'title') flag = 0
@@ -27,6 +28,7 @@ class SearchPage extends React.Component {
       this.setState({ searchTerm: parsedQuery[1] })
     }
   }
+
   componentWillReceiveProps(nextProps) {
     const parsedQuery = nextProps.match.params.term.split('=')
     if (nextProps.match.params.term !== this.props.match.params.term && parsedQuery[1] !== '') {
@@ -39,6 +41,7 @@ class SearchPage extends React.Component {
       this.setState({ searchTerm: parsedQuery[1] })
     }
   }
+
   // Search for title
   loadContent(searchTerm, flag) {
     var baseUrl = ''
@@ -49,7 +52,7 @@ class SearchPage extends React.Component {
     $.ajax({
       url: requestUrl,
       headers: { 'Authorization': `bearer ${token}` },
-      contentType: 'application/x-www-form-urlencoded',
+      contentType: 'application/json',
       method: 'GET'
     }).done((data) => {
       const cleanData = data.hits.map((v) => {
@@ -64,6 +67,7 @@ class SearchPage extends React.Component {
       console.log('There has an error on loading search results.')
     })
   }
+
   // Get list of videos the user liked
   getVideoList() {
     const token = Auth.getToken()
@@ -78,6 +82,7 @@ class SearchPage extends React.Component {
       console.log('There is an error when getting video list.')
     })
   }
+  
   render() {
     return (
       <div className="search-results-wrapper">

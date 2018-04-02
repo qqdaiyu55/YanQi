@@ -13,6 +13,7 @@ class EditVideoCard extends React.Component {
       rscId: '',
       count: 1
     }
+    // mode: 'add' or 'edit', default 'add'
     this.mode = 'add'
     this.coverChanged = false
     this.videoId = ''
@@ -40,6 +41,7 @@ class EditVideoCard extends React.Component {
 
     this.dispNotification = this.dispNotification.bind(this)
   }
+
   componentDidMount() {
     $('.horizon-scroll ul').sortable({
       axis: 'x',
@@ -58,7 +60,7 @@ class EditVideoCard extends React.Component {
       url: '/api/video',
       data: data,
       headers: {'Authorization': `bearer ${token}`},
-      contentType: 'application/x-www-form-urlencoded',
+      contentType: 'application/json',
       method: 'GET'
     }).done((data)=>{
       this.mode = 'edit'
@@ -129,13 +131,6 @@ class EditVideoCard extends React.Component {
 
   // Clear text and hide the resource edit card when cancelling
   cancelEditResource() {
-    this.setState({
-      tempResourceInfo: {
-        title: '',
-        size: null,
-        magnet: ''
-      }
-    })
     $('#edit-resource-card input').val('')
     $('#edit-resource-card').css({ 'visibility':'hidden', 'opacity':'0', 'top':'60%' })
   }
@@ -152,19 +147,20 @@ class EditVideoCard extends React.Component {
       let rsc_id = this.rscCardStatus.count.toString()
 
       $(".horizon-scroll ul").append(
-        '<li class="ui-sortable-handle" id="rsc-card-'+rsc_id+'">'+
-        '<div class="item">'+title+'</div>'+
-        '<div class="item">'+size+'</div>'+
-        '<div class="item">'+'<i class="fa fa-magnet rsc-magnet"></i>'+'<div  class="magnet-content">'+magnet+'</div></div>'+
+        '<li class="ui-sortable-handle" id="rsc-card-' + rsc_id + '">' +
+        '<div class="remove-rsc-card"><i class="fas fa-times-circle"></i></div>' +
+        '<div class="item">' + title  + '</div>' +
+        '<div class="item">' + size   + '</div>' +
+        '<div class="item-magnet">' + magnet + '</div>' +
         '</li>'
       )
 
       // Edit the resource when clicking
-      $("#rsc-card-"+rsc_id).click((e) => {
+      $('#rsc-card-'+rsc_id).click((e) => {
         let rsc = $(e.target).parent('.ui-sortable-handle')
         let rsc_id = rsc.attr('id')
         let rsc_info = rsc.html()
-        let tmp = rsc_info.match('<div class="item">(.*?)</div><div class="item">(.*?)</div><div class="item">.*?content">(.*?)</div></div>')
+        let tmp = rsc_info.match('<div class="item">(.*?)</div><div class="item">(.*?)</div><div class="item-magnet">(.*?)</div>')
 
         $('#edit-resource-card input[name="title"]').val(tmp[1])
         $('#edit-resource-card input[name="size"]').val(tmp[2].split(' ')[0])
@@ -175,14 +171,19 @@ class EditVideoCard extends React.Component {
         $('#edit-resource-card').css({ "visibility":"visible", "opacity":"1", "top":"50%" })
       })
 
+      // Remove the resource
+      $('#rsc-card-'+rsc_id+' .remove-rsc-card').click((e) => {
+        $(e.target).parents('.ui-sortable-handle').remove()
+      })
+
       this.rscCardStatus.count += 1
     } else {
       let rsc = $('#'+this.rscCardStatus.rscId)
 
       // Assign new value
-      rsc.children().eq(0).html(title)
-      rsc.children().eq(1).html(size)
-      rsc.children().eq(2).children('div').html(magnet)
+      rsc.children().eq(1).html(title)
+      rsc.children().eq(2).html(size)
+      rsc.children().eq(3).html(magnet)
     }
   }
 
@@ -283,7 +284,7 @@ class EditVideoCard extends React.Component {
       }).get()
       var rscInfo = []
       htmlRscInfo.forEach((e) => {
-        var tmp = e.match('<div class="item">(.*?)</div><div class="item">(.*?)</div><div class="item">.*?content">(.*?)</div></div>')
+        var tmp = e.match('<div class="item">(.*?)</div><div class="item">(.*?)</div><div class="item-magnet">(.*?)</div>')
         tmp = [tmp[1], tmp[2], tmp[3].split('&')[0]]
         rscInfo.push(tmp)
       })
@@ -367,7 +368,6 @@ class EditVideoCard extends React.Component {
         // show notification
         $('#notification').html('SUCCESS')
         this.dispNotification(true)
-        // $('#notification').remove()
       }).fail(() => {
         console.log('There is an error when uploading video information.')
 
@@ -451,7 +451,7 @@ const EditResourceCard = ({
     <button name="submit" onClick={onSubmit}>Submit</button>
     <button name="cancel" onClick={cancel}>Cancel</button>
   </div>
-);
+)
 
 const ResourceCardInput = ({
   name,

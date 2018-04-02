@@ -32,10 +32,12 @@ class VideoPage extends React.Component {
     this.openEditVideoModal = this.openEditVideoModal.bind(this)
     this.searchTag = this.searchTag.bind(this)
   }
+
   componentWillMount() {
     this.getLiked()
     this.loadContent()
   }
+
   loadContent() {
     const id = this.props.match.params.id
     const token = encodeURIComponent(Auth.getToken())
@@ -45,7 +47,7 @@ class VideoPage extends React.Component {
       url: '/api/video',
       data: data,
       headers: {'Authorization': `bearer ${token}`},
-      contentType: 'application/x-www-form-urlencoded',
+      contentType: 'application/json',
       method: 'GET'
     }).done((data)=>{
       this.setState({
@@ -81,6 +83,8 @@ class VideoPage extends React.Component {
       console.log("There has an error.")
     })
   }
+
+  // Update user's favorate videos list when click 'like/dislike' button
   addToList() {
     if (this.state.liked === true) {
       this.setState({ liked: false })
@@ -106,6 +110,8 @@ class VideoPage extends React.Component {
       console.log('There is an error when updating video list.')
     })
   }
+
+  // Get to know if the user likes this video
   getLiked() {
     const id = this.props.match.params.id
 
@@ -123,14 +129,17 @@ class VideoPage extends React.Component {
       console.log('There is an error when getting video list.')
     })
   }
+
   openEditVideoModal() {
     $('#edit-video-card').css({ "visibility":"visible", "opacity":"1" })
     $('#edit-video-card-flag').val(this.props.match.params.id)
     $('#edit-video-card-flag').click()
   }
+
   searchTag(e) {
     this.props.history.push('/search/tag='+e.target.innerHTML)
   }
+
   render() {
     const title = this.state.data.title
     const backdrop = this.state.data.backdrop
@@ -161,7 +170,7 @@ class VideoPage extends React.Component {
           <div className="overlay"></div>
           <div className="buttons-wrapper">
             <i className='fa fa-heart' data-toggled={this.state.liked} onClick={this.addToList}></i>
-            <i className='fa fa-pencil' onClick={this.openEditVideoModal}></i>
+            <i className='fas fa-pencil-alt' onClick={this.openEditVideoModal}></i>
           </div>
         </div>
         <div className="tags">
@@ -180,6 +189,7 @@ class VideoPage extends React.Component {
   }
 }
 
+// Video resource card component
 class RscCard extends React.Component {
   constructor(props) {
     super(props)
@@ -187,6 +197,8 @@ class RscCard extends React.Component {
     this.handleClick = this.handleClick.bind(this)
     this.copyMagnet = this.copyMagnet.bind(this)
   }
+
+  // Play the video when clicking any part of the card except magnet button
   handleClick(e) {
     if (e.target.tagName !== 'I') {
       if ($("#video-components").css("display") === "none") {
@@ -204,9 +216,12 @@ class RscCard extends React.Component {
       }
     }
   }
+
+  // Copy the magnet link when clicking magnet button
   copyMagnet(e) {
     clipboard.writeText(e.target.nextSibling.innerHTML)
   }
+
   render() {
     const data = this.props.data
     const seeder = this.props.seeder

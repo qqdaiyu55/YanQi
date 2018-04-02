@@ -15,7 +15,7 @@ class SignUpPage extends React.Component {
         repeatPassword: '',
         inviteCode: ''
       }
-    };
+    }
 
     this.processForm = this.processForm.bind(this)
     this.changeUser = this.changeUser.bind(this)
@@ -23,7 +23,7 @@ class SignUpPage extends React.Component {
 
 
   // Process the form
-  processForm(event) {
+  processForm (event) {
     // Prevent default action. in this case, action is the form submission event
     event.preventDefault()
 
@@ -78,7 +78,7 @@ class SignUpPage extends React.Component {
   }
 
   // Change the user object
-  changeUser(event) {
+  changeUser (event) {
     const field = event.target.name
     const user = this.state.user
     user[field] = event.target.value
@@ -88,7 +88,7 @@ class SignUpPage extends React.Component {
     })
   }
 
-  render() {
+  render () {
     return (
       <SignUpForm
         onSubmit={this.processForm}

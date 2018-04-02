@@ -7,7 +7,7 @@ var arraysEqual = (arr1, arr2) => {
     }
 
     return true
-};
+}
 
 // Generate 8 bits unique id
 var uuidv8 = () => {

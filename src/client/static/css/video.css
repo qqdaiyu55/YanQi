@@ -397,7 +397,7 @@
   margin-top: 10px;
 }
 #video-status .speed-status:before {
-  font-family: FontAwesome;
+  font-family: 'Font Awesome\ 5 Free';
   text-decoration: inherit;
   font-size: 20px;
   line-height: 20px;
@@ -405,14 +405,15 @@
   margin-right: 5px;
 }
 #video-status .speed-status[data-type="peer"]:before {
+  font-weight: 900;
   content: "\f140";
   color: #e50914;
 }
 #video-status .speed-status[data-type="download"]:before {
-  content: "\f01a";
+  content: "\f358";
   color: #2ecc71;
 }
 #video-status .speed-status[data-type="upload"]:before {
-  content: "\f01b";
+  content: "\f35b";
   color: #f39c12;
 }

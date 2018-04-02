@@ -41,6 +41,7 @@
   "scripts": {
     "start": "nodemon --use-strict index.js",
     "dev": "webpack --config webpack.dev.js",
-    "build": "webpack --config webpack.prod.js"
+    "build": "webpack --config webpack.prod.js",
+    "bundle-css": "cat src/client/static/css/* | csso -o build/app.css"
   }
 }

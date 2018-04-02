@@ -13,9 +13,11 @@ class MyList extends React.Component {
 
     this.loadContent = this.loadContent.bind(this)
   }
+
   componentDidMount() {
     this.loadContent()
   }
+
   // Get list of videos the user liked
   loadContent() {
     const token = Auth.getToken()
@@ -36,6 +38,7 @@ class MyList extends React.Component {
       console.log('There is an error when getting video list.')
     })
   }
+  
   render() {
     return (
       <div className="search-results-wrapper">

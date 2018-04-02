@@ -133,4 +133,18 @@ router.get('/new', (req, res) => {
   })
 })
 
+router.get('/peerId', (req, res) => {
+  const token = req.headers.authorization.split(' ')[1]
+  const decode = jwt.verify(token, config.jwtSecret)
+  const subId = decode.sub
+
+  res.status(200).json({ peer_id: uuidv8() + subId + uuidv8() })
+})
+
+
+// Generate 8 bits unique id
+var uuidv8 = () => {
+  return Math.random().toString(16).substr(2, 8)
+}
+
 module.exports = router

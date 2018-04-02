@@ -176,8 +176,6 @@ class ProfileCard extends React.Component {
   }
 }
 
-const ProfileCardWithRouter = withRouter(ProfileCard)
-
 UserProfile.propTypes = {
   username: PropTypes.string.isRequired,
   avatarUrl: PropTypes.string.isRequired,
@@ -185,4 +183,12 @@ UserProfile.propTypes = {
   upload: PropTypes.number.isRequired
 }
 
-export default withRouter(UserProfile);
+ProfileCard.prototypes = {
+  avatarUrl: PropTypes.string.isRequired,
+  download: PropTypes.number.isRequired,
+  upload: PropTypes.number.isRequired
+}
+
+const ProfileCardWithRouter = withRouter(ProfileCard)
+
+export default withRouter(UserProfile)

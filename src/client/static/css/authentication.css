@@ -54,11 +54,12 @@
   content: "\f023";
 }
 .auth-form-input input[name='inviteCode'] ~ label::before {
-  content: "\f023";
+  content: "\f0a3";
 }
 .auth-form-input label {
-  font-family: FontAwesome;
+  font-family: 'Font Awesome\ 5 Free';
   font-size: 13px;
+  font-weight: 900;
   opacity: .1;
   transition: opacity .5s ease;
 }

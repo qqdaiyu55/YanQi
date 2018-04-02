@@ -1,5 +1,5 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
+import React from 'react'
+import { Link } from 'react-router-dom'
 
 const Hero = () => (
   <div id="hero" className="Hero" style={{ backgroundImage: 'url(/img/GhostBlade_Aeolian.jpg)'}}>
@@ -13,7 +13,7 @@ const Hero = () => (
     </div>
     <div className="overlay"></div>
   </div>
-);
+)
 
 
-export default Hero;
+export default Hero

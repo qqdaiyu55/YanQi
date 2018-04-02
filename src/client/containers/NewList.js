@@ -14,11 +14,13 @@ class NewList extends React.Component {
     this.loadContent = this.loadContent.bind(this)
     this.getVideoList = this.getVideoList.bind(this)
   }
-  componentDidMount() {
+
+  componentWillMount() {
     this.loadContent()
     this.getVideoList()
   }
-  // Get list of videos the user liked
+
+  // Get list of newest updated videos
   loadContent() {
     const token = Auth.getToken()
     $.ajax({
@@ -31,9 +33,11 @@ class NewList extends React.Component {
         data: results.data,
       })
     }).fail(() => {
-      console.log('There is an error when getting video list.')
+      console.log('There is an error when getting new videos list.')
     })
   }
+
+  // Get the list of videos the user liked
   getVideoList() {
     const token = Auth.getToken()
     $.ajax({
@@ -44,9 +48,10 @@ class NewList extends React.Component {
     }).done((data) => {
       this.setState({ videolist: data.video_list })
     }).fail(() => {
-      console.log('There is an error when getting video list.')
+      console.log("There is an error when getting user's favorate videos list.")
     })
   }
+
   render() {
     return (
       <div className="search-results-wrapper">
