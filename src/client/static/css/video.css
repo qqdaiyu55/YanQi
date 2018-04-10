@@ -289,7 +289,7 @@
   width: 100%;
   height: 20px;
   top: 0;
-  z-index: 1000;
+  z-index: 200;
   transition: all .3s;
 }
 #video-topbar.is-visible {
@@ -416,4 +416,56 @@
 #video-status .speed-status[data-type="upload"]:before {
   content: "\f35b";
   color: #f39c12;
+}
+
+#video-playlist {
+  position: absolute;
+  visibility: hidden;
+  height: 100%;
+  right: 0;
+  z-index: 1100;
+}
+#video-playlist.is-visible {
+  visibility: visible;
+}
+#video-playlist .tgl-btn {
+  cursor: pointer;
+  position: absolute;
+  top: 45%;
+  left: 0;
+  width: 10px;
+  height: 18px;
+  background-image: url('/img/close-playlist.svg');
+  background-size: 100% 100%;
+  z-index: 1200;
+  transform: translateY(-50%);
+}
+#video-playlist .tgl-btn.hide {
+  background-image: url('/img/show-playlist.svg');
+  left: -10px;
+}
+#video-playlist ul {
+  position: relative;
+  visibility: visible;
+  width: 200px;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.6);
+  overflow: auto;
+  transition: .25s;
+}
+#video-playlist ul.hide {
+  visibility: hidden;
+  width: 0;
+}
+#video-playlist ul li {
+  cursor: pointer;
+  padding: 4px 4px 4px 7px;
+  color: #e43c44;
+  font-size: 13px;
+  font-weight: 400;
+  /* white-space: nowrap; */
+  transition: background .25s;
+}
+#video-playlist ul li:hover {
+  background: rgba(255, 255, 255, .2);
 }

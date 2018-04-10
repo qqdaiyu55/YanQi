@@ -1,18 +1,20 @@
 import React from 'react'
 import WebTorrent from 'webtorrent/webtorrent.min'
 import Auth from '../modules/Auth'
-import { formatVideoTime, BytestoSize } from '../modules/Library'
+import { formatVideoTime, BytestoSize, uuidv8 } from '../modules/Library'
 
 var torrentID = ''
-var loaded = false
+var playlist = []
 // Disable DHT
 var client = new WebTorrent({
-  dht: false
+  // dht: false
 })
 
 // Announces list
 global.WEBTORRENT_ANNOUNCE = [
-  'ws://0.0.0.0:6969'
+  'wss://tracker.btorrent.xyz',
+  'wss://tracker.openwebtorrent.com'
+  // 'wss://tracker.fastcast.nz'
 ]
 
 // Display webtorrent video
@@ -28,22 +30,7 @@ var displayVideo = (props) => {
   client.add(props.torrentID, function(torrent) {
     // Allowed online streaming file extensions: mp4, m4a, m4v
     // Refer to: https://webtorrent.io/faq
-    const file = torrent.files.find((file) => {
-      return file.name.endsWith('.mp4') || file.name.endsWith('.m4a') || file.name.endsWith('.m4v')
-    })
-
-    if (file) {
-      // Limit the file size to 2GB to prevent memory leaks
-      if (file.length/(1024*1024*1024) > 2) {
-        $('#video-loader .loader-inner').hide()
-        $('#video-loader p').html('Warning: size of video larger than 2GB.')
-      } else {
-        file.appendTo('#video-container .video-wrapper')
-      }
-    } else {
-      $('#video-loader .loader-inner').hide()
-      $('#video-loader p').html('Error: only support .mp4 .m4a .m4v format now.')
-    }
+    torrent.deselect(0, torrent.pieces.length - 1, false)
   })
 
   torrentID = props.torrentID
@@ -99,12 +86,13 @@ class Video extends React.Component {
       setPeerId(data.peer_id)
       this.forceUpdate()
     }).fail(() => {
-      console.log('There is an error when getting peer Id.')
+      throw new ERROR('There is an error when getting peer Id.')
     })
   }
   componentDidMount() {
     var topBar = $('#video-topbar')
     var videoContainer = $('#video-container')
+    var videoPlaylist = $('#video-playlist')
     var videoControls = $('#video-controls')
     var playVid = $('#video-controls .play-vid')
     var video = $('#video-container video').get(0)
@@ -126,7 +114,9 @@ class Video extends React.Component {
     $(window).keypress((e) => {
       // Press SPACE: play or pause
       if (e.keyCode === 0 || e.keyCode === 32) {
-        e.preventDefault()
+        if ($("#video-components").css("display") === "block") {
+          e.preventDefault()
+        }
         playVid.click()
       }
     })
@@ -164,6 +154,7 @@ class Video extends React.Component {
       userActivity = false
       videoControls.removeClass('is-visible')
       topBar.removeClass('is-visible')
+      videoPlaylist.removeClass('is-visible')
       videoContainer.css('cursor', 'none')
     })
     var activityCheck = setInterval(() => {
@@ -173,6 +164,7 @@ class Video extends React.Component {
 
         videoControls.addClass('is-visible')
         topBar.addClass('is-visible')
+        videoPlaylist.addClass('is-visible')
         videoContainer.css('cursor', 'auto')
         clearTimeout(autohideControls)
         // In X seconds, if no more activity has occurred
@@ -180,6 +172,7 @@ class Video extends React.Component {
         autohideControls = setTimeout(function() {
           videoControls.removeClass('is-visible')
           topBar.removeClass('is-visible')
+          videoPlaylist.removeClass('is-visible')
           videoContainer.css('cursor', 'none')
         }, 2000)
       }
@@ -377,6 +370,11 @@ class Video extends React.Component {
     } else {
        console.log('Error: exiting fullscreen.')
     }
+
+    var videoHeigth = $('#video-container video').height()
+    if ($('#video-container').height() !== videoHeigth) {
+      $('#video-container').height(videoHeigth)
+    }
   }
   showOverlay() {
     $('#video-components .fs-overlay').css({ 'visibility': 'visible', 'opacity': '1', 'width': '100vw', 'height': '100vh' })
@@ -436,6 +434,7 @@ class Video extends React.Component {
             </div>
           </div>
           <ProgressRing radius={25} stroke={4} videoLoaded={this.state.videoLoaded} />
+          <Playlist />
         </div>
       </div>
     );
@@ -462,9 +461,7 @@ class ProgressRing extends React.Component {
   }
   componentDidMount() {
     setInterval(() => {
-      if (this.props.videoLoaded) {
-        this.setState({ progress: client.progress })
-      }
+      this.setState({ progress: client.progress })
     }, 1000)
   }
   // Trick to download video
@@ -577,6 +574,73 @@ class ProgressRing extends React.Component {
         <div className='speed-status' data-type='upload'>
           {BytestoSize(uploadSpeed, 1)}, {BytestoSize(uploadSpeed, 1)+'/s'}
         </div>
+      </div>
+    )
+  }
+}
+
+class Playlist extends React.Component {
+  constructor() {
+    super()
+
+    this.state = {
+      files: []
+    }
+  }
+
+  componentDidMount() {
+    setInterval(() => {
+      let files
+      if (client.torrents[0]) {
+        files = client.torrents[0].files
+      }
+      if (files && this.state.files != files) {
+        this.setState({ files: files })
+      }
+    }, 1000)
+  }
+
+  handleClick(e) {
+    // remove previous video
+    $("#video-container .video-wrapper").html('')
+    
+    const torrent = client.torrents[0]
+    torrent.deselect(0, torrent.pieces.length - 1, false)
+
+    const file = torrent.files.find((file) => {
+      return file.name === e.target.innerHTML
+    })
+    file.select()
+    $('#video-topbar .title').html(file.name.substring(0, file.name.lastIndexOf('.')))
+    
+    // if (file.length / (1024 * 1024 * 1024) > 2) {
+    //   $('#video-loader .loader-inner').hide()
+    //   $('#video-loader p').html('Warning: size of video larger than 2GB.')
+    // } else {
+    //   file.appendTo('#video-container .video-wrapper')
+    // }
+    file.appendTo('#video-container .video-wrapper')
+  }
+
+  togglePlaylist() {
+    $('#video-playlist ul').toggleClass('hide')
+    $('#video-playlist .tgl-btn').toggleClass('hide')
+  }
+
+  render() {
+    const videos = this.state.files.filter((file) => {
+      return file.name.endsWith('.mp4') || file.name.endsWith('.m4a') || file.name.endsWith('.m4v')
+    })
+    if (videos) {
+      var playlist = videos.map(function (t, i) {
+        return (<li key={uuidv8()} onClick={this.handleClick}>{t.name}</li>)
+      }.bind(this))
+    }
+
+    return (
+      <div id='video-playlist'>
+        <div className='tgl-btn' onClick={this.togglePlaylist}></div>
+        <ul>{playlist}</ul>
       </div>
     )
   }

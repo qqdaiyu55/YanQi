@@ -12,7 +12,11 @@ class VideoPage extends React.Component {
   constructor(props) {
     super(props)
     
-    this.announce = ['ws://104.131.128.61:8000']
+    this.announce = [
+      // 'wss://tracker.btorrent.xyz'
+      'wss://tracker.openwebtorrent.com'
+      // 'wss://tracker.fastcast.nz'
+    ]
 
     this.state = {
       data: {
@@ -64,7 +68,7 @@ class VideoPage extends React.Component {
         return r[2].split('magnet:?xt=urn:btih:')[1]
       })
       var seeders = new Array(infoHash.length).fill(0)
-      Tracker.scrape({ announce: [this.announce], infoHash: infoHash }, ((err, results) => {
+      Tracker.scrape({ announce: this.announce, infoHash: infoHash }, ((err, results) => {
         if (err) {
           throw err
           return

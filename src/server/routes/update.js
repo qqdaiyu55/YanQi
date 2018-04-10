@@ -15,7 +15,7 @@ router.post('/tags', (req, res, next) => {
   const subId = decode.sub
   const tags = info.tags
 
-  User.findOneAndUpdate({_id: subId}, {tags: tags}, {upsert: true}, (err, res) => {
+  User.findOneAndUpdate({_id: subId}, {tags: tags}, (err, res) => {
     if (err) {
       res.status(400).json({
         error: 'Failure in updating tags!'
