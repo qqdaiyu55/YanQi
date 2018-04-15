@@ -6,6 +6,7 @@ import Modal from './Modal'
 import Auth from '../modules/Auth'
 import { uuidv8, MBtoSize, dataURItoBlob } from '../modules/Library'
 import ImageCompressor from '@xkeshi/image-compressor'
+import clipboard from 'clipboard-polyfill'
 
 class UserProfile extends React.Component {
   constructor(props) {
@@ -29,7 +30,7 @@ class UserProfile extends React.Component {
   render() {
     return (
       <div className='profile'>
-        <ProfileCardWithRouter username={this.props.username} avatarUrl={this.props.avatarUrl} download={this.props.download} upload={this.props.upload} />
+        <ProfileCardWithRouter username={this.props.username} avatarUrl={this.props.avatarUrl} download={this.props.download} upload={this.props.upload} peerId={this.props.peerId}/>
         <div className='user'>
           <div className='name'>{this.props.username}</div>
           <div className='image' onClick={this.showProfileCard}><img src={'/avatar/'+this.props.avatarUrl} alt='avatar' /></div>
@@ -55,6 +56,7 @@ class ProfileCard extends React.Component {
     this.updateAvatar = this.updateAvatar.bind(this)
 
     this.logout = this.logout.bind(this)
+    this.copyPeerId = this.copyPeerId.bind(this)
   }
   openAvatarEditor() {
     $('#avatar-editor').css({ 'visibility':'visible', 'opacity':'1'})
@@ -115,6 +117,9 @@ class ProfileCard extends React.Component {
     Auth.deauthenticateUser()
     this.props.history.push('/')
   }
+  copyPeerId() {
+    clipboard.writeText(this.props.peerId)
+  }
 
   render() {
     const labelStyle = {
@@ -147,6 +152,7 @@ class ProfileCard extends React.Component {
             <div className='profile-data' data-type='upload'>{MBtoSize(this.props.upload)}</div>
             <div className='profile-data' data-type='rate'>{((this.props.download+1)/(this.props.upload+1)).toFixed(2)}</div>
           </div>
+          <div className='copy-peerid-button' onClick={this.copyPeerId}>Copy peer ID</div>
         </div>
         <Modal id='avatar-editor'>
           <div className='modal'>

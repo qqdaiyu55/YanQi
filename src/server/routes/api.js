@@ -22,7 +22,8 @@ router.get('/profile', (req, res, next) => {
       avatarUrl: user.avatar_url,
       tags: user.tags,
       download: user.download,
-      upload: user.upload
+      upload: user.upload,
+      peerId: subId
     });
   });
 });
@@ -133,12 +134,13 @@ router.get('/new', (req, res) => {
   })
 })
 
+const VERSION_PREFIX = '-WW0098-'
 router.get('/peerId', (req, res) => {
   const token = req.headers.authorization.split(' ')[1]
   const decode = jwt.verify(token, config.jwtSecret)
   const subId = decode.sub
 
-  res.status(200).json({ peer_id: uuidv8() + subId + uuidv8() })
+  res.status(200).json({ peer_id: Buffer.from(VERSION_PREFIX).toString('hex') + subId})
 })
 
 

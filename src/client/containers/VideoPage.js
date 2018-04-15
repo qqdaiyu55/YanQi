@@ -14,8 +14,9 @@ class VideoPage extends React.Component {
     
     this.announce = [
       // 'wss://tracker.btorrent.xyz'
-      'wss://tracker.openwebtorrent.com'
+      // 'wss://tracker.openwebtorrent.com'
       // 'wss://tracker.fastcast.nz'
+      'ws://localhost:6969'
     ]
 
     this.state = {

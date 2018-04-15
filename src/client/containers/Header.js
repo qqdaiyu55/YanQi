@@ -19,6 +19,7 @@ class Header extends React.Component {
         avatarUrl: '',
         download: 0,
         upload: 0,
+        peerId: ''
       }
     }
 
@@ -39,7 +40,8 @@ class Header extends React.Component {
           username: data.username,
           avatarUrl: data.avatarUrl,
           download: data.download,
-          upload: data.upload
+          upload: data.upload,
+          peerId: data.peerId
         }
       })
     }).fail(() => {
@@ -68,7 +70,7 @@ class Header extends React.Component {
         <div id='search' className='Search'>
           <input onKeyUp={this.handleKeyUp} onChange={this.handleChange} type='search' placeholder='Search for a title...' value={this.state.searchTerm}/>
         </div>
-        <UserProfile username={this.state.profile.username} avatarUrl={this.state.profile.avatarUrl} download={this.state.profile.download} upload={this.state.profile.upload} />
+        <UserProfile username={this.state.profile.username} avatarUrl={this.state.profile.avatarUrl} download={this.state.profile.download} upload={this.state.profile.upload} peerId={this.state.profile.peerId}/>
       </header>
     );
   }

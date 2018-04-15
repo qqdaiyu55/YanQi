@@ -12,9 +12,10 @@ var client = new WebTorrent({
 
 // Announces list
 global.WEBTORRENT_ANNOUNCE = [
-  'wss://tracker.btorrent.xyz',
-  'wss://tracker.openwebtorrent.com'
+  // 'wss://tracker.btorrent.xyz',
+  // 'wss://tracker.openwebtorrent.com'
   // 'wss://tracker.fastcast.nz'
+  'ws://localhost:6969'
 ]
 
 // Display webtorrent video

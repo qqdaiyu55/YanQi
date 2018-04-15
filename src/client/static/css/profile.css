@@ -108,7 +108,7 @@
   cursor: pointer;
   color: #e50914;
   font-size: 15px;
-  font-weight: 300;
+  font-weight: 400;
   top: 120px;
   left: 50%;
   transform: translate(-50%);
@@ -149,6 +149,14 @@
 .profile-data-wrapper .profile-data[data-type="rate"]::before {
   background: #f1c40f;
 }
+#profile-card .copy-peerid-button {
+  position: absolute;
+  cursor: pointer;
+  color: #e50914;
+  font-size: 15px;
+  font-weight: 400;
+  top: 120px;
+}
 
 #avatar-editor .modal {
   position: absolute;
@@ -157,20 +165,16 @@
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  /*background: white;*/
 }
 #avatar-editor .avatar-file-loader {
   position: absolute;
   display: block;
-  /*overflow: hidden;*/
   width: 200px;
   height: 200px;
   color: white;
 }
 #avatar-editor .avatar-editor-right {
   position: absolute;
-  /*display: block;*/
-  /*width: 25%;*/
   height: 100%;
   right: 0;
 }

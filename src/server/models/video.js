@@ -4,6 +4,7 @@ const mongoosastic = require('mongoosastic')
 
 // define the Video model schema
 const VideoSchema = new Schema({
+  _id: Schema.ObjectId,
   title: { type: String, es_indexed: true },
   backdrop: { type: String, es_indexed: true},
   rsc_info: Array,

@@ -28,7 +28,7 @@ rpm -ivh elasticsearch-5.6.4.rpm
 # set elasticsearch
 # for 1G memory server, the recommended setting is:
 #  -Xms128m
-#  -Xmx 256g
+#  -Xmx256m
 vim /etc/elasticsearch/jvm.options
 
 # install elasticsearch plugin

@@ -20,7 +20,6 @@
     "body-parser": "^1.15.2",
     "clipboard-polyfill": "^2.3.0",
     "compression": "^1.7.1",
-    "draft-js": "^0.10.3",
     "express": "^4.14.0",
     "helmet": "^3.11.0",
     "jsonwebtoken": "^7.2.1",
