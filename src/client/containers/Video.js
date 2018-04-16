@@ -7,15 +7,12 @@ var torrentID = ''
 var playlist = []
 // Disable DHT
 var client = new WebTorrent({
-  // dht: false
+  dht: false
 })
 
 // Announces list
 global.WEBTORRENT_ANNOUNCE = [
-  // 'wss://tracker.btorrent.xyz',
-  // 'wss://tracker.openwebtorrent.com'
-  // 'wss://tracker.fastcast.nz'
-  'ws://localhost:6969'
+  'wss://tracker.yanqi.tv'
 ]
 
 // Display webtorrent video
