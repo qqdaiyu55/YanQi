@@ -10,20 +10,15 @@ class VideoList extends React.Component {
   }
   getItems(data) {
     return data.map((v, i) => {
-      if (i < 30) {
-        var title = v.title
-        var id = v.id
-        var splittedBackdrop = v.backdrop.split('.')
-        var backdrop = '/backdrop/' + splittedBackdrop[0] + '_thumbnail.' + splittedBackdrop[1]
-        var liked = this.props.videolist.includes(id) ? true : false
+      var title = v.title
+      var id = v.id
+      var splittedBackdrop = v.backdrop.split('.')
+      var backdrop = '/backdrop/' + splittedBackdrop[0] + '_thumbnail.' + splittedBackdrop[1]
+      var liked = this.props.videolist.includes(id) ? true : false
 
-        return (
-          <Item key={id} id={id} title={title} backdrop={backdrop} liked={liked} />
-        );
-
-      } else {
-        return (<div key={v._id}></div>)
-      }
+      return (
+        <Item key={id} id={id} title={title} backdrop={backdrop} liked={liked} />
+      )
     }, this)
   }
   render() {

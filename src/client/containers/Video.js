@@ -104,7 +104,6 @@ class Video extends React.Component {
     var userActivity = false
 
     videoContainer.draggable()
-    $('.loader-inner').loaders()
 
     update = setInterval(this.updateplayer, 500)
 

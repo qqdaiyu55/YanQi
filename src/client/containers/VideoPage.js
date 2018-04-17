@@ -221,7 +221,7 @@ class RscCard extends React.Component {
 
   // Copy the magnet link when clicking magnet button
   copyMagnet(e) {
-    clipboard.writeText(e.target.nextSibling.innerHTML)
+    clipboard.writeText(e.target.nextSibling.innerHTML + '&tr=udp%3A%2F%2Ftracker.yanqi.tv%3A6969&tr=wss%3A%2F%2Ftracker.yanqi.tv')
   }
 
   render() {

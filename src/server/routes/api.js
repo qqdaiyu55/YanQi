@@ -30,30 +30,50 @@ router.get('/profile', (req, res, next) => {
 
 
 router.get('/videos', (req, res) => {
-  var parsedQuery = req.query.q.split(':')
+  const term = req.query.term
+  const type = req.query.type
+  const start = req.query.start
+  const size = req.query.size
+
   var searchPattern = {}
-  if (parsedQuery[0] === 'title') {
+  if (type === 'title') {
     searchPattern = {
-      'match': {
-        'title.cn': parsedQuery[1]
+      from: start,
+      size: size,
+      query: {
+        match: {
+          'title.cn': term
+        }
       }
     }
-  } else if (parsedQuery[0] === 'tag') {
+  } else if (type === 'tag') {
     searchPattern = {
-      'terms': {
-        'tags.keyword': [parsedQuery[1]]
+      from: start,
+      size: size,
+      query: {
+        match: {
+          'tags.keyword': term
+        }
       }
     }
   } else {
-    console.log('Error: Illegal search pattern!')
+    throw new Error('Error: Illegal search pattern!')
     return
   }
 
-  Video.search(searchPattern, (err, results) => {
+  Video.esSearch(searchPattern, (err, results) => {
     if (err) throw err
+
+    const data = results.hits.hits.map((v) => {
+      return ({
+        'id': v._id,
+        'title': v._source.title,
+        'backdrop': v._source.backdrop
+      })
+    })
     res.json({
       num: results.hits.total,
-      hits: results.hits.hits
+      data: data
     })
   })
 })
@@ -96,7 +116,6 @@ router.get('/videolist/all', (req, res) => {
     Video.find({ '_id': { $in: videoListIds }}, (err, videos) => {
       if (err) throw err
 
-      // console.log(videos)
       const data = videos.map((v) => {
         return ({
           'id': v._id,
@@ -111,10 +130,11 @@ router.get('/videolist/all', (req, res) => {
 
 router.get('/new', (req, res) => {
   var searchPattern = {
+    from: req.query.start,
+    size: req.query.size,
     sort: {
       update_time: 'desc'
     },
-    size: 30,
     query: {
       match_all: {}
     }
@@ -134,6 +154,7 @@ router.get('/new', (req, res) => {
   })
 })
 
+// Prefix which helps tracker to identify user's client (webtorrent) and version
 const VERSION_PREFIX = '-WW0098-'
 router.get('/peerId', (req, res) => {
   const token = req.headers.authorization.split(' ')[1]

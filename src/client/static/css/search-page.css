@@ -2,7 +2,8 @@
   width: 100vw;
   height: calc(100vh - 110px);
   top: 110px;
-  position: fixed;
+  position: relative;
+  /* position: fixed; */
   /*background: rgba(0, 0, 0, 0.8);*/
 }
 
@@ -112,32 +113,44 @@
 .search-item:hover .overlay .title {
   opacity: 0;
 }
+.search-item:hover .item-list-toggle {
+  visibility: visible;
+}
 
 
 .item-list-toggle {
-  /*border: 2px solid rgba(255, 255, 255, 0.2);*/
-  width: 70px;
-  height: 70px;
-  /*font-size: 16px;*/
-  border-radius: 32px;
-  overflow: hidden;
   position: absolute;
   right: 0px;
   top: 0px;
+  /*border: 2px solid rgba(255, 255, 255, 0.2);*/
+  width: 70px;
+  height: 70px;
+  visibility: hidden;
+  /*font-size: 16px;*/
+  border-radius: 32px;
+  overflow: hidden;
 
   background-image:url( '/img/web_heart_animation.png');
   background-position: left;
-  background-repeat:no-repeat;
-  background-size:2900%;
+  background-repeat: no-repeat;
+  background-size: 2900%;
 }
 .item-list-toggle:hover {
-  background-position:right;
+  background-position: right;
 }
 .item-list-toggle[data-toggled="true"] {
+  visibility: visible;
   animation: heart-burst .8s steps(28) 1;
-  background-position:right;
+  background-position: right;
 }
 @keyframes heart-burst {
   from {background-position:left;}
   to { background-position:right;}
+}
+
+
+.scroll-loader {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
 }

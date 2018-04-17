@@ -1,7 +1,7 @@
 import React from 'react'
 import ReactDOM from 'react-dom'
 import {
-  BrowserRouter as Router,
+  HashRouter,
   browserHistory,
   Redirect,
   Switch,
@@ -14,7 +14,7 @@ import SignUpPage from './containers/SignUpPage'
 import Auth from './modules/Auth'
 
 ReactDOM.render(
-  <Router history={browserHistory}>
+  <HashRouter history={browserHistory}>
     <Switch>
       <Route exact path='/login' component={LoginPage} />
       <Route exact path='/signup' component={SignUpPage} />
@@ -26,6 +26,6 @@ ReactDOM.render(
         )
       )} />
     </Switch>
-  </Router>,
+  </HashRouter>,
   document.getElementById('root')
 )

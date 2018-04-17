@@ -11,7 +11,7 @@ const UserSchema = new Schema({
   password: String,
   avatar_url: {
     type: String,
-    default: 'default.jpg'
+    default: 'default.png'
   },
   tags: {
     type: Array,
