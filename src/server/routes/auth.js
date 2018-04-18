@@ -37,7 +37,7 @@ function validateSignupForm(payload) {
     message = 'The invite code is expired.'
   } else {
     inviteCode[payload.inviteCode] -= 1
-    fs.writeFile(inviteCodeSysPath, JSON.stringify(inviteCode), (err) => {
+    fs.writeFile(INVITE_CODE_FILE_PATH, JSON.stringify(inviteCode), (err) => {
       if (err) throw err
     })
   }
