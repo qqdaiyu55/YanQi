@@ -2,8 +2,6 @@ import React from 'react'
 import { Link } from 'react-router-dom'
 
 const Hero = () => (
-  // https://i.imgur.com/v5xQAMM.jpg
-  // https://i.imgur.com/DzjCHr3.jpg
   <div id="hero" className="Hero" style={{ backgroundImage: 'url(https://i.imgur.com/DzjCHr3.jpg)'}}>
     <div className="content">
       <h1>VIOLET EVERGARDEN</h1>

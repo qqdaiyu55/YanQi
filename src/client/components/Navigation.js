@@ -213,8 +213,8 @@ class Navigation extends React.Component {
             </li>
             <Link to='/list' className='link'><li>My list</li></Link>
             <Link to='/new' className='link'><li>New</li></Link>
-            <li>Download</li>
-            <li><a href='https://www.w3schools.com' style={{textDecoration: 'none', color: '#fff'}}>Wiki</a></li>
+            <li><a href='https://github.com/qqdaiyu55/webtorrent-desktop/releases/tag/v0.19.0-yanqi' style={{ textDecoration: 'none', color: '#fff' }}>Download</a></li>
+            <li><a href='https://github.com/qqdaiyu55/yanqi.tv/wiki' style={{textDecoration: 'none', color: '#fff'}}>Wiki</a></li>
             <li onClick={this.openEditVideoModal}><i className='fa fa-fw fa-plus'></i></li>
           </ul>
         </nav>
