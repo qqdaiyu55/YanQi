@@ -296,10 +296,6 @@ class EditVideoCard extends React.Component {
         alert('Title is empty!')
         return
       }
-      if (!rscInfo.length) {
-        alert('Resource Information is empty!')
-        return
-      }
 
       // Check if fields of resource information are available
       // e.g. if size has non numeric characters or magnet link format is right

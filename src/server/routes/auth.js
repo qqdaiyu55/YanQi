@@ -1,12 +1,11 @@
 const express = require('express')
 const passport = require('passport')
 const fs = require('fs')
-const inviteCode = require('../management/invite-code.json')
-const blocklist = require('../management/blocklist.json')
 
 const router = new express.Router()
 
-const inviteCodeSysPath = './src/server/management/invite-code.json'
+const INVITE_CODE_FILE_PATH = './src/server/management/invite-code.json'
+const BLOCKLIST_FILE_PATH = './src/server/management/blocklist.json'
 
 /**
  * Validate the sign up form
@@ -18,6 +17,7 @@ const inviteCodeSysPath = './src/server/management/invite-code.json'
 function validateSignupForm(payload) {
   let isFormValid = true
   let message = ''
+  let inviteCode = JSON.parse(fs.readFileSync(INVITE_CODE_FILE_PATH, 'utf8'))
 
   if (!payload || typeof payload.username !== 'string' || payload.username.trim().length == 0) {
     isFormValid = false
@@ -37,7 +37,9 @@ function validateSignupForm(payload) {
     message = 'The invite code is expired.'
   } else {
     inviteCode[payload.inviteCode] -= 1
-    fs.writeFile(inviteCodeSysPath, JSON.stringify(inviteCode))
+    fs.writeFile(inviteCodeSysPath, JSON.stringify(inviteCode), (err) => {
+      if (err) throw err
+    })
   }
 
   return {
@@ -58,6 +60,7 @@ function validateLoginForm(payload) {
   let errors = {}
   let isFormValid = true
   let message = ''
+  let blocklist = JSON.parse(fs.readFileSync(BLOCKLIST_FILE_PATH, 'utf8'))
 
   if (!payload || typeof payload.username !== 'string' || payload.username.trim().length === 0) {
     isFormValid = false
