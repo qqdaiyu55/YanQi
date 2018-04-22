@@ -605,18 +605,15 @@ class Playlist extends React.Component {
     torrent.deselect(0, torrent.pieces.length - 1, false)
 
     const file = torrent.files.find((file) => {
-      return file.name === e.target.innerHTML
+      return file.name === e.target.innerText
     })
     file.select()
     $('#video-topbar .title').html(file.name.substring(0, file.name.lastIndexOf('.')))
-    
-    // if (file.length / (1024 * 1024 * 1024) > 2) {
-    //   $('#video-loader .loader-inner').hide()
-    //   $('#video-loader p').html('Warning: size of video larger than 2GB.')
-    // } else {
-    //   file.appendTo('#video-container .video-wrapper')
-    // }
-    file.appendTo('#video-container .video-wrapper')
+
+    file.appendTo('#video-container .video-wrapper', {
+      autoplay: true,
+      controls: false
+    })
   }
 
   togglePlaylist() {
@@ -628,10 +625,13 @@ class Playlist extends React.Component {
     const videos = this.state.files.filter((file) => {
       return file.name.endsWith('.mp4') || file.name.endsWith('.m4a') || file.name.endsWith('.m4v')
     })
-    if (videos) {
+    if (videos.length > 0) {
       var playlist = videos.map(function (t, i) {
         return (<li key={uuidv8()} onClick={this.handleClick}>{t.name}</li>)
       }.bind(this))
+    } else if (this.state.files.length > 0) {
+      $('#video-loader .loader-inner').hide()
+      $('#video-loader p').html('No supported files find, only .mp4 .m4a .m4v files support online streaming.')
     }
 
     return (

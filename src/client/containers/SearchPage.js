@@ -33,7 +33,6 @@ class SearchPage extends React.Component {
 
   componentWillReceiveProps(nextProps) {
     const parsedQuery = nextProps.match.params.term.split('=')
-    console.log(parsedQuery)
 
     if (nextProps.match.params.term !== this.props.match.params.term && parsedQuery[1] !== '') {
       // this.loadContent(parsedQuery[1], parsedQuery[0])

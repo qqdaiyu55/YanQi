@@ -36,7 +36,7 @@
     "react-router-dom": "^4.2.2",
     "react-tagsinput": "^3.19.0",
     "rodal": "^1.6.0",
-    "webtorrent": "^0.x"
+    "webtorrent": "^0.99.0"
   },
   "scripts": {
     "start": "nodemon --use-strict index.js",

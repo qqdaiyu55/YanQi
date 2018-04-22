@@ -30,9 +30,9 @@
   top: 50%;
   transform: translateY(-50%);
 }
-#video-container video::-webkit-media-controls-enclosure {
+/* #video-container video::-webkit-media-controls-enclosure {
   display: none !important;
-}
+} */
 
 
 #video-loader {
