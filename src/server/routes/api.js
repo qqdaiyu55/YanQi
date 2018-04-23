@@ -155,7 +155,7 @@ router.get('/new', (req, res) => {
 })
 
 // Prefix which helps tracker to identify user's client (webtorrent) and version
-const VERSION_PREFIX = '-WW0098-'
+const VERSION_PREFIX = '-WW0099-'
 router.get('/peerId', (req, res) => {
   const token = req.headers.authorization.split(' ')[1]
   const decode = jwt.verify(token, config.jwtSecret)
