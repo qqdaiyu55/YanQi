@@ -159,13 +159,14 @@ class EditVideoCard extends React.Component {
       $('#rsc-card-'+rsc_id).click((e) => {
         let rsc = $(e.target).parent('.ui-sortable-handle')
         let rsc_id = rsc.attr('id')
-        let rsc_info = rsc.html()
-        let tmp = rsc_info.match('<div class="item">(.*?)</div><div class="item">(.*?)</div><div class="item-magnet">(.*?)</div>')
+        let rsc_info = Array.from(rsc.children()).map((d) => {
+          return d.innerText
+        })
 
-        $('#edit-resource-card input[name="title"]').val(tmp[1])
-        $('#edit-resource-card input[name="size"]').val(tmp[2].split(' ')[0])
-        $('#edit-resource-card select').val(tmp[2].split(' ')[1])
-        $('#edit-resource-card input[name="magnet"]').val(tmp[3])
+        $('#edit-resource-card input[name="title"]').val(rsc_info[1])
+        $('#edit-resource-card input[name="size"]').val(rsc_info[2].split(' ')[0])
+        $('#edit-resource-card select').val(rsc_info[2].split(' ')[1])
+        $('#edit-resource-card input[name="magnet"]').val(rsc_info[3])
         this.rscCardStatus.addNew = false
         this.rscCardStatus.rscId = rsc_id
         $('#edit-resource-card').css({ "visibility":"visible", "opacity":"1", "top":"50%" })
@@ -181,9 +182,9 @@ class EditVideoCard extends React.Component {
       let rsc = $('#'+this.rscCardStatus.rscId)
 
       // Assign new value
-      rsc.children().eq(1).html(title)
-      rsc.children().eq(2).html(size)
-      rsc.children().eq(3).html(magnet)
+      rsc.children().eq(1).text(title)
+      rsc.children().eq(2).text(size)
+      rsc.children().eq(3).text(magnet)
     }
   }
 
@@ -279,13 +280,13 @@ class EditVideoCard extends React.Component {
     if (r === true) {
       // Get information
       const title = $("#edit-video-card .title").val()
-      const htmlRscInfo = $("#edit-video-card .horizon-scroll ul").children().map(function() {
-        return this.innerHTML
-      }).get()
+      const htmlRscInfo = Array.from($("#edit-video-card .horizon-scroll ul").children())
       var rscInfo = []
       htmlRscInfo.forEach((e) => {
-        var tmp = e.match('<div class="item">(.*?)</div><div class="item">(.*?)</div><div class="item-magnet">(.*?)</div>')
-        tmp = [tmp[1], tmp[2], tmp[3].split('&')[0]]
+        let tmp = Array.from($(e).children()).map((d) => {
+          return d.innerText
+        })
+        tmp = [tmp[1], tmp[2], tmp[3]]
         rscInfo.push(tmp)
       })
       const tags = this.state.tags
@@ -402,7 +403,7 @@ class EditVideoCard extends React.Component {
       this.resetComponent()
     }
   }
-
+  
   render() {
     return (
       <div className="Video-card">

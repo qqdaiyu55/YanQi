@@ -63,7 +63,7 @@ class VideoPage extends React.Component {
       })
 
       var infoHash = data.rsc_info.map((r) => {
-        return r[2].split('magnet:?xt=urn:btih:')[1]
+        return r[2].split('magnet:?xt=urn:btih:')[1].split('&')[0]
       })
       var seeders = new Array(infoHash.length).fill(0)
       Tracker.scrape({ announce: this.announce, infoHash: infoHash }, ((err, results) => {
@@ -221,7 +221,8 @@ class RscCard extends React.Component {
 
   // Copy the magnet link when clicking magnet button
   copyMagnet(e) {
-    clipboard.writeText(e.target.nextSibling.innerHTML + '&tr=udp%3A%2F%2Ftracker.yanqi.tv%3A6969&tr=wss%3A%2F%2Ftracker.yanqi.tv')
+    console.log(e.target.nextSibling.innerText)
+    clipboard.writeText(e.target.nextSibling.innerText)
   }
 
   render() {
