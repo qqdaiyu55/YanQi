@@ -11,9 +11,9 @@ var client = new WebTorrent({
 })
 
 // Announces list
-global.WEBTORRENT_ANNOUNCE = [
-  'wss://tracker.yanqi.tv'
-]
+// global.WEBTORRENT_ANNOUNCE = [
+//   'ws://localhost:6969'
+// ]
 
 // Display webtorrent video
 var displayVideo = (props) => {
@@ -90,7 +90,7 @@ class Video extends React.Component {
   componentDidMount() {
     var topBar = $('#video-topbar')
     var videoContainer = $('#video-container')
-    var videoPlaylist = $('#video-playlist')
+    var videoPlaylistToggleButton = $('#video-playlist .tgl-btn')
     var videoControls = $('#video-controls')
     var playVid = $('#video-controls .play-vid')
     var video = $('#video-container video').get(0)
@@ -151,7 +151,7 @@ class Video extends React.Component {
       userActivity = false
       videoControls.removeClass('is-visible')
       topBar.removeClass('is-visible')
-      videoPlaylist.removeClass('is-visible')
+      videoPlaylistToggleButton.removeClass('is-visible')
       videoContainer.css('cursor', 'none')
     })
     var activityCheck = setInterval(() => {
@@ -161,7 +161,7 @@ class Video extends React.Component {
 
         videoControls.addClass('is-visible')
         topBar.addClass('is-visible')
-        videoPlaylist.addClass('is-visible')
+        videoPlaylistToggleButton.addClass('is-visible')
         videoContainer.css('cursor', 'auto')
         clearTimeout(autohideControls)
         // In X seconds, if no more activity has occurred
@@ -169,7 +169,7 @@ class Video extends React.Component {
         autohideControls = setTimeout(function() {
           videoControls.removeClass('is-visible')
           topBar.removeClass('is-visible')
-          videoPlaylist.removeClass('is-visible')
+          videoPlaylistToggleButton.removeClass('is-visible')
           videoContainer.css('cursor', 'none')
         }, 2000)
       }
@@ -618,7 +618,6 @@ class Playlist extends React.Component {
 
   togglePlaylist() {
     $('#video-playlist ul').toggleClass('hide')
-    $('#video-playlist .tgl-btn').toggleClass('hide')
   }
 
   render() {
@@ -629,6 +628,8 @@ class Playlist extends React.Component {
       var playlist = videos.map(function (t, i) {
         return (<li key={uuidv8()} onClick={this.handleClick}>{t.name}</li>)
       }.bind(this))
+      $('#video-loader .loader-inner').hide()
+      $('#video-loader p').html('Please select a video in playlist.')
     } else if (this.state.files.length > 0) {
       $('#video-loader .loader-inner').hide()
       $('#video-loader p').html('No supported files find, only .mp4 .m4a .m4v files support online streaming.')

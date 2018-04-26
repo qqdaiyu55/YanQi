@@ -15,7 +15,7 @@ const UserSchema = new Schema({
   },
   tags: {
     type: Array,
-    default: ['电影', '动漫', '美剧']
+    default: ['movie', 'anime', 'tv show']
   },
   upload: {
     type: Number,

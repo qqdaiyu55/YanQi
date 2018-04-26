@@ -321,13 +321,12 @@
   width: 95%;
   height: 30%;
   left: 50%;
-  bottom: 10px;
   transform: translate(-50%, 0);
   color: rgb(220, 220, 220);
   font-size: 16px;
   word-wrap: break-word;
   border: 0px;
-  margin-top: 10px;
+  margin-top: 13px;
   padding: 6px;
   background: rgba(5,5,5,.5);
   border-radius: 10px;

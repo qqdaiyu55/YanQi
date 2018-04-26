@@ -30,9 +30,6 @@
   top: 50%;
   transform: translateY(-50%);
 }
-/* #video-container video::-webkit-media-controls-enclosure {
-  display: none !important;
-} */
 
 
 #video-loader {
@@ -421,29 +418,31 @@
 
 #video-playlist {
   position: absolute;
-  visibility: hidden;
   height: 100%;
   right: 0;
   z-index: 1100;
 }
-#video-playlist.is-visible {
-  visibility: visible;
-}
 #video-playlist .tgl-btn {
   cursor: pointer;
   position: absolute;
-  top: 45%;
+  visibility: hidden;
+  opacity: 0;
+  top: 40%;
   left: 0;
-  width: 10px;
-  height: 18px;
-  background-image: url('/img/close-playlist.svg');
-  background-size: 100% 100%;
+  width: 20px;
+  height: 20px;
+  background-color: #e50914;
+  border-radius: 50%;
   z-index: 1200;
-  transform: translateY(-50%);
+  transform: translateX(-50%);
+  transition: opacity .4s, background .2s;
 }
-#video-playlist .tgl-btn.hide {
-  background-image: url('/img/show-playlist.svg');
-  left: -10px;
+#video-playlist .tgl-btn.is-visible {
+  visibility: visible;
+  opacity: .9;
+}
+#video-playlist .tgl-btn:hover {
+  background-color: #fd777d;
 }
 #video-playlist ul {
   position: relative;
@@ -461,10 +460,10 @@
 #video-playlist ul li {
   cursor: pointer;
   padding: 4px 4px 4px 7px;
-  color: #e43c44;
+  color: #f7e3e4;
   font-size: 13px;
   font-weight: 400;
-  /* white-space: nowrap; */
+  border-bottom: 1px dashed;
   transition: background .25s;
 }
 #video-playlist ul li:hover {
