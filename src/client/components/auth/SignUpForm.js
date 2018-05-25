@@ -40,7 +40,7 @@ const SignUpForm = ({
             />
             <button className='auth-form-btn'>Sign up</button>
             <p>Already have an account? <Link to={'/login'} className='link'>Log in</Link><br/>
-              <a href="https://github.com/qqdaiyu55/yanqi.tv/wiki/%E7%94%B3%E8%AF%B7%E9%82%80%E8%AF%B7%E7%A0%81" style={{ textDecoration: 'none', color: '#DD403A' }}>How to apply for invite code?</a></p>
+              <a href="https://github.com/yanqitv/yanqi.tv/wiki/Apply-for-Invite-Code" style={{ textDecoration: 'none', color: '#DD403A' }}>How to apply for invite code?</a></p>
           </form>
         </div>
     </div>

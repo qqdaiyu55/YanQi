@@ -31,7 +31,6 @@ class Auth {
    *
    * @returns {string}
    */
-
   static getToken() {
     return localStorage.getItem('token')
   }
