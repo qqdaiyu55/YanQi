@@ -1,5 +1,5 @@
 <h1 align="center">
-  <img src="https://i.imgur.com/ns4vpVw.png" alt="YANQI" width="150" align="center"/>
+  <img src="https://i.imgur.com/YcgO3ST.png" alt="YANQI" width="200" align="center"/>
 </h1>
 
 <h4 align="center">An elegant P2P video sharing website, support online streaming.</h4>
